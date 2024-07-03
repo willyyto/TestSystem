@@ -1,0 +1,15 @@
+C:\dev\projects\TestSystem\TestSystem.Infra\bin\Debug\net8.0\TestSystem.Infra.deps.json
+C:\dev\projects\TestSystem\TestSystem.Infra\bin\Debug\net8.0\TestSystem.Infra.dll
+C:\dev\projects\TestSystem\TestSystem.Infra\bin\Debug\net8.0\TestSystem.Infra.pdb
+C:\dev\projects\TestSystem\TestSystem.Infra\bin\Debug\net8.0\TestSystem.Core.dll
+C:\dev\projects\TestSystem\TestSystem.Infra\bin\Debug\net8.0\TestSystem.Core.pdb
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.csproj.AssemblyReference.cache
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.AssemblyInfoInputs.cache
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.AssemblyInfo.cs
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.csproj.CoreCompileInputs.cache
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.csproj.CopyComplete
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.dll
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\refint\TestSystem.Infra.dll
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.pdb
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\ref\TestSystem.Infra.dll
