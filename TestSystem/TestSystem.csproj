@@ -17,10 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Mappers\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\TestSystem.Core\TestSystem.Core.csproj"/>
         <ProjectReference Include="..\TestSystem.Infra\TestSystem.Infra.csproj"/>
     </ItemGroup>

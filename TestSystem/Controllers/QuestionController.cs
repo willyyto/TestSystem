@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
+using TestSystem.Mappers;
 
 namespace TestSystem.Controllers;
 
@@ -20,16 +22,14 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = "UserPolicy")]
     public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
     {
         var ct = _cancellationTokenAccessor.Token;
         var questions = await _questionRepository.GetQuestionsAsync(ct);
-        return Ok(questions);
+        return Ok(questions.Select(i => i.MapToQuestionDto()).ToList());
     }
 
     [HttpPost]
-    [Authorize(Policy = "AdminPolicy")]
     public async Task<ActionResult<Question>> AddQuestion([FromBody] Question question)
     {
         var ct = _cancellationTokenAccessor.Token;
@@ -38,14 +38,13 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Policy = "UserPolicy")]
-    public async Task<ActionResult<Question>> GetQuestionById(Guid id)
+    public async Task<ActionResult<QuestionDto>> GetQuestionById(Guid id)
     {
         var ct = _cancellationTokenAccessor.Token;
         var question = await _questionRepository.GetQuestionByIdAsync(ct, id);
         if (question == null)
             return NotFound();
 
-        return Ok(question);
+        return Ok(question.MapToQuestionDto());
     }
 }

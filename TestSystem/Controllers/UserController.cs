@@ -19,19 +19,18 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public List<User> GetUsers()
+    public async Task<ActionResult<List<User>>> GetUsers()
     {
         var ct = _cancellationTokenAccessor.Token;
-        var task = _userRepository.GetAllUsersAsync(ct);
-        return task.Result.ToList();
+        var user = await _userRepository.GetAllUsersAsync(ct);
+        return Ok(user);
     }
 
     [HttpPost]
-    public Guid? AddUser(User User)
+    public async Task<ActionResult<Guid?>> AddUser(User User)
     {
         var ct = _cancellationTokenAccessor.Token;
-        var task = _userRepository.AddUserAsync(ct, User);
-        task.Wait(ct);
-        return task.Result;
+        var id = await _userRepository.AddUserAsync(ct, User);
+        return Ok(id);
     }
 }
