@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TestSystem.Core.Entities;
-using TestSystem.Infra;
 using TestSystem.Infra.DataServices;
 using TestSystem.Infra.Interfaces;
 
@@ -11,32 +10,47 @@ namespace TestSystem.Infra.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly ILogger<UserRepository> _logger;
-    private readonly ITestSystemDbContextAsync _msDbContext;
+    private readonly ITestSystemDbContextAsync _tsDbContext;
 
-    public UserRepository(ITestSystemDbContextAsync msDbContext, ILogger<UserRepository> logger)
+    public UserRepository(ITestSystemDbContextAsync tsDbContext, ILogger<UserRepository> logger)
     {
-        _msDbContext = msDbContext;
+        _tsDbContext = tsDbContext;
         _logger = logger;
+    }
+    
+    public async Task<User> Authenticate(CancellationToken ct, string username, string password)
+    {
+        var user = await _tsDbContext.Users.SingleOrDefaultAsync(x => x.Username == username, ct);
+
+        if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            return null;
+
+        return user;
+    }
+    
+    public async Task<User> GetById(CancellationToken ct, Guid id)
+    {
+        return await _tsDbContext.Users.FindAsync(id);
     }
 
     public async Task<List<User>> GetAllUsersAsync(CancellationToken ct)
     {
-        var Users = await _msDbContext.Users.ToListAsync(ct);
-        return Users;
+        var users = await _tsDbContext.Users.ToListAsync(ct);
+        return users;
     }
 
-    public async Task<Guid> AddUserAsync(CancellationToken ct, User User)
+    public async Task<Guid> AddUserAsync(CancellationToken ct, User user)
     {
         try
         {
-            await _msDbContext.Users.AddAsync(User, ct);
-            await _msDbContext.SaveChangesAsync(ct);
+            await _tsDbContext.Users.AddAsync(user, ct);
+            await _tsDbContext.SaveChangesAsync(ct);
         }
         catch (Exception ex)
         {
             return Guid.Empty;
         }
 
-        return User.Id;
+        return user.Id;
     }
 }

@@ -1,5 +1,3 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace TestSystem;
+﻿namespace TestSystem;
 
 public record DatabaseSettings(string ConnectionString);

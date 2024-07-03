@@ -1,68 +1,73 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
+using TestSystem.Infra.Interfaces;
 
 namespace TestSystem.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    /*private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly IConfiguration _configuration;
+    private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
+    private readonly IConfiguration _config;
+    private readonly IUserRepository _userRepository;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+    public AuthController(IUserRepository userRepository, IConfiguration config,
+        ICancellationTokenAccessor cancellationTokenAccessor)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _configuration = configuration;
-    }*/
-
-    /*[HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
-    {
-        var user = new User { UserName = model.Username, Email = model.Email };
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded)
-        {
-            return Ok();
-        }
-
-        return BadRequest(result.Errors);
+        _userRepository = userRepository;
+        _config = config;
+        _cancellationTokenAccessor = cancellationTokenAccessor;
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public async Task<IActionResult> Login([FromBody] LoginDto login)
     {
-        var user = await _userManager.FindByNameAsync(model.Username);
-        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        var ct = _cancellationTokenAccessor.Token;
+        var user = await _userRepository.Authenticate(ct, login.Username, login.Password);
+
+        if (user == null)
+            return Unauthorized();
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
-            var claims = new[]
+            Subject = new ClaimsIdentity(new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                new Claim(ClaimTypes.Name, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role) // Add role claim
+            }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        return Ok(new {Token = tokenString});
+    }
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Issuer"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
-
-            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-        }
-
-        return Unauthorized();
-    }*/
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto register)
+    {
+        var ct = _cancellationTokenAccessor.Token;
+        var user = new User
+        {
+            Name = register.Name,
+            Username = register.Username,
+            Email = register.Email,
+            Password = BCrypt.Net.BCrypt.HashPassword(register.Password),
+            Role = register.Role // Assign role
+        };
+        var id = await _userRepository.AddUserAsync(ct, user);
+        if (id == Guid.Empty)
+            return BadRequest();
+        return Ok();
+    }
 }

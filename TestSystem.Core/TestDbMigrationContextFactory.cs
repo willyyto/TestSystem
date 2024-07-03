@@ -28,7 +28,7 @@ public class TestDbMigrationContextFactory : IDesignTimeDbContextFactory<TestDbM
         var connectionString = configuration.GetConnectionString("TestManagementDbConnection");
 
         Console.WriteLine($"Attempting to run migrations with connection: '{connectionString}'");
-        
+
         var dbContextBuilder =
             new DbContextOptionsBuilder<TestDbMigrationContext>().UseSqlServer(connectionString);
 

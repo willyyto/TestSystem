@@ -1,11 +1,14 @@
-﻿using Autofac;
+﻿using System.Text;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TestSystem;
 
 public class Startup
 {
-    private IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
     public Startup(IConfiguration configuration)
     {
@@ -30,10 +33,31 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = _configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                };
+            });
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+        });
+
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy => policy
-                .WithOrigins("http://localhost:5173")
+                .AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod()
             );

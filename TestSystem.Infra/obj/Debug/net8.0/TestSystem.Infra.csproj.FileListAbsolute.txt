@@ -13,3 +13,4 @@ C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.dl
 C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\refint\TestSystem.Infra.dll
 C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.pdb
 C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\ref\TestSystem.Infra.dll
+C:\dev\projects\TestSystem\TestSystem.Infra\obj\Debug\net8.0\TestSystem.Infra.sourcelink.json

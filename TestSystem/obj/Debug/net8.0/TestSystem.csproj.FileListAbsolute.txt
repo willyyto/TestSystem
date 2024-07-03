@@ -99,3 +99,5 @@ C:\dev\projects\TestSystem\TestSystem\bin\Debug\net8.0\Microsoft.AspNetCore.Iden
 C:\dev\projects\TestSystem\TestSystem\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
 C:\dev\projects\TestSystem\TestSystem\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
 C:\dev\projects\TestSystem\TestSystem\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\dev\projects\TestSystem\TestSystem\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\dev\projects\TestSystem\TestSystem\obj\Debug\net8.0\TestSystem.sourcelink.json

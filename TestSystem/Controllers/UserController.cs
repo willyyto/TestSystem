@@ -9,12 +9,12 @@ namespace TestSystem.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
-    private readonly IUserRepository _UserRepository;
+    private readonly IUserRepository _userRepository;
 
-    public UserController(IUserRepository UserRepository,
+    public UserController(IUserRepository userRepository,
         ICancellationTokenAccessor cancellationTokenAccessor)
     {
-        _UserRepository = UserRepository;
+        _userRepository = userRepository;
         _cancellationTokenAccessor = cancellationTokenAccessor;
     }
 
@@ -22,7 +22,7 @@ public class UserController : ControllerBase
     public List<User> GetUsers()
     {
         var ct = _cancellationTokenAccessor.Token;
-        var task = _UserRepository.GetAllUsersAsync(ct);
+        var task = _userRepository.GetAllUsersAsync(ct);
         return task.Result.ToList();
     }
 
@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     public Guid? AddUser(User User)
     {
         var ct = _cancellationTokenAccessor.Token;
-        var task = _UserRepository.AddUserAsync(ct, User);
+        var task = _userRepository.AddUserAsync(ct, User);
         task.Wait(ct);
         return task.Result;
     }

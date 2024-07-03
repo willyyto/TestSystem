@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "3A5E+/zfGc3ZxiMeUPdTUL3SfI9knpxUlUSr3640nzRK1sv3JmgSONI62FeSH1bxiBAaFxu54gRTTacJyzdlXA==",
+  "dgSpecHash": "MoJ4Jk9Pida+Ddjx39enBjnit8Tu0q9a9cKwqze1lNPCVOamgRCz/EmeHBaiXD1hGPZYZIVg7trpEPs6phVtEA==",
   "success": true,
   "projectFilePath": "C:\\dev\\projects\\TestSystem\\TestSystem.Infra\\TestSystem.Infra.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Willy\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Willy\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
+    "C:\\Users\\Willy\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Willy\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.6\\microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512",
     "C:\\Users\\Willy\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.6\\microsoft.aspnetcore.cryptography.internal.8.0.6.nupkg.sha512",
     "C:\\Users\\Willy\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.6\\microsoft.aspnetcore.cryptography.keyderivation.8.0.6.nupkg.sha512",
