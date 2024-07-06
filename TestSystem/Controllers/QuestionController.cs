@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;

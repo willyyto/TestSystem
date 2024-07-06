@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, {createContext, ReactNode, useEffect, useState} from 'react';
 import axios from 'axios';
 
 axios.defaults.baseURL = 'https://localhost:44395'; // Set the correct backend API URL
@@ -16,7 +16,7 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [user, setUser] = useState<any>(null);
     const [role, setRole] = useState<string | null>(null);
 
@@ -27,14 +27,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             axios.get('/api/user').then(response => {
                 setUser(response.data.user);
                 setRole(response.data.role);
-            }).catch(() => {``
+            }).catch(() => {
+                ``
                 logout();
             });
         }
     }, []);
 
     const login = async (username: string, password: string) => {
-        const response = await axios.post('/api/auth/login', { username, password });
+        const response = await axios.post('/api/auth/login', {username, password});
         localStorage.setItem('token', response.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         setUser(response.data.user);
@@ -45,11 +46,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
-        setRole(null);``
+        setRole(null);
+        ``
     };
 
     return (
-        <AuthContext.Provider value={{ user, role, login, logout }}>
+        <AuthContext.Provider value={{user, role, login, logout}}>
             {children}
         </AuthContext.Provider>
     );

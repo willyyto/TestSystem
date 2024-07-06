@@ -21,7 +21,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
     {
         services.AddControllers();
-        
+
         services.Configure<RouteOptions>(options =>
         {
             options.LowercaseUrls = true;
@@ -43,12 +43,12 @@ public class Startup
 
         services.AddCors(options =>
         {
-           options.AddPolicy("AllowLocalhost",
+            options.AddPolicy("AllowLocalhost",
                 builder =>
                 {
                     builder.WithOrigins("http://localhost:5173")
-                           .AllowAnyHeader()
-                           .AllowAnyMethod();
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
         });
     }
@@ -85,7 +85,7 @@ public class Startup
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 .UseHsts()
                 .UseHttpsRedirection();
-        
+
         app.UseCors("AllowLocalhost");
         app.MapControllers();
     }

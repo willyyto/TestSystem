@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
         _tsDbContext = tsDbContext;
         _logger = logger;
     }
-    
+
     public async Task<User> GetById(CancellationToken ct, Guid id)
     {
         return await _tsDbContext.Users.FindAsync(id);

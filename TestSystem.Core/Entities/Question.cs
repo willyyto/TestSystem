@@ -20,4 +20,3 @@ public class Question : IArchivable, IMetaData, IActive
     public DateTime UpdatedOn { get; set; }
     public DateTime CreatedOn { get; set; }
 }
-

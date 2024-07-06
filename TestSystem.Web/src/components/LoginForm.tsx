@@ -1,12 +1,12 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { InputText } from 'primereact/inputtext';
-import { Password } from 'primereact/password';
-import { Button } from 'primereact/button';
-import AuthContext from '@/services/AuthContext';
+import React, {useContext, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {InputText} from 'primereact/inputtext';
+import {Password} from 'primereact/password';
+import {Button} from 'primereact/button';
+import AuthContext from 'services/AuthContext';
 
 const LoginForm: React.FC = () => {
-    const { login } = useContext(AuthContext)!;
+    const {login} = useContext(AuthContext)!;
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -26,13 +26,16 @@ const LoginForm: React.FC = () => {
                 <h2 className="text-3xl mb-6 text-center">Login</h2>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700">Username</label>
-                    <InputText value={username} onChange={(e) => setUsername(e.target.value)} className="w-full p-inputtext-sm" />
+                    <InputText value={username} onChange={(e) => setUsername(e.target.value)}
+                               className="w-full p-inputtext-sm"/>
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700">Password</label>
-                    <Password value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-inputtext-sm" toggleMask />
+                    <Password value={password} onChange={(e) => setPassword(e.target.value)}
+                              className="w-full p-inputtext-sm" toggleMask/>
                 </div>
-                <Button label="Login" icon="pi pi-sign-in" className="w-full p-button-raised p-button-primary" onClick={handleLogin} />
+                <Button label="Login" icon="pi pi-sign-in" className="w-full p-button-raised p-button-primary"
+                        onClick={handleLogin}/>
             </div>
         </div>
     );
