@@ -1,16 +1,22 @@
-import React from 'react';
+import {Footer} from "components/Footer";
+import {Header} from "components/Header";
+import Provider from "Provider";
 
-interface LayoutProps {
-}
-
-const Layouts: React.FC<LayoutProps> = (props: React.PropsWithChildren<LayoutProps>
-) => {
-
+export default function DefaultLayout({
+                                          children,
+                                      }: {
+    children: React.ReactNode;
+}) {
     return (
-        <>
-            {props.children}
-        </>
-    );
-};
+        <Provider>
+            <div className="relative flex flex-col h-screen">
+                <Header/>
+                <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
+                    {children}
+                </main>
+                <Footer/>
+            </div>
+        </Provider>
 
-export default Layouts;
+    );
+}
