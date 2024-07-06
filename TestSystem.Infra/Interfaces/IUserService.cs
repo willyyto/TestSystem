@@ -5,6 +5,6 @@ namespace TestSystem.Infra.Interfaces;
 
 public interface IUserService
 {
-     public RefreshToken GenerateRefreshToken();
-     public string CreateToken(User user);
+    public RefreshToken GenerateRefreshToken();
+    public string CreateToken(User user);
 }

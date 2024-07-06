@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
@@ -27,20 +26,17 @@ public class UserController : ControllerBase
         var user = await _userRepository.GetAllUsersAsync(ct);
         return Ok(user);
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetUser()
     {
         var ct = _cancellationTokenAccessor.Token;
         var userId = User.FindFirstValue(ClaimTypes.Name);
-        var user = await _userRepository.GetById(ct,Guid.Parse(userId));
+        var user = await _userRepository.GetById(ct, Guid.Parse(userId));
 
-        if (user == null)
-        {
-            return NotFound();
-        }
+        if (user == null) return NotFound();
 
-        return Ok(new { user, role = user.Role });
+        return Ok(new {user, role = user.Role});
     }
 
     [HttpPost]

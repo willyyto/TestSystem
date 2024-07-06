@@ -8,6 +8,7 @@ const Layouts: React.FC<LayoutProps> = (props: React.PropsWithChildren<LayoutPro
 
     return (
         <>
+            {props.children}
         </>
     );
 };
