@@ -48,7 +48,7 @@ public static class EfContextRegistrationExtensions
     public static ContainerBuilder AddEfCoreDbContexts(this ContainerBuilder builder)
     {
         return builder
-            .AddManagementSystemDbContext()
+            .AddTestSystemDbContext()
             .AddManagementMigrationsDbContext();
     }
 
@@ -58,7 +58,7 @@ public static class EfContextRegistrationExtensions
     public static ContainerBuilder AddDatabaseSettings(this ContainerBuilder containerBuilder, IConfiguration config)
     {
         var databaseSettings = new DatabaseSettings(
-            config.GetConnectionString("TestManagementDbConnection")
+            config.GetConnectionString("TestSystemDbConnection")
         );
 
         containerBuilder.RegisterInstance(databaseSettings).AsSelf().SingleInstance();
@@ -86,7 +86,7 @@ public static class EfContextRegistrationExtensions
         return containerBuilder;
     }
 
-    private static ContainerBuilder AddManagementSystemDbContext(this ContainerBuilder builder)
+    private static ContainerBuilder AddTestSystemDbContext(this ContainerBuilder builder)
     {
         builder
             .AddDbContextOptions<TestSystemDbContextAsync>()

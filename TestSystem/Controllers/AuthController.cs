@@ -1,73 +1,75 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using TestSystem.Core.Dtos;
+﻿using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TestSystem.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+[ApiController]
+public class AuthController: ControllerBase
 {
-    private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
-    private readonly IConfiguration _config;
-    private readonly IUserRepository _userRepository;
+    public static User user = new User();
+    private readonly IUserService _userService;
 
-    public AuthController(IUserRepository userRepository, IConfiguration config,
-        ICancellationTokenAccessor cancellationTokenAccessor)
+    public AuthController( IUserService userService)
     {
-        _userRepository = userRepository;
-        _config = config;
-        _cancellationTokenAccessor = cancellationTokenAccessor;
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto login)
-    {
-        var ct = _cancellationTokenAccessor.Token;
-        var user = await _userRepository.Authenticate(ct, login.Username, login.Password);
-
-        if (user == null)
-            return Unauthorized();
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role) // Add role claim
-            }),
-            Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(token);
-
-        return Ok(new {Token = tokenString});
+        _userService = userService;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto register)
+    public ActionResult<User> Register(UserDto request)
     {
-        var ct = _cancellationTokenAccessor.Token;
-        var user = new User
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        user.Username = request.Username;
+        user.Password = passwordHash;
+
+        return Ok(user);
+    }
+    
+    [HttpPost("login")]
+    public ActionResult<User> Login(UserDto request)
+    {
+        if (user.Username != request.Username)
+            return BadRequest("User Not Found");
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            return BadRequest("Wrong password.");
+        
+        string token = _userService.CreateToken(user);
+        var refreshToken = _userService.GenerateRefreshToken();
+        SetRefreshToken(refreshToken);
+        
+        return Ok(token);
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult<string>> RefreshToken()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (!user.RefreshToken.Equals(refreshToken))
         {
-            Name = register.Name,
-            Username = register.Username,
-            Email = register.Email,
-            Password = BCrypt.Net.BCrypt.HashPassword(register.Password),
-            Role = register.Role // Assign role
+            return Unauthorized("Invalid refresh token");
+        }
+        else if (user.TokenExpires < DateTime.Now)
+        {
+            return Unauthorized("Token expired");
+        }
+
+        string token = _userService.CreateToken(user);
+        var newRefreshToken = _userService.GenerateRefreshToken();
+        SetRefreshToken(newRefreshToken);
+        return Ok(token);
+    }
+    private void SetRefreshToken(RefreshToken newRefreshToken)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = newRefreshToken.Expires
         };
-        var id = await _userRepository.AddUserAsync(ct, user);
-        if (id == Guid.Empty)
-            return BadRequest();
-        return Ok();
+        Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
+        user.RefreshToken = newRefreshToken.Token;
+        user.TokenCreated = newRefreshToken.Created;
+        user.TokenExpires = newRefreshToken.Expires;
     }
 }

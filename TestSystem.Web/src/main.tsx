@@ -1,17 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { PrimeReactProvider } from "primereact/api";
+import App from "./App";
+import "./index.css";
+import "primeicons/primeicons.css";
+import "./App.css";
 
-import App from "./App.tsx";
-import { Provider } from "./provider.tsx";
-import "@/styles/globals.css";
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Provider>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
+    <PrimeReactProvider value={{ unstyled: false }}>
+      <App />
+    </PrimeReactProvider>
+  </React.StrictMode>
 );

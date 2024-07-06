@@ -6,8 +6,12 @@ public class User : IArchivable, IMetaData, IActive, ILockable
     public string Name { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
-    public string Role { get; set; }
+
     public string Email { get; set; }
+    public string Role { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTime TokenCreated { get; set; }
+    public DateTime TokenExpires { get; set; }
     public bool IsActive { get; set; }
     public bool IsArchived { get; set; }
     public bool IsLocked { get; set; }

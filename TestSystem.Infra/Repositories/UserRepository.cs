@@ -18,16 +18,6 @@ public class UserRepository : IUserRepository
         _logger = logger;
     }
     
-    public async Task<User> Authenticate(CancellationToken ct, string username, string password)
-    {
-        var user = await _tsDbContext.Users.SingleOrDefaultAsync(x => x.Username == username, ct);
-
-        if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
-            return null;
-
-        return user;
-    }
-    
     public async Task<User> GetById(CancellationToken ct, Guid id)
     {
         return await _tsDbContext.Users.FindAsync(id);

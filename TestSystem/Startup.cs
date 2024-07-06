@@ -1,8 +1,7 @@
-﻿using System.Text;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace TestSystem;
 
@@ -22,7 +21,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
     {
         services.AddControllers();
-
+        
         services.Configure<RouteOptions>(options =>
         {
             options.LowercaseUrls = true;
@@ -31,36 +30,26 @@ public class Startup
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"],
-                    ValidAudience = _configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
-                };
-            });
-
-        services.AddAuthorization(options =>
+        services.AddSwaggerGen(options =>
         {
-            options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
-            options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+            options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey
+            });
+            options.OperationFilter<SecurityRequirementsOperationFilter>();
         });
 
         services.AddCors(options =>
         {
-            options.AddDefaultPolicy(policy => policy
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-            );
+           options.AddPolicy("AllowLocalhost",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:5173")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
         });
     }
 
@@ -96,8 +85,8 @@ public class Startup
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 .UseHsts()
                 .UseHttpsRedirection();
-
-        app.UseCors();
+        
+        app.UseCors("AllowLocalhost");
         app.MapControllers();
     }
 }
