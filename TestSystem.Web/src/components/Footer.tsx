@@ -1,4 +1,4 @@
-import { Link } from "@nextui-org/link";
+import {Link} from "@nextui-org/link";
 
 export const Footer = () => {
   return(<footer className="w-full flex items-center justify-center py-3">
@@ -9,7 +9,7 @@ export const Footer = () => {
     title="nextui.org homepage"
   >
     <span className="text-default-600">Powered by</span>
-    <p className="text-primary">NextUI</p>
+    <p className="text-primary">William To</p>
   </Link>
 </footer>)
     

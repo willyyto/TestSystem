@@ -10,6 +10,8 @@ public interface ITestSystemDbContextAsync
     DbSet<Test> Tests { get; }
     DbSet<Question> Questions { get; }
     DbSet<Answer> Answers { get; }
+    DbSet<TestResult> TestResults { get; }
+    DbSet<QuestionResult> QuestionResults { get; }
 
 
     Task<int> SaveChangesAsync(CancellationToken ct);

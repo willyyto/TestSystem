@@ -16,6 +16,11 @@ public class TestConfig : IEntityTypeConfiguration<Test>
             .WithMany(c => c.Tests)
             .HasForeignKey(e => e.CompanyId);
 
+        builder.HasMany(e => e.TestResults)
+            .WithOne(tr => tr.Test)
+            .HasForeignKey(tr => tr.TestId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
     }
 }

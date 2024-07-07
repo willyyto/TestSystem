@@ -1,0 +1,67 @@
+﻿using Microsoft.EntityFrameworkCore;
+using TestSystem.Core.Dtos;
+using TestSystem.Core.Entities;
+using TestSystem.Infra.DataServices;
+using TestSystem.Infra.Interfaces;
+
+namespace TestSystem.Infra.Services;
+
+[InstanceScopedService]
+public class TestService : ITestService
+{
+    private readonly TestSystemDbContextAsync _tsDbContext;
+
+    public TestService(TestSystemDbContextAsync tsDbContext)
+    {
+        _tsDbContext = tsDbContext;
+    }
+
+    public async Task<int?> SubmitQuiz(TestSubmissionDto submission)
+    {
+        var test = await _tsDbContext.Tests
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .FirstOrDefaultAsync(t => t.Id == submission.Id);
+
+        if (test == null) return null;
+
+        // Process answers and calculate score
+        var score = 0;
+
+        foreach (var question in test.Questions)
+            if (submission.Answers.TryGetValue(question.Id, out var answer))
+            {
+                if (question.Type == QuestionType.MultipleChoice || question.Type == QuestionType.TrueFalse)
+                {
+                    var correctAnswer = question.Answers.FirstOrDefault(a => a.IsCorrect);
+                    if (correctAnswer != null && correctAnswer.Text == answer) score++;
+                }
+                else if (question.Type == QuestionType.ShortAnswer)
+                {
+                    // Add custom logic for short answer grading if needed
+                }
+            }
+
+        // Save test result (if needed)
+        var testResult = new TestResult
+        {
+            Id = Guid.NewGuid(),
+            UserId = Guid.Empty, // Set this to the actual user ID if needed
+            TestId = test.Id,
+            AttemptDate = DateTime.UtcNow,
+            Score = score,
+            QuestionResults = test.Questions.Select(q => new QuestionResult
+            {
+                Id = Guid.NewGuid(),
+                QuestionId = q.Id,
+                IsCorrect = submission.Answers.TryGetValue(q.Id, out var ans) &&
+                            q.Answers.Any(a => a.IsCorrect && a.Text == ans)
+            }).ToList()
+        };
+
+        _tsDbContext.TestResults.Add(testResult);
+        await _tsDbContext.SaveChangesAsync();
+
+        return score;
+    }
+}

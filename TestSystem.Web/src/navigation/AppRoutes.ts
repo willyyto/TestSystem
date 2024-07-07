@@ -5,11 +5,13 @@
 
 const AppRoutes = Object.freeze({
     root: '/',
+    dashboard: '/dashboard',
     about: '/about',
     docs: '/docs',
     blog: '/blog',
     pricing: '/pricing',
     login: '/login',
+    quiz: '/quiz/:testId',
 });
 
 export default AppRoutes;

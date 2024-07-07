@@ -1,8 +1,9 @@
-﻿import React, { useState } from "react";
-import { Input, Button, Card, Spacer, CardHeader, CardBody, Checkbox } from "@nextui-org/react";
-import { EyeFilledIcon } from "components/Icons/EyeFilledIcon";
-import { EyeSlashFilledIcon } from "components/Icons/EyeSlashFilledIcon";
-import { motion, AnimatePresence } from "framer-motion";
+﻿import {useState} from "react";
+import {Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer} from "@nextui-org/react";
+import {EyeFilledIcon} from "components/Icons/EyeFilledIcon";
+import {EyeSlashFilledIcon} from "components/Icons/EyeSlashFilledIcon";
+import {AnimatePresence, motion} from "framer-motion";
+import {useNavigate} from "react-router-dom";
 
 export default function Auth() {
     const [username, setUsername] = useState("");
@@ -14,9 +15,11 @@ export default function Auth() {
     const [isSignUp, setIsSignUp] = useState(false);
     const [role, setRole] = useState("user");
     const toggleVisibility = () => setIsVisible(!isVisible);
-
+    const navigate = useNavigate();
     const handleAuth = () => {
-        // Handle login or sign-up logic
+        if (!isSignUp) {
+            navigate('/dashboard');
+        }
     };
 
     const cardVariants = {

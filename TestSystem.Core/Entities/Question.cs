@@ -15,6 +15,7 @@ public class Question : IArchivable, IMetaData, IActive
     public Guid TestId { get; set; }
     public Test Test { get; set; }
     public ICollection<Answer> Answers { get; set; }
+    public ICollection<QuestionResult> QuestionResults { get; set; }
     public bool IsActive { get; set; }
     public bool IsArchived { get; set; }
     public DateTime UpdatedOn { get; set; }
