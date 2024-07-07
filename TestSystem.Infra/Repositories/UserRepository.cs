@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.DataServices;
@@ -10,6 +11,7 @@ namespace TestSystem.Infra.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly ILogger<UserRepository> _logger;
+    private readonly IPasswordHasher<User> _passwordHasher;
     private readonly ITestSystemDbContextAsync _tsDbContext;
 
     public UserRepository(ITestSystemDbContextAsync tsDbContext, ILogger<UserRepository> logger)
@@ -21,6 +23,11 @@ public class UserRepository : IUserRepository
     public async Task<User> GetById(CancellationToken ct, Guid id)
     {
         return await _tsDbContext.Users.FindAsync(id);
+    }
+
+    public async Task<User?> GetByUsername(CancellationToken ct, string username)
+    {
+        return await _tsDbContext.Users.FirstOrDefaultAsync(u => u.Username == username, ct);
     }
 
     public async Task<List<User>> GetAllUsersAsync(CancellationToken ct)

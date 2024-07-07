@@ -1,10 +1,10 @@
 ﻿using TestSystem.Core.Dtos;
-using TestSystem.Core.Entities;
 
 namespace TestSystem.Infra.Interfaces;
 
 public interface IUserService
 {
-    public RefreshToken GenerateRefreshToken();
-    public string CreateToken(User user);
+    Task<Guid> AddUserAsync(CancellationToken ct, RegisterDto request);
+    Task<bool> ValidateUserAsync(CancellationToken ct, string username, string password);
+    Task<string> CreateToken(CancellationToken ct, LoginDto request);
 }

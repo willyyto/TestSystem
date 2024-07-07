@@ -1,6 +1,8 @@
 ﻿using Autofac;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TestSystem.Core;
+using TestSystem.Core.Entities;
 using TestSystem.Infra;
 using TestSystem.Infra.DataServices;
 
@@ -22,6 +24,8 @@ public static class EfContextRegistrationExtensions
 
         containerBuilder.RegisterAttributeTaggedServices<InstanceScopedServiceAttribute>();
         containerBuilder.RegisterAttributeTaggedServices<InstanceScopedBusinessServiceAttribute>();
+        containerBuilder.RegisterType<PasswordHasher<User>>().As<IPasswordHasher<User>>().SingleInstance();
+
 
         return containerBuilder;
     }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
 using TestSystem.Mappers;
 
 namespace TestSystem.Controllers;
 
+[Authorize(Roles = "user")]
 [ApiController]
 [Route("api/[controller]")]
 public class TestController : ControllerBase

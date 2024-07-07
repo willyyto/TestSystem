@@ -1,13 +1,15 @@
-﻿import {useState} from "react";
-import {Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer} from "@nextui-org/react";
-import {EyeFilledIcon} from "components/Icons/EyeFilledIcon";
-import {EyeSlashFilledIcon} from "components/Icons/EyeSlashFilledIcon";
-import {AnimatePresence, motion} from "framer-motion";
-import {useNavigate} from "react-router-dom";
+﻿import { useState } from "react";
+import { Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer } from "@nextui-org/react";
+import { EyeFilledIcon } from "components/Icons/EyeFilledIcon";
+import { EyeSlashFilledIcon } from "components/Icons/EyeSlashFilledIcon";
+import { AnimatePresence, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Auth() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
@@ -16,9 +18,43 @@ export default function Auth() {
     const [role, setRole] = useState("user");
     const toggleVisibility = () => setIsVisible(!isVisible);
     const navigate = useNavigate();
-    const handleAuth = () => {
-        if (!isSignUp) {
-            navigate('/dashboard');
+
+    const handleAuth = async () => {
+        if (isSignUp) {
+            // Handle registration
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            try {
+                await axios.post('https://localhost:44395/api/auth/register', {
+                    username,
+                    password,
+                    email,
+                    name,
+                    role
+                });
+                alert("Registration successful!");
+                setIsSignUp(false); // Switch to login after successful registration
+            } catch (error) {
+                console.error("Registration failed", error);
+                alert("Registration failed. Please try again.");
+            }
+        } else {
+            // Handle login
+            try {
+                const response = await axios.post('https://localhost:44395/api/auth/login', {
+                    username,
+                    password
+                });
+                const { token } = response.data;
+                localStorage.setItem("token", token); // Store token in local storage
+                navigate('/dashboard'); // Navigate to dashboard
+            } catch (error) {
+                console.error("Login failed", error);
+                alert("Login failed. Please check your credentials and try again.");
+            }
         }
     };
 
@@ -65,19 +101,29 @@ export default function Auth() {
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
-                                <Spacer y={2}/>
+                                <Spacer y={2} />
                                 {isSignUp && (
                                     <>
                                         <Input
                                             type="email"
-                                            label="Email Address"
+                                            label="Email"
                                             variant="bordered"
                                             placeholder="Enter your email"
                                             size="md"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                         />
-                                        <Spacer y={2}/>
+                                        <Spacer y={2} />
+                                        <Input
+                                            type="text"
+                                            label="Full Name"
+                                            variant="bordered"
+                                            placeholder="Enter your name"
+                                            size="md"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                        />
+                                        <Spacer y={2} />
                                     </>
                                 )}
                                 <Input
@@ -87,11 +133,9 @@ export default function Auth() {
                                     endContent={
                                         <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                                             {isVisible ? (
-                                                <EyeSlashFilledIcon
-                                                    className="text-2xl text-default-400 pointer-events-none"/>
+                                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
                                             ) : (
-                                                <EyeFilledIcon
-                                                    className="text-2xl text-default-400 pointer-events-none"/>
+                                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
                                             )}
                                         </button>
                                     }
@@ -102,7 +146,7 @@ export default function Auth() {
                                 />
                                 {isSignUp && (
                                     <>
-                                        <Spacer y={2}/>
+                                        <Spacer y={2} />
                                         <Input
                                             label="Confirm Password"
                                             variant="bordered"
@@ -112,7 +156,7 @@ export default function Auth() {
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                         />
-                                        <Spacer y={2}/>
+                                        <Spacer y={2} />
                                         <label className="block text-sm font-medium text-gray-700">Role</label>
                                         <select
                                             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
@@ -124,7 +168,7 @@ export default function Auth() {
                                         </select>
                                     </>
                                 )}
-                                <Spacer y={2}/>
+                                <Spacer y={2} />
                                 {!isSignUp && (
                                     <div className="flex items-center justify-between mb-4">
                                         <Checkbox isSelected={rememberMe} size="sm"
@@ -138,33 +182,30 @@ export default function Auth() {
 
                                     </div>
                                 )}
-                                <Spacer y={2}/>
+                                <Spacer y={2} />
 
                                 <Button className="w-full" onPress={handleAuth} color="primary">
                                     {isSignUp ? "Sign Up" : "Log In"}
                                 </Button>
                                 <div className="flex items-center my-4">
-                                    <hr className="flex-grow border-t border-gray-200 border-b-0"/>
+                                    <hr className="flex-grow border-t border-gray-200 border-b-0" />
                                     <span className="mx-4 text-gray-500 text-sm">OR</span>
-                                    <hr className="flex-grow border-t border-gray-200 border-b-0"/>
+                                    <hr className="flex-grow border-t border-gray-200 border-b-0" />
                                 </div>
-                                <Button className="w-full" onClick={() => { /* Handle alternative sign-up/login method */
-                                }} >
+                                <Button className="w-full" onClick={() => { /* Handle alternative sign-up/login method */ }}>
                                     Continue with Google
                                 </Button>
-                                <Spacer y={4}/>
+                                <Spacer y={4} />
                                 <p className="text-center text-sm">
                                     {isSignUp ? (
                                         <>
                                             Already have an account? <a onClick={() => setIsSignUp(false)}
-                                                                        className="text-blue-500 cursor-pointer">Log
-                                            In</a>
+                                                                        className="text-blue-500 cursor-pointer">Log In</a>
                                         </>
                                     ) : (
                                         <>
                                             Need to create an account? <a onClick={() => setIsSignUp(true)}
-                                                                          className="text-blue-500 cursor-pointer">Sign
-                                            Up</a>
+                                                                          className="text-blue-500 cursor-pointer">Sign Up</a>
                                         </>
                                     )}
                                 </p>

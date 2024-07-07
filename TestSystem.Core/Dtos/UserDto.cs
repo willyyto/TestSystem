@@ -1,7 +1,3 @@
 ﻿namespace TestSystem.Core.Dtos;
 
-public class UserDto
-{
-    public required string Username { get; set; }
-    public required string Password { get; set; }
-}
+public record UserDto(string Username, string Password, string Name, string Email, string Role);

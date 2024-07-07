@@ -16,7 +16,7 @@ public class TestService : ITestService
         _tsDbContext = tsDbContext;
     }
 
-   public async Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission)
+    public async Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission)
     {
         var test = await _tsDbContext.Tests
             .Include(t => t.Questions)
@@ -29,7 +29,6 @@ public class TestService : ITestService
         var score = 0;
 
         foreach (var question in test.Questions)
-        {
             if (submission.Answers.TryGetValue(question.Id, out var answer))
             {
                 if (question.Type == QuestionType.MultipleChoice || question.Type == QuestionType.TrueFalse)
@@ -42,7 +41,6 @@ public class TestService : ITestService
                     // Add custom logic for short answer grading if needed
                 }
             }
-        }
 
         // Save test result
         var testResult = new TestResult

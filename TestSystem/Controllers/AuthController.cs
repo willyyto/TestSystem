@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestSystem.Core.Dtos;
-using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
 
 namespace TestSystem.Controllers;
@@ -9,63 +8,36 @@ namespace TestSystem.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    public static User user = new();
+    private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
+    private readonly IUserRepository _userRepository;
     private readonly IUserService _userService;
 
-    public AuthController(IUserService userService)
+    public AuthController(IUserService userService, IUserRepository userRepository,
+        ICancellationTokenAccessor cancellationTokenAccessor)
     {
         _userService = userService;
+        _userRepository = userRepository;
+        _cancellationTokenAccessor = cancellationTokenAccessor;
     }
 
     [HttpPost("register")]
-    public ActionResult<User> Register(UserDto request)
+    public async Task<IActionResult> Register(RegisterDto request)
     {
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-        user.Username = request.Username;
-        user.Password = passwordHash;
-
-        return Ok(user);
+        var ct = _cancellationTokenAccessor.Token;
+        var userId = await _userService.AddUserAsync(ct, request);
+        if (userId == null || userId == Guid.Empty)
+            return NoContent();
+        return Ok(userId);
     }
 
     [HttpPost("login")]
-    public ActionResult<User> Login(UserDto request)
+    public async Task<IActionResult> Login(LoginDto request)
     {
-        if (user.Username != request.Username)
-            return BadRequest("User Not Found");
-        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
-            return BadRequest("Wrong password.");
+        var ct = _cancellationTokenAccessor.Token;
+        if (!await _userService.ValidateUserAsync(ct, request.Username, request.Password)) return Unauthorized();
 
-        var token = _userService.CreateToken(user);
-        var refreshToken = _userService.GenerateRefreshToken();
-        SetRefreshToken(refreshToken);
+        var tokenString = await _userService.CreateToken(ct, request);
 
-        return Ok(token);
-    }
-
-    [HttpPost("refresh-token")]
-    public async Task<ActionResult<string>> RefreshToken()
-    {
-        var refreshToken = Request.Cookies["refreshToken"];
-        if (!user.RefreshToken.Equals(refreshToken))
-            return Unauthorized("Invalid refresh token");
-        if (user.TokenExpires < DateTime.Now) return Unauthorized("Token expired");
-
-        var token = _userService.CreateToken(user);
-        var newRefreshToken = _userService.GenerateRefreshToken();
-        SetRefreshToken(newRefreshToken);
-        return Ok(token);
-    }
-
-    private void SetRefreshToken(RefreshToken newRefreshToken)
-    {
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = newRefreshToken.Expires
-        };
-        Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
-        user.RefreshToken = newRefreshToken.Token;
-        user.TokenCreated = newRefreshToken.Created;
-        user.TokenExpires = newRefreshToken.Expires;
+        return Ok(new {Token = tokenString});
     }
 }
