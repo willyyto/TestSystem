@@ -33,13 +33,17 @@ public class TestRepository : ITestRepository
     {
         return await _tsDbContext.TestResults
             .Include(r => r.Test)
-            .Include(r => r.QuestionResults).ToListAsync(ct);
+            .Include(r => r.QuestionResults)
+            .ThenInclude(q => q.Question)
+            .ThenInclude(a => a.Answers).ToListAsync(ct);
     }
 
     public async Task<TestResult?> GetTestResultByIdAsync(CancellationToken ct, Guid id)
     {
         return await _tsDbContext.TestResults
             .Include(r => r.Test)
-            .Include(r => r.QuestionResults).FirstOrDefaultAsync(t => t.Id == id, ct);
+            .Include(r => r.QuestionResults)
+            .ThenInclude(q => q.Question)
+            .ThenInclude(a => a.Answers).FirstOrDefaultAsync(t => t.Id == id, ct);
     }
 }

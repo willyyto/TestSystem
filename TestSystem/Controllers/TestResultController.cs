@@ -32,8 +32,8 @@ public class TestResultController : ControllerBase
     public async Task<ActionResult<TestResult>> GetTestResult(Guid id)
     {
         var ct = _cancellationTokenAccessor.Token;
-        var testResult = _TestResultRepository.GetTestResultByIdAsync(ct, id);
+        var testResult = await _TestResultRepository.GetTestResultByIdAsync(ct, id);
         if (testResult == null) return NotFound();
-        return Ok(testResult);
+        return Ok(testResult.MapToTestResultDto());
     }
 }

@@ -6,9 +6,11 @@ import BlogPage from 'pages/Blog';
 import DocsPage from 'pages/Docs';
 import PricingPage from 'pages/Pricing';
 import AboutPage from 'pages/About';
-import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
-import QuizAttempt from "../pages/QuizAttempt";
+import Login from "pages/Login";
+import Dashboard from "pages/Dashboard";
+import TestBox from "pages/TestBox";
+import Result from "pages/Result";
+import CreateTest from "pages/CreateTest";
 
 const routes: RouteObject[] = [
     {
@@ -56,7 +58,19 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.quiz,
         element: (
-            <Layout> <QuizAttempt/></Layout>
+            <Layout> <TestBox/></Layout>
+        ),
+    },
+    {
+        path: AppRoutes.result,
+        element: (
+            <Layout> <Result/></Layout>
+        ),
+    },
+    {
+        path: AppRoutes.createtest,
+        element: (
+            <Layout> <CreateTest/></Layout>
         ),
     }
 ];

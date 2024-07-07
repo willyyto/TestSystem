@@ -9,19 +9,19 @@ namespace TestSystem.Infra.Services;
 [InstanceScopedService]
 public class TestService : ITestService
 {
-    private readonly TestSystemDbContextAsync _tsDbContext;
+    private readonly ITestSystemDbContextAsync _tsDbContext;
 
-    public TestService(TestSystemDbContextAsync tsDbContext)
+    public TestService(ITestSystemDbContextAsync tsDbContext)
     {
         _tsDbContext = tsDbContext;
     }
 
-    public async Task<int?> SubmitQuiz(TestSubmissionDto submission)
+   public async Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission)
     {
         var test = await _tsDbContext.Tests
             .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .FirstOrDefaultAsync(t => t.Id == submission.Id);
+            .FirstOrDefaultAsync(t => t.Id == submission.TestId, ct);
 
         if (test == null) return null;
 
@@ -29,6 +29,7 @@ public class TestService : ITestService
         var score = 0;
 
         foreach (var question in test.Questions)
+        {
             if (submission.Answers.TryGetValue(question.Id, out var answer))
             {
                 if (question.Type == QuestionType.MultipleChoice || question.Type == QuestionType.TrueFalse)
@@ -41,8 +42,9 @@ public class TestService : ITestService
                     // Add custom logic for short answer grading if needed
                 }
             }
+        }
 
-        // Save test result (if needed)
+        // Save test result
         var testResult = new TestResult
         {
             Id = Guid.NewGuid(),
@@ -54,13 +56,14 @@ public class TestService : ITestService
             {
                 Id = Guid.NewGuid(),
                 QuestionId = q.Id,
+                Answer = submission.Answers.ContainsKey(q.Id) ? submission.Answers[q.Id] : string.Empty,
                 IsCorrect = submission.Answers.TryGetValue(q.Id, out var ans) &&
                             q.Answers.Any(a => a.IsCorrect && a.Text == ans)
             }).ToList()
         };
 
         _tsDbContext.TestResults.Add(testResult);
-        await _tsDbContext.SaveChangesAsync();
+        await _tsDbContext.SaveChangesAsync(ct);
 
         return score;
     }

@@ -17,7 +17,7 @@ interface Test {
     questions: Question[];
 }
 
-const QuizAttempt: React.FC = () => {
+const TestBox: React.FC = () => {
     const { testId } = useParams<{ testId: string }>();
     const [test, setTest] = useState<Test | null>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -118,4 +118,4 @@ const QuizAttempt: React.FC = () => {
     );
 };
 
-export default QuizAttempt;
+export default TestBox;

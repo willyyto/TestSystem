@@ -22,7 +22,14 @@ public class TestSubmission : ControllerBase
     [HttpPost("submit")]
     public async Task<ActionResult> SubmitTest(TestSubmissionDto submission)
     {
-        var score = _TestService.SubmitQuiz(submission);
+        var ct = _cancellationTokenAccessor.Token;
+        if (submission == null || submission.TestId == Guid.Empty || submission.Answers == null)
+            return BadRequest("Invalid submission data.");
+
+        var score = _TestService.SubmitQuiz(ct, submission);
+
+        if (score == null) return NotFound("Test not found.");
+
 
         return Ok(new {Message = "Test submitted successfully", Score = score});
     }

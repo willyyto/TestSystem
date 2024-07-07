@@ -12,6 +12,8 @@ const AppRoutes = Object.freeze({
     pricing: '/pricing',
     login: '/login',
     quiz: '/quiz/:testId',
+    result: '/result/:resultId',
+    createtest: '/createtest',
 });
 
 export default AppRoutes;

@@ -10,6 +10,7 @@ public static class QuestionResultMapper
         return new QuestionResultDto(
             questionResult.Id,
             questionResult.QuestionId,
+            questionResult.Answer,
             questionResult.IsCorrect,
             questionResult.Question.MapToQuestionDto()
         );

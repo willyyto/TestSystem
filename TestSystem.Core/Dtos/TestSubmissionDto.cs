@@ -1,3 +1,7 @@
 ﻿namespace TestSystem.Core.Dtos;
 
-public record TestSubmissionDto(Guid Id, Dictionary<Guid, string> Answers);
+public class TestSubmissionDto
+{
+    public Guid TestId { get; set; }
+    public Dictionary<Guid, string> Answers { get; set; }
+}
