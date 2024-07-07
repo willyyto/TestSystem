@@ -1,83 +1,36 @@
 import { FC, useState, useEffect } from "react";
-import { VisuallyHidden } from "@react-aria/visually-hidden";
-import { SwitchProps, useSwitch } from "@nextui-org/switch";
-import clsx from "clsx";
-
-import { useTheme } from "components/Theme/use-theme";
-import { SunFilledIcon, MoonFilledIcon } from "components/icons";
+import { useTheme as useNextTheme } from "next-themes";
+import { SunFilledIcon, MoonFilledIcon } from "components/icons"; // Make sure to import your icons
 
 export interface ThemeSwitchProps {
-  className?: string;
-  classNames?: SwitchProps["classNames"];
+    className?: string;
 }
 
-export const ThemeSwitch: FC<ThemeSwitchProps> = ({
-  className,
-  classNames,
-}) => {
-  const [isMounted, setIsMounted] = useState(false);
+export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
+    const { theme, setTheme } = useNextTheme();
+    const [isMounted, setIsMounted] = useState(false);
 
-  const { theme, toggleTheme } = useTheme();
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
-  const onChange = toggleTheme;
+    // Prevent Hydration Mismatch
+    if (!isMounted) return <div className="w-6 h-6" />;
 
-  const {
-    Component,
-    slots,
-    isSelected,
-    getBaseProps,
-    getInputProps,
-    getWrapperProps,
-  } = useSwitch({
-    isSelected: theme === "light",
-    onChange,
-  });
+    const toggleTheme = () => {
+        setTheme(theme === "light" ? "dark" : "light");
+    };
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, [isMounted]);
-
-  // Prevent Hydration Mismatch
-  if (!isMounted) return <div className="w-6 h-6" />;
-
-  return (
-    <Component
-      {...getBaseProps({
-        className: clsx(
-          "px-px transition-opacity hover:opacity-80 cursor-pointer",
-          className,
-          classNames?.base,
-        ),
-      })}
-    >
-      <VisuallyHidden>
-        <input {...getInputProps()} />
-      </VisuallyHidden>
-      <div
-        {...getWrapperProps()}
-        className={slots.wrapper({
-          class: clsx(
-            [
-              "w-auto h-auto",
-              "bg-transparent",
-              "rounded-lg",
-              "flex items-center justify-center",
-              "group-data-[selected=true]:bg-transparent",
-              "!text-default-500",
-              "pt-px",
-              "px-0",
-              "mx-0",
-            ],
-            classNames?.wrapper,
-          ),
-        })}
-      >
-        {isSelected ? (
-          <MoonFilledIcon size={22} />
-        ) : (
-          <SunFilledIcon size={22} />
-        )}
-      </div>
-    </Component>
-  );
+    return (
+        <button
+            onClick={toggleTheme}
+            className={`px-px transition-opacity hover:opacity-80 cursor-pointer ${className}`}
+        >
+            {theme === "light" ? (
+                <MoonFilledIcon size={22} />
+            ) : (
+                <SunFilledIcon size={22} />
+            )}
+        </button>
+    );
 };

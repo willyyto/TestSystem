@@ -1,11 +1,13 @@
 import type {RouteObject} from 'react-router';
-import {Layout} from 'pages';
+import {Layout} from 'layouts';
 import AppRoutes from 'navigation/AppRoutes';
 import Home from 'pages/Home';
 import BlogPage from 'pages/Blog';
 import DocsPage from 'pages/Docs';
 import PricingPage from 'pages/Pricing';
 import AboutPage from 'pages/About';
+import Login from "../pages/Login";
+import DefaultLayout from "../layouts/DefaultLayout.tsx";
 
 const routes: RouteObject[] = [
     {
@@ -36,6 +38,12 @@ const routes: RouteObject[] = [
         path: AppRoutes.about,
         element: (
             <Layout> <AboutPage/></Layout>
+        ),
+    },
+    {
+        path: AppRoutes.login,
+        element: (
+            <DefaultLayout> <Login/></DefaultLayout>
         ),
     }
 ];
