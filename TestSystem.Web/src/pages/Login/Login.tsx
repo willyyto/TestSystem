@@ -56,7 +56,17 @@ export default function Auth() {
                                 <h1 className="text-xl">{isSignUp ? "Sign Up" : "Log In"}</h1>
                             </CardHeader>
                             <CardBody>
-                                {isSignUp ? (
+                                <Input
+                                    label="Username"
+                                    variant="bordered"
+                                    placeholder="Enter your username"
+                                    size="md"
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
+                                <Spacer y={2}/>
+                                {isSignUp && (
                                     <>
                                         <Input
                                             type="email"
@@ -69,18 +79,7 @@ export default function Auth() {
                                         />
                                         <Spacer y={2}/>
                                     </>
-                                ) : (
-                                    <Input
-                                        label="Username"
-                                        variant="bordered"
-                                        placeholder="Enter your username"
-                                        size="md"
-                                        type="text"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                    />
                                 )}
-                                <Spacer y={2}/>
                                 <Input
                                     label="Password"
                                     variant="bordered"
