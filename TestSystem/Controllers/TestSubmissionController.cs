@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TestSystem;
 using TestSystem.Core.Dtos;
 using TestSystem.Infra.Interfaces;
+using TestSystem.Utils;
 
 namespace QuizSystem.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TestSubmission : ControllerBase
@@ -26,11 +30,18 @@ public class TestSubmission : ControllerBase
         if (submission == null || submission.TestId == Guid.Empty || submission.Answers == null)
             return BadRequest("Invalid submission data.");
 
-        var score = _TestService.SubmitQuiz(ct, submission);
+        try
+        {
+            var userId = UserUtils.GetUserId(User);
+            var score = await _TestService.SubmitQuiz(ct, submission, userId);
 
-        if (score == null) return NotFound("Test not found.");
+            if (score == null) return NotFound("Test not found.");
 
-
-        return Ok(new {Message = "Test submitted successfully", Score = score});
+            return Ok(new { Message = "Test submitted successfully", Score = score });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
     }
 }

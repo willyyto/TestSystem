@@ -50,4 +50,10 @@ public class UserRepository : IUserRepository
 
         return user.Id;
     }
+    
+    public async Task UpdateUserAsync(CancellationToken ct, User user)
+    {
+        _tsDbContext.Users.Update(user);
+        await _tsDbContext.SaveChangesAsync(ct);
+    }
 }

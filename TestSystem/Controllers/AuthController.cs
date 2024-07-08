@@ -36,8 +36,34 @@ public class AuthController : ControllerBase
         var ct = _cancellationTokenAccessor.Token;
         if (!await _userService.ValidateUserAsync(ct, request.Username, request.Password)) return Unauthorized();
 
-        var tokenString = await _userService.CreateToken(ct, request);
+        var user = await _userRepository.GetByUsername(ct, request.Username);
+        
+        var token = _userService.GenerateJwtToken(user);
+        var refreshToken = _userService.GenerateRefreshToken();
+        
+        await _userRepository.UpdateUserAsync(ct, user);
+        return Ok(new TokenDto { Token = token, RefreshToken = refreshToken });
+    }
 
-        return Ok(new {Token = tokenString});
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] TokenDto request)
+    {
+        var principal = _userService.GetPrincipalFromExpiredToken(request.Token);
+        var username = principal.Identity.Name;
+
+        var ct = _cancellationTokenAccessor.Token;
+        var user = await _userRepository.GetByUsername(ct, username);
+        if (user == null || user.RefreshToken != request.RefreshToken || user.TokenExpires <= DateTime.UtcNow)
+            return Unauthorized();
+
+        var newJwtToken = _userService.GenerateJwtToken(user);
+        var newRefreshToken = _userService.GenerateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        user.TokenCreated = DateTime.UtcNow;
+        user.TokenExpires = DateTime.UtcNow.AddDays(7);
+        await _userRepository.UpdateUserAsync(ct, user);
+
+        return Ok(new TokenDto {Token = newJwtToken, RefreshToken = newRefreshToken});
     }
 }

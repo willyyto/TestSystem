@@ -3,10 +3,9 @@ import { Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer } from "@ne
 import { EyeFilledIcon } from "components/Icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "components/Icons/EyeSlashFilledIcon";
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
 
-export default function Auth() {
+export default function Login() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -17,40 +16,26 @@ export default function Auth() {
     const [isSignUp, setIsSignUp] = useState(false);
     const [role, setRole] = useState("user");
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const navigate = useNavigate();
+
+    const { login, register } = useAuth();
 
     const handleAuth = async () => {
         if (isSignUp) {
-            // Handle registration
             if (password !== confirmPassword) {
                 alert("Passwords do not match!");
                 return;
             }
-
             try {
-                await axios.post('https://localhost:44395/api/auth/register', {
-                    username,
-                    password,
-                    email,
-                    name,
-                    role
-                });
+                await register(username, password, email, name, role);
                 alert("Registration successful!");
-                setIsSignUp(false); // Switch to login after successful registration
+                setIsSignUp(false);
             } catch (error) {
                 console.error("Registration failed", error);
                 alert("Registration failed. Please try again.");
             }
         } else {
-            // Handle login
             try {
-                const response = await axios.post('https://localhost:44395/api/auth/login', {
-                    username,
-                    password
-                });
-                const { token } = response.data;
-                localStorage.setItem("token", token); // Store token in local storage
-                navigate('/dashboard'); // Navigate to dashboard
+                await login(username, password);
             } catch (error) {
                 console.error("Login failed", error);
                 alert("Login failed. Please check your credentials and try again.");
@@ -171,15 +156,13 @@ export default function Auth() {
                                 <Spacer y={2} />
                                 {!isSignUp && (
                                     <div className="flex items-center justify-between mb-4">
-                                        <Checkbox isSelected={rememberMe} size="sm"
-                                                  onChange={(e) => setRememberMe(e.target.checked)}>
+                                        <Checkbox isSelected={rememberMe} size="sm" onChange={(e) => setRememberMe(e.target.checked)}>
                                             Remember Me
                                         </Checkbox>
 
                                         <a href="/forgot-password" className="text-sm text-blue-500">
                                             Forgot Password?
                                         </a>
-
                                     </div>
                                 )}
                                 <Spacer y={2} />
@@ -199,13 +182,11 @@ export default function Auth() {
                                 <p className="text-center text-sm">
                                     {isSignUp ? (
                                         <>
-                                            Already have an account? <a onClick={() => setIsSignUp(false)}
-                                                                        className="text-blue-500 cursor-pointer">Log In</a>
+                                            Already have an account? <a onClick={() => setIsSignUp(false)} className="text-blue-500 cursor-pointer">Log In</a>
                                         </>
                                     ) : (
                                         <>
-                                            Need to create an account? <a onClick={() => setIsSignUp(true)}
-                                                                          className="text-blue-500 cursor-pointer">Sign Up</a>
+                                            Need to create an account? <a onClick={() => setIsSignUp(true)} className="text-blue-500 cursor-pointer">Sign Up</a>
                                         </>
                                     )}
                                 </p>

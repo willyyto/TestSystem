@@ -16,7 +16,7 @@ public class TestService : ITestService
         _tsDbContext = tsDbContext;
     }
 
-    public async Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission)
+    public async Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission, Guid userId)
     {
         var test = await _tsDbContext.Tests
             .Include(t => t.Questions)
@@ -46,7 +46,7 @@ public class TestService : ITestService
         var testResult = new TestResult
         {
             Id = Guid.NewGuid(),
-            UserId = Guid.Empty, // Set this to the actual user ID if needed
+            UserId = userId,
             TestId = test.Id,
             AttemptDate = DateTime.UtcNow,
             Score = score,

@@ -46,4 +46,25 @@ public class TestRepository : ITestRepository
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers).FirstOrDefaultAsync(t => t.Id == id, ct);
     }
+    
+    public async Task<IEnumerable<TestResult>> GetTestResultsByUserIdAsync(CancellationToken ct, Guid userId)
+    {
+        return await _tsDbContext.TestResults
+            .Include(r => r.Test)
+            .Include(r => r.QuestionResults)
+            .ThenInclude(q => q.Question)
+            .ThenInclude(a => a.Answers)
+            .Where(tr => tr.UserId == userId)
+            .ToListAsync(ct);
+    }
+
+    public async Task<TestResult?> GetTestResultByIdAndUserIdAsync(CancellationToken ct, Guid id, Guid userId)
+    {
+        return await _tsDbContext.TestResults
+            .Include(r => r.Test)
+            .Include(r => r.QuestionResults)
+            .ThenInclude(q => q.Question)
+            .ThenInclude(a => a.Answers)
+            .FirstOrDefaultAsync(tr => tr.Id == id && tr.UserId == userId, ct);
+    }
 }

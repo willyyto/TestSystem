@@ -11,6 +11,9 @@ import Dashboard from "pages/Dashboard";
 import TestBox from "pages/TestBox";
 import Result from "pages/Result";
 import CreateTest from "pages/CreateTest";
+import ProtectedRoute from "./ProtectedRoute.tsx";
+import Logout from "pages/Logout";
+import UnAuthorized from "../pages/UnAuthorised";
 
 const routes: RouteObject[] = [
     {
@@ -22,55 +25,89 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.dashboard,
         element: (
-            <Layout> <Dashboard/></Layout>
+            <Layout>
+                <ProtectedRoute roles={['user']}><Dashboard/></ProtectedRoute>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.blog,
         element: (
-            <Layout> <BlogPage/></Layout>
+            <Layout>
+                <BlogPage/>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.docs,
         element: (
-            <Layout> <DocsPage/></Layout>
+            <Layout> 
+                <DocsPage/>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.pricing,
         element: (
-            <Layout> <PricingPage/></Layout>
+            <Layout> 
+                <PricingPage/>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.about,
         element: (
-            <Layout> <AboutPage/></Layout>
+            <Layout>
+                <AboutPage/>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.login,
         element: (
-            <DefaultLayout> <Login/></DefaultLayout>
+            <DefaultLayout> 
+                <Login/>
+            </DefaultLayout>
+        ),
+    },
+    {
+        path: AppRoutes.logout,
+        element: (
+            <DefaultLayout>
+                <Logout/>
+            </DefaultLayout>
+        ),
+    },
+    {
+        path: AppRoutes.unauthorised,
+        element: (
+            <Layout>
+                <UnAuthorized/>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.quiz,
         element: (
-            <Layout> <TestBox/></Layout>
+            <Layout> 
+                <ProtectedRoute><TestBox/></ProtectedRoute>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.result,
         element: (
-            <Layout> <Result/></Layout>
+            <Layout> 
+                <ProtectedRoute><Result/></ProtectedRoute>
+            </Layout>
         ),
     },
     {
         path: AppRoutes.createtest,
         element: (
-            <Layout> <CreateTest/></Layout>
+            <Layout> 
+                <ProtectedRoute><CreateTest/></ProtectedRoute>
+            </Layout>
         ),
     }
 ];

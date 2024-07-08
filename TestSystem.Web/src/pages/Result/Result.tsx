@@ -1,40 +1,12 @@
 ﻿import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Card, CardHeader, CardBody, RadioGroup, Textarea } from '@nextui-org/react';
 import { useParams } from 'react-router-dom';
 import { CustomRadio } from 'components/Test/CustomRadio';
+import apiService from 'contexts/ApiService';
+import {Result} from 'types/Interfaces'
 
 
-interface Question {
-    id: string;
-    text: string;
-    type: string;
-    answers: string[];
-}
 
-interface Test {
-    id: string;
-    title: string;
-    questions: Question[];
-}
-
-interface QuestionResult {
-    id: string;
-    questionId: string;
-    isCorrect: boolean;
-    question: Question;
-    answer: string;
-}
-
-interface Result {
-    id: string;
-    userId: string;
-    testId: string;
-    attemptDate: string;
-    score: number;
-    test: Test;
-    questionResults: QuestionResult[];
-}
 
 const ResultPage: React.FC = () => {
     const { resultId } = useParams<{ resultId: string }>();
@@ -43,8 +15,8 @@ const ResultPage: React.FC = () => {
     useEffect(() => {
         const fetchResult = async () => {
             try {
-                const response = await axios.get(`https://localhost:44395/api/testresult/${resultId}`);
-                setResult(response.data);
+                const data = await apiService.fetchResultById(resultId);
+                setResult(data);
             } catch (error) {
                 console.error("Error fetching result:", error);
             }

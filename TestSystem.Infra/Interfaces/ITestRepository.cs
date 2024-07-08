@@ -8,4 +8,7 @@ public interface ITestRepository
     Task<Test?> GetTestByIdAsync(CancellationToken ct, Guid id);
     Task<IEnumerable<TestResult>> GetTestResultsAsync(CancellationToken ct);
     Task<TestResult?> GetTestResultByIdAsync(CancellationToken ct, Guid id);
+    Task<IEnumerable<TestResult>> GetTestResultsByUserIdAsync(CancellationToken ct, Guid userId);
+    Task<TestResult?> GetTestResultByIdAndUserIdAsync(CancellationToken ct, Guid id, Guid userId);
+
 }

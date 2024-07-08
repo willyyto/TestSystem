@@ -1,30 +1,12 @@
+// Dashboard.tsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Icon } from "@iconify/react";
+import { fetchTests, fetchResults } from 'contexts/ApiService';
+import {Test, Result} from "types/Interfaces.ts";
 
-interface Question {
-    id: string;
-    text: string;
-    type: string;
-    answers: string[];
-}
-
-interface Test {
-    id: string;
-    title: string;
-    questions: Question[];
-    endDate: string;
-}
-
-interface Result {
-    id: string;
-    test: Test;
-    score: number;
-    attemptDate: string;
-}
 
 const Dashboard = () => {
     const [tests, setTests] = useState<Test[]>([]);
@@ -33,15 +15,15 @@ const Dashboard = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const testResponse = await axios.get('https://localhost:44395/api/test');
-            const testsWithEndDate = testResponse.data.map((test: Test) => ({
+            const testsData = await fetchTests();
+            const testsWithEndDate = testsData.map((test: Test) => ({
                 ...test,
                 endDate: '2024-12-31' // Hardcoded end date
             }));
             setTests(testsWithEndDate);
 
-            const resultResponse = await axios.get('https://localhost:44395/api/testresult');
-            setResults(resultResponse.data);
+            const resultsData = await fetchResults();
+            setResults(resultsData);
         };
 
         fetchData();

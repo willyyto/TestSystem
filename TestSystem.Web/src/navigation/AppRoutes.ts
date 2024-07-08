@@ -11,6 +11,8 @@ const AppRoutes = Object.freeze({
     blog: '/blog',
     pricing: '/pricing',
     login: '/login',
+    logout: '/logout',
+    unauthorised: '/unauthorised',
     quiz: '/quiz/:testId',
     result: '/result/:resultId',
     createtest: '/createtest',

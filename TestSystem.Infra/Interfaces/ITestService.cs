@@ -4,5 +4,5 @@ namespace TestSystem.Infra.Interfaces;
 
 public interface ITestService
 {
-    Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission);
+    Task<int?> SubmitQuiz(CancellationToken ct, TestSubmissionDto submission, Guid userId);
 }

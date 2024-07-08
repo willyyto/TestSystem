@@ -1,21 +1,14 @@
 ﻿import React, { useState } from 'react';
-import axios from 'axios';
 import { Button, Input, Spacer, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Card, Select, SelectItem } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
-
-interface Question {
-    id: string;
-    text: string;
-    type: string;
-    options: string[];
-    correctOption: string;
-}
+import apiService from 'contexts/ApiService';
+import {CreateQuestion} from "types/Interfaces.ts";
 
 const questionTypes = ['Multiple Choice', 'True/False', 'Short Answer'];
 
 const CreateTest: React.FC = () => {
     const [title, setTitle] = useState('');
-    const [questions, setQuestions] = useState<Question[]>([]);
+    const [questions, setQuestions] = useState<CreateQuestion[]>([]);
     const navigate = useNavigate();
 
     const handleAddQuestion = () => {
@@ -34,15 +27,12 @@ const CreateTest: React.FC = () => {
         setQuestions(updatedQuestions);
     };
 
-    const handleCreateQuiz = async () => {
+    const handleCreateTest = async () => {
         try {
-            await axios.post('https://localhost:44395/api/test', {
-                title,
-                questions
-            });
+            await apiService.createTest({ title, questions });
             navigate('/dashboard');
         } catch (error) {
-            console.error('Failed to create quiz', error);
+            console.error('Failed to create test', error);
         }
     };
 
@@ -120,8 +110,6 @@ const CreateTest: React.FC = () => {
                                         className="mr-2"
                                     />
                                     <Button
-                                        auto
-                                        flat
                                         color="danger"
                                         onClick={() => handleRemoveOption(index, optionIndex)}
                                     >
@@ -181,17 +169,17 @@ const CreateTest: React.FC = () => {
                         />
                     )}
                     <Spacer y={1} />
-                    <Button auto flat color="danger" onClick={() => handleRemoveQuestion(index)}>
+                    <Button color="danger" onClick={() => handleRemoveQuestion(index)}>
                         Remove Question
                     </Button>
                 </Card>
             ))}
             <Spacer y={1} />
             <div className="flex justify-between">
-                <Button auto flat color="danger" onClick={() => navigate('/dashboard')}>
+                <Button color="danger" onClick={() => navigate('/dashboard')}>
                     Cancel
                 </Button>
-                <Button auto onClick={handleCreateQuiz}>
+                <Button onClick={handleCreateTest}>
                     Create
                 </Button>
             </div>

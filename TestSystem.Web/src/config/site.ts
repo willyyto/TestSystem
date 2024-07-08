@@ -16,6 +16,10 @@ export const siteConfig = {
         label: "Login",
         href: "/Login",
     },
+    {
+      label: "Logout",
+      href: "/Logout",
+    },
   ],
   navMenuItems: [
     {

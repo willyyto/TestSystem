@@ -6,7 +6,7 @@ using TestSystem.Mappers;
 
 namespace TestSystem.Controllers;
 
-[Authorize(Roles = "user")]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TestController : ControllerBase
