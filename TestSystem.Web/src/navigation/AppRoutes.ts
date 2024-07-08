@@ -6,6 +6,7 @@
 const AppRoutes = Object.freeze({
     root: '/',
     dashboard: '/dashboard',
+    admindashboard: '/admindashboard',
     about: '/about',
     docs: '/docs',
     blog: '/blog',

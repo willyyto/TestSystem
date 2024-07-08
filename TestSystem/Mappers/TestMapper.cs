@@ -10,7 +10,9 @@ public static class TestMapper
         return new TestDto(
             test.Id,
             test.Title,
-            test.Questions.Select(i => i.MapToQuestionDto()).ToList()
+            test.Company.Name,
+            test.Questions.Select(i => i.MapToQuestionDto()).ToList(),
+            test.IsActive
         );
     }
 }

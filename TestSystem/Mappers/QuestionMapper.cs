@@ -11,7 +11,7 @@ public static class QuestionMapper
             question.Id,
             question.Text,
             question.Type.ToString(),
-            question.Answers.Select(I => I.Text).ToList()
+            question.Answers.Select(I => I.MapToAnswerDto()).ToList()
         );
     }
 }

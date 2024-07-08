@@ -73,8 +73,8 @@ const TestBox: React.FC = () => {
                         onChange={(event) => handleAnswerChange(currentQuestion.id, event)}
                     >
                         {currentQuestion.answers.map((answer) => (
-                            <CustomRadio description="" key={answer} value={answer}>
-                                {answer}
+                            <CustomRadio key={answer.text} value={answer.text}>
+                                {answer.text}
                             </CustomRadio>
                         ))}
                     </RadioGroup>

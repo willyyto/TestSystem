@@ -5,9 +5,6 @@ import { CustomRadio } from 'components/Test/CustomRadio';
 import apiService from 'contexts/ApiService';
 import {Result} from 'types/Interfaces'
 
-
-
-
 const ResultPage: React.FC = () => {
     const { resultId } = useParams<{ resultId: string }>();
     const [result, setResult] = useState<Result | null>(null);
@@ -58,10 +55,10 @@ const ResultPage: React.FC = () => {
                             <RadioGroup value={questionResult.answer || ''} >
                                 {questionResult.question.answers.map((option) => (
                                     <CustomRadio
-                                        key={option}
-                                        value={option}
+                                        key={option.id}
+                                        value={option.text}
                                     >
-                                        {option}
+                                        {option.text}
                                     </CustomRadio>
                                 ))}
                             </RadioGroup>

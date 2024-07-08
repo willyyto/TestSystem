@@ -1,3 +1,5 @@
-﻿namespace TestSystem.Core.Dtos;
+﻿using TestSystem.Core.Entities;
 
-public record TestDto(Guid Id, string Title, List<QuestionDto> Questions);
+namespace TestSystem.Core.Dtos;
+
+public record TestDto(Guid Id, string Title, string Company, List<QuestionDto> Questions, bool IsActive);

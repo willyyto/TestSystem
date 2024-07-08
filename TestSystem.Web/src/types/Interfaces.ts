@@ -2,6 +2,8 @@
     id: string;
     title: string;
     questions: Question[];
+    isActive: boolean;
+    company: string
     endDate?: string;
 }
 
@@ -9,7 +11,13 @@ export interface Question {
     id: string;
     text: string;
     type: string;
-    answers: string[];
+    answers: Answer[];
+}
+
+export interface Answer {
+    id: string;
+    text: string;
+    isCorrect: boolean;
 }
 
 export interface QuestionResult {

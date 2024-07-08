@@ -20,12 +20,12 @@ public class TestRepository : ITestRepository
 
     public async Task<IEnumerable<Test>> GetTestsAsync(CancellationToken ct)
     {
-        return await _tsDbContext.Tests.Include(q => q.Questions).ThenInclude(q => q.Answers).ToListAsync(ct);
+        return await _tsDbContext.Tests.Include(c => c.Company).Include(q => q.Questions).ThenInclude(q => q.Answers).ToListAsync(ct);
     }
 
     public async Task<Test?> GetTestByIdAsync(CancellationToken ct, Guid id)
     {
-        return await _tsDbContext.Tests.Include(q => q.Questions).ThenInclude(q => q.Answers)
+        return await _tsDbContext.Tests.Include(c => c.Company).Include(q => q.Questions).ThenInclude(q => q.Answers)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
 
@@ -33,6 +33,7 @@ public class TestRepository : ITestRepository
     {
         return await _tsDbContext.TestResults
             .Include(r => r.Test)
+            .ThenInclude(c => c.Company)
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers).ToListAsync(ct);
@@ -42,6 +43,7 @@ public class TestRepository : ITestRepository
     {
         return await _tsDbContext.TestResults
             .Include(r => r.Test)
+            .ThenInclude(c => c.Company)
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers).FirstOrDefaultAsync(t => t.Id == id, ct);
@@ -51,6 +53,7 @@ public class TestRepository : ITestRepository
     {
         return await _tsDbContext.TestResults
             .Include(r => r.Test)
+            .ThenInclude(c => c.Company)
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers)
@@ -62,6 +65,7 @@ public class TestRepository : ITestRepository
     {
         return await _tsDbContext.TestResults
             .Include(r => r.Test)
+            .ThenInclude(c => c.Company)
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers)

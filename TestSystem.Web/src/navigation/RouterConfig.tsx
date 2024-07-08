@@ -14,6 +14,7 @@ import CreateTest from "pages/CreateTest";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import Logout from "pages/Logout";
 import UnAuthorized from "../pages/UnAuthorised";
+import AdminDashboard from "../pages/AdminDashboard";
 
 const routes: RouteObject[] = [
     {
@@ -27,6 +28,14 @@ const routes: RouteObject[] = [
         element: (
             <Layout>
                 <ProtectedRoute roles={['user']}><Dashboard/></ProtectedRoute>
+            </Layout>
+        ),
+    },
+    {
+        path: AppRoutes.admindashboard,
+        element: (
+            <Layout>
+                <ProtectedRoute><AdminDashboard/></ProtectedRoute>
             </Layout>
         ),
     },
