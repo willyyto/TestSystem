@@ -1,17 +1,17 @@
-import { Link } from "@nextui-org/link";
+import {Link} from "@nextui-org/link";
 import {
-  Navbar as NextUINavbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
+    Navbar as NextUINavbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle,
 } from "@nextui-org/navbar";
-import { link as linkStyles } from "@nextui-org/theme";
+import {link as linkStyles} from "@nextui-org/theme";
 import clsx from "clsx";
-import { siteConfig } from "config/site";
-import { ThemeSwitch } from "components/Theme/theme-switch";
+import {siteConfig} from "config/site";
+import {ThemeSwitch} from "components/Theme/theme-switch";
 
 export const Header = () => {
 
@@ -71,7 +71,7 @@ export const Header = () => {
                       ? "danger"
                       : "foreground"
                 }
-                href="#"
+                href={item.href}
                 size="lg"
               >
                 {item.label}

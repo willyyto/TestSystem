@@ -1,16 +1,18 @@
 ﻿import React from 'react';
 import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     Button,
-    CardHeader,
     Card,
-    CardBody, RadioGroup, Textarea
+    CardBody,
+    CardHeader,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    RadioGroup,
+    Textarea
 } from '@nextui-org/react';
-import { Test, Question, Answer } from 'types/Interfaces';
+import {Question, Test} from 'types/Interfaces';
 import {CustomRadio} from "../Test/CustomRadio.tsx";
 
 interface ViewTestModalProps {
@@ -32,18 +34,21 @@ const ViewTestModal: React.FC<ViewTestModalProps> = ({ isOpen, onClose, test }) 
                     <CardBody>
                         <h4 className="text-xl mb-4">{question.text}</h4>
                         {question.type === 'MultipleChoice' && (
-                            <RadioGroup value={question.answers.find((a) => a.isCorrect)?.text || ''}>
+                            <RadioGroup value={question.answers.find((a) => a.isCorrect)?.text || ''} color={"success"}>
                                 {question.answers.map((option) => (
-                                    <CustomRadio key={option.id} value={option.text}>
+                                    <CustomRadio key={option.id} value={option.text} isCorrect={option.isCorrect}>
                                         {option.text}
                                     </CustomRadio>
                                 ))}
                             </RadioGroup>
                         )}
                         {question.type === 'TrueFalse' && (
-                            <RadioGroup value={question.answers.find((a) => a.isCorrect)?.text || ''}>
-                                <CustomRadio value="True">True</CustomRadio>
-                                <CustomRadio value="False">False</CustomRadio>
+                            <RadioGroup value={question.answers.find((a) => a.isCorrect)?.text || ''} color={"success"}>
+                                {question.answers.map((option) => (
+                                    <CustomRadio key={option.id} value={option.text} isCorrect={option.isCorrect}>
+                                        {option.text}
+                                    </CustomRadio>
+                                ))}
                             </RadioGroup>
                         )}
                         {question.type === 'ShortAnswer' && (

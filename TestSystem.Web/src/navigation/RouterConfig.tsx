@@ -13,8 +13,9 @@ import Result from "pages/Result";
 import CreateTest from "pages/CreateTest";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import Logout from "pages/Logout";
-import UnAuthorized from "../pages/UnAuthorised";
-import AdminDashboard from "../pages/AdminDashboard";
+import Page401 from "pages/AppStatus/Page401";
+import Page404 from "pages/AppStatus/Page404";
+import AdminDashboard from "pages/AdminDashboard";
 
 const routes: RouteObject[] = [
     {
@@ -91,7 +92,7 @@ const routes: RouteObject[] = [
         path: AppRoutes.unauthorised,
         element: (
             <Layout>
-                <UnAuthorized/>
+                <Page401/>
             </Layout>
         ),
     },

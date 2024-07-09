@@ -13,6 +13,10 @@ export const siteConfig = {
         href: "/Dashboard",
     },
     {
+      label: "Admin",
+      href: "/AdminDashboard",
+    },
+    {
         label: "Login",
         href: "/Login",
     },
@@ -23,32 +27,16 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
-    },
-    {
       label: "Home",
       href: "/dashboard",
     },
     {
-      label: "Projects",
-      href: "/projects",
+      label: "Admin",
+      href: "/AdminDashboard",
     },
     {
-      label: "Team",
-      href: "/team",
-    },
-    {
-      label: "Calendar",
-      href: "/calendar",
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
+      label: "Login",
+      href: "/Login",
     },
     {
       label: "Logout",
