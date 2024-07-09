@@ -1,29 +1,28 @@
-﻿import React, { useState, useEffect, useMemo, useCallback } from 'react';
+﻿import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Input,
     Button,
-    DropdownTrigger,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
     Chip,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
     Pagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
 } from '@nextui-org/react';
-import { PlusIcon } from 'components/Icons/PlusIcon';
-import { SearchIcon } from 'components/Icons/SearchIcon';
-import { VerticalDotsIcon } from 'components/Icons/VerticalDotsIcon';
-import { ChevronDownIcon } from 'components/Icons/ChevronDownIcon';
-import { AdminTestTableColumns } from './AdminTestTableColumns';
-import { capitalize } from 'utils/utils';
-import apiService from 'contexts/ApiService';
-import ViewTestModal from 'components/common/ViewTestModal';
-import { Test } from 'types/Interfaces';
+import {ChevronDownIcon, EllipsisVerticalIcon, MagnifyingGlassIcon, PlusIcon} from "@heroicons/react/24/outline";
+import {AdminTestTableColumns} from './AdminTestTableColumns.ts';
+import {capitalize} from '../../../utils/utils.tsx';
+import apiService from '../../../contexts/ApiService.tsx';
+import ViewTestModal from './ViewTestModal.tsx';
+import {Test} from '../../../types/Interfaces.ts';
+
+import {useNavigate} from "react-router-dom";
 
 const INITIAL_VISIBLE_COLUMNS = ['title', 'company', 'questions', 'isActive', 'actions'];
 
@@ -46,6 +45,7 @@ const AdminTestTable: React.FC = () => {
     const [testData, setTestData] = useState<Test[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTest, setSelectedTest] = useState<Test | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTests = async () => {
@@ -138,7 +138,7 @@ const AdminTestTable: React.FC = () => {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
+                                    <EllipsisVerticalIcon className="text-default-300 h-6 w-6"/>
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
@@ -193,7 +193,7 @@ const AdminTestTable: React.FC = () => {
                         isClearable
                         className="w-full sm:max-w-[44%]"
                         placeholder="Search"
-                        startContent={<SearchIcon />}
+                        startContent={<MagnifyingGlassIcon className="w-5 h-5 text-gray-500"/>}
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
@@ -201,7 +201,7 @@ const AdminTestTable: React.FC = () => {
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                                <Button endContent={<ChevronDownIcon className="h-3 w-3"/>} variant="flat">
                                     Status
                                 </Button>
                             </DropdownTrigger>
@@ -220,7 +220,7 @@ const AdminTestTable: React.FC = () => {
                         </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                                <Button endContent={<ChevronDownIcon className="h-3 w-3"/>} variant="flat">
                                     Columns
                                 </Button>
                             </DropdownTrigger>
@@ -239,7 +239,8 @@ const AdminTestTable: React.FC = () => {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />} onClick={() => navigate('/createtest')}>
+                        <Button color="primary" endContent={<PlusIcon
+                            className="h-4 w-4 text-white"/>} onClick={() => navigate('/createtest')}>
                             Add New
                         </Button>
                     </div>
@@ -303,7 +304,7 @@ const AdminTestTable: React.FC = () => {
         <>
             <Table
                 aria-label="Example table with custom cells, pagination and sorting"
-                color="secondary"
+                color="primary"
                 isHeaderSticky
                 removeWrapper
                 bottomContent={bottomContent}

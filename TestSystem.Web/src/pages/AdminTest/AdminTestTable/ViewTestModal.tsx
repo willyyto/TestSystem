@@ -12,8 +12,8 @@ import {
     RadioGroup,
     Textarea
 } from '@nextui-org/react';
-import {Question, Test} from 'types/Interfaces';
-import {CustomRadio} from "../Test/CustomRadio.tsx";
+import {Question, Test} from '../../../types/Interfaces.ts';
+import {CustomRadio} from "../../../components/Test/CustomRadio.tsx";
 
 interface ViewTestModalProps {
     isOpen: boolean;

@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { useTheme as useNextTheme } from "next-themes";
-import { SunFilledIcon, MoonFilledIcon } from "components/icons"; // Make sure to import your icons
+import { SunIcon, MoonIcon } from "@heroicons/react/24/solid"; // Make sure to import your icons
 
 export interface ThemeSwitchProps {
     className?: string;
@@ -27,9 +27,9 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
             className={`px-px transition-opacity hover:opacity-80 cursor-pointer ${className}`}
         >
             {theme === "light" ? (
-                <MoonFilledIcon size={22} />
+                <MoonIcon  className="h-6 w-6" />
             ) : (
-                <SunFilledIcon size={22} />
+                <SunIcon className="h-7 w-7" />
             )}
         </button>
     );

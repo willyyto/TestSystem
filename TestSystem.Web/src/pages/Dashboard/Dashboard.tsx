@@ -1,11 +1,11 @@
 // Dashboard.tsx
-import { useEffect, useState } from 'react';
-import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
-import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-import { Icon } from "@iconify/react";
-import { fetchTests, fetchResults } from 'contexts/ApiService';
-import {Test, Result} from "types/Interfaces.ts";
+import {useEffect, useState} from 'react';
+import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '@nextui-org/react';
+import {useNavigate} from 'react-router-dom';
+import {format} from 'date-fns';
+import {fetchResults, fetchTests} from 'contexts/ApiService';
+import {Result, Test} from "types/Interfaces.ts";
+import {MagnifyingGlassIcon} from "@heroicons/react/24/outline";
 
 
 const Dashboard = () => {
@@ -85,7 +85,8 @@ const Dashboard = () => {
                                 <TableCell>{formatDate(result.attemptDate)}</TableCell>
                                 <TableCell>
                                     <Button color="primary" size="sm" onClick={() => navigate(`/result/${result.id}`)}
-                                            startContent={<Icon icon="mdi:search"/>}>
+                                            startContent={<MagnifyingGlassIcon
+                                                className="h-4 w-4 text-white"/>}>
                                         View Result
                                     </Button>
                                 </TableCell>

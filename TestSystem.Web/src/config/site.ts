@@ -14,7 +14,7 @@ export const siteConfig = {
     },
     {
       label: "Admin",
-      href: "/AdminDashboard",
+        href: "/Admin/Dashboard",
     },
     {
         label: "Login",

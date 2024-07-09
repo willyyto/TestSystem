@@ -12,9 +12,10 @@ import {link as linkStyles} from "@nextui-org/theme";
 import clsx from "clsx";
 import {siteConfig} from "config/site";
 import {ThemeSwitch} from "components/Theme/theme-switch";
+import {useLocation} from "react-router-dom";
 
-export const Header = () => {
-
+export const Navbar = () => {
+    const location = useLocation();
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -29,7 +30,7 @@ export const Header = () => {
         </NavbarBrand>
         <div className="hidden lg:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
+            <NavbarItem key={item.href} isActive={item.href === location.pathname}>
               <Link
                 className={clsx(
                   linkStyles({ color: "foreground" }),
@@ -62,7 +63,7 @@ export const Header = () => {
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
+            <NavbarMenuItem key={`${item}-${index}`} isActive={item.href === location.pathname}>
               <Link
                 color={
                   index === 2

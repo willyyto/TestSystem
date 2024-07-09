@@ -16,6 +16,8 @@ import Logout from "pages/Logout";
 import Page401 from "pages/AppStatus/Page401";
 import Page404 from "pages/AppStatus/Page404";
 import AdminDashboard from "pages/AdminDashboard";
+import {SideLayout} from "layouts/SideLayout.tsx";
+import AdminTest from "pages/AdminTest";
 
 const routes: RouteObject[] = [
     {
@@ -35,9 +37,17 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.admindashboard,
         element: (
-            <Layout>
+            <SideLayout>
                 <ProtectedRoute><AdminDashboard/></ProtectedRoute>
-            </Layout>
+            </SideLayout>
+        ),
+    },
+    {
+        path: AppRoutes.admintest,
+        element: (
+            <SideLayout>
+                <ProtectedRoute><AdminTest/></ProtectedRoute>
+            </SideLayout>
         ),
     },
     {
