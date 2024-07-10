@@ -1,9 +1,8 @@
 ﻿"use client";
-
 import React from "react";
-import { useLockedBody } from "../hooks/useBodyLock";
-import { SidebarWrapper } from "components/Sidebar/Sidebar";
-import { SidebarContext } from "./SideLayoutContext";
+import {useLockedBody} from "../hooks/useBodyLock";
+import {SidebarWrapper} from "components/Sidebar/Sidebar";
+import {SidebarContext} from "./SideLayoutContext";
 import {DefaultLayout} from "./index.tsx";
 
 interface Props {
@@ -28,7 +27,7 @@ export const SideLayout = ({ children }: Props) => {
                 <section className='flex'>
                     <SidebarWrapper />
                     <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-                        <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
+                        <main className="container mx-auto max-w-full px-6 flex-grow pt-16">
                             {children}
                         </main>
                     </div>

@@ -1,14 +1,9 @@
-﻿import React, { createContext, useState, useContext, useEffect } from 'react';
+﻿import React, {createContext, useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
-import {
-    getToken,
-    getRefreshToken,
-    setToken,
-    setRefreshToken,
-    clearTokens
-} from 'contexts/TokenService';
+import {useNavigate} from 'react-router-dom';
+import {User} from 'components/Sidebar/UserDropdown'
+import {clearTokens, getRefreshToken, getToken, setRefreshToken, setToken} from 'contexts/TokenService';
 import API_BASE_URL from 'contexts/AppConfig';
 
 interface AuthContextType {
@@ -18,7 +13,9 @@ interface AuthContextType {
     isAuthenticated: boolean;
     hasRole: (role: string) => boolean;
     getToken: () => string | null;
-    userRole: string | null; // Expose userRole for loading state in ProtectedRoute
+    userRole: string | null;
+    userGivenName: string | null;
+    userEmail: string | null;// Expose userRole for loading state in ProtectedRoute
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,6 +23,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticatedState, setIsAuthenticatedState] = useState<boolean>(!!getToken());
     const [userRole, setUserRole] = useState<string | null>(null);
+    const [userGivenName, setUserGivenName] = useState<string | null>(null);
+    const [userEmail, setUserEmail] = useState<string | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,6 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 refreshAccessToken();
             } else {
                 setUserRole(decodedToken.role);
+                setUserGivenName(decodedToken.given_name);
+                setUserEmail(decodedToken.email);
             }
         }
     }, []);
@@ -49,6 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsAuthenticatedState(true);
             const decodedToken: any = jwtDecode(token);
             setUserRole(decodedToken.role);
+            setUserGivenName(decodedToken.given_name);
+            setUserEmail(decodedToken.email);
+            console.error(decodedToken.role);
             navigate('/dashboard');
         } catch (error) {
             console.error('Login failed', error);
@@ -70,6 +74,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         clearTokens();
         setIsAuthenticatedState(false);
         setUserRole(null);
+        setUserEmail(null);
+        setUserGivenName(null);
         navigate('/login');
     };
 
@@ -87,6 +93,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsAuthenticatedState(true);
             const decodedToken: any = jwtDecode(newToken);
             setUserRole(decodedToken.role);
+            setUserGivenName(decodedToken.given_name);
+            setUserEmail(decodedToken.email);
         } catch (error) {
             console.error('Failed to refresh token', error);
             logout();
@@ -111,7 +119,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ login, register, logout, isAuthenticated: isAuthenticated(), hasRole, getToken, userRole }}>
+        <AuthContext.Provider value={{
+            login,
+            register,
+            logout,
+            isAuthenticated: isAuthenticated(),
+            hasRole,
+            getToken,
+            userRole,
+            userGivenName,
+            userEmail
+        }}>
             {children}
         </AuthContext.Provider>
     );

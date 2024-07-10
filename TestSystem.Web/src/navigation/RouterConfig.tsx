@@ -14,7 +14,7 @@ import CreateTest from "pages/CreateTest";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import Logout from "pages/Logout";
 import Page401 from "pages/AppStatus/Page401";
-import Page404 from "pages/AppStatus/Page404";
+/*import Page404 from "pages/AppStatus/Page404";*/
 import AdminDashboard from "pages/AdminDashboard";
 import {SideLayout} from "layouts/SideLayout.tsx";
 import AdminTest from "pages/AdminTest";
@@ -29,9 +29,9 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.dashboard,
         element: (
-            <Layout>
+            <SideLayout>
                 <ProtectedRoute roles={['user']}><Dashboard/></ProtectedRoute>
-            </Layout>
+            </SideLayout>
         ),
     },
     {

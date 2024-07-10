@@ -1,6 +1,6 @@
 ﻿import {useState} from "react";
 import {Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer} from "@nextui-org/react";
-import {EyeIcon, EyeSlashIcon} from "@heroicons/react/24/solid";
+import {Icon} from "@iconify/react";
 import {AnimatePresence, motion} from "framer-motion";
 import {useAuth} from "contexts/AuthContext";
 
@@ -118,10 +118,10 @@ export default function Login() {
                                     endContent={
                                         <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                                             {isVisible ? (
-                                                <EyeSlashIcon
+                                                <Icon icon="solar:eye-closed-bold"
                                                     className="h-7 w-7 pb-2 text-2xl text-default-400 pointer-events-none"/>
                                             ) : (
-                                                <EyeIcon
+                                                <Icon icon="solar:eye-bold"
                                                     className="h-7 w-7 pb-2 text-2xl text-default-400 pointer-events-none"/>
                                             )}
                                         </button>

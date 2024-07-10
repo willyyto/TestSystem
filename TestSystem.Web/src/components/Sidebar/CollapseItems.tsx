@@ -1,8 +1,7 @@
 ﻿"use client";
-import React, { useState } from "react";
-import { ChevronUpIcon } from "@heroicons/react/24/solid";
-import { Accordion, AccordionItem } from "@nextui-org/react";
-import clsx from "clsx";
+import React, {useState} from "react";
+import {ChevronUpIcon} from "@heroicons/react/24/solid";
+import {Accordion, AccordionItem} from "@nextui-org/react";
 
 interface Props {
     icon: React.ReactNode;

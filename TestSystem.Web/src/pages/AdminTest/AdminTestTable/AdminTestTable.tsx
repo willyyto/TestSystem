@@ -15,14 +15,14 @@ import {
     TableHeader,
     TableRow,
 } from '@nextui-org/react';
-import {ChevronDownIcon, EllipsisVerticalIcon, MagnifyingGlassIcon, PlusIcon} from "@heroicons/react/24/outline";
 import {AdminTestTableColumns} from './AdminTestTableColumns.ts';
-import {capitalize} from '../../../utils/utils.tsx';
-import apiService from '../../../contexts/ApiService.tsx';
+import {capitalize} from 'utils/utils.tsx';
+import apiService from 'contexts/ApiService.tsx';
 import ViewTestModal from './ViewTestModal.tsx';
-import {Test} from '../../../types/Interfaces.ts';
+import {Test} from 'types/Interfaces.ts';
 
 import {useNavigate} from "react-router-dom";
+import {Icon} from "@iconify/react";
 
 const INITIAL_VISIBLE_COLUMNS = ['title', 'company', 'questions', 'isActive', 'actions'];
 
@@ -138,13 +138,13 @@ const AdminTestTable: React.FC = () => {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
-                                    <EllipsisVerticalIcon className="text-default-300 h-6 w-6"/>
+                                    <Icon icon="solar:menu-dots-bold" className="text-default-300 h-6 w-6 rotate-90"/>
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem onPress={() => handleViewTest(test)}>View</DropdownItem>
                                 <DropdownItem>Edit</DropdownItem>
-                                <DropdownItem>Delete</DropdownItem>
+                                <DropdownItem color="danger">Delete</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -193,7 +193,8 @@ const AdminTestTable: React.FC = () => {
                         isClearable
                         className="w-full sm:max-w-[44%]"
                         placeholder="Search"
-                        startContent={<MagnifyingGlassIcon className="w-5 h-5 text-gray-500"/>}
+                        startContent={<Icon icon="solar:minimalistic-magnifer-outline"
+                                            className="h-4 w-4 text-gray-500"/>}
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
@@ -201,7 +202,8 @@ const AdminTestTable: React.FC = () => {
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="h-3 w-3"/>} variant="flat">
+                                <Button endContent={<Icon icon="solar:alt-arrow-down-outline" className="h-3 w-3"/>}
+                                        variant="flat">
                                     Status
                                 </Button>
                             </DropdownTrigger>
@@ -220,7 +222,8 @@ const AdminTestTable: React.FC = () => {
                         </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="h-3 w-3"/>} variant="flat">
+                                <Button endContent={<Icon icon="solar:alt-arrow-down-outline" className="h-3 w-3"/>}
+                                        variant="flat">
                                     Columns
                                 </Button>
                             </DropdownTrigger>
@@ -239,8 +242,9 @@ const AdminTestTable: React.FC = () => {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon
-                            className="h-4 w-4 text-white"/>} onClick={() => navigate('/createtest')}>
+                        <Button color="primary" endContent={<Icon icon="heroicons-solid:plus"
+                                                                  className="h-5 w-5 text-white"/>}
+                                onClick={() => navigate('/createtest')}>
                             Add New
                         </Button>
                     </div>
@@ -306,7 +310,6 @@ const AdminTestTable: React.FC = () => {
                 aria-label="Example table with custom cells, pagination and sorting"
                 color="primary"
                 isHeaderSticky
-                removeWrapper
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
                 classNames={{

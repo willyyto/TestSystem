@@ -13,17 +13,9 @@ export const siteConfig = {
         href: "/Dashboard",
     },
     {
-      label: "Admin",
-        href: "/Admin/Dashboard",
-    },
-    {
         label: "Login",
         href: "/Login",
-    },
-    {
-      label: "Logout",
-      href: "/Logout",
-    },
+    }
   ],
   navMenuItems: [
     {
@@ -33,10 +25,6 @@ export const siteConfig = {
     {
       label: "Admin",
       href: "/AdminDashboard",
-    },
-    {
-      label: "Login",
-      href: "/Login",
     },
     {
       label: "Logout",

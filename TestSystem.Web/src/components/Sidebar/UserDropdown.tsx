@@ -1,13 +1,17 @@
-﻿"use client";
+"use client";
+import React, {useEffect, useState} from "react";
 import {
+    Avatar,
     Dropdown,
     DropdownItem,
     DropdownMenu,
     DropdownSection,
     DropdownTrigger,
+    Skeleton,
 } from "@nextui-org/react";
-import React, { useState } from "react";
-import { UserIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
+import {Icon} from "@iconify/react";
+import {useAuth} from "contexts/AuthContext";
+import {capitalize} from "utils/utils.tsx"; // Adjust the import path as needed
 
 interface User {
     name: string;
@@ -16,11 +20,23 @@ interface User {
 }
 
 export const UsersDropdown = () => {
-    const [User, setUser] = useState<User>({
-        name: "John Smith",
-        role: "Admin",
-        logo: <UserIcon className="h-5 w-5" />,
-    });
+    const {userRole, userGivenName, userEmail} = useAuth();
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (userGivenName && userRole) {
+            setUser({
+                name: capitalize(userGivenName),
+                role: capitalize(userRole),
+                logo: <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" size="sm"/>,
+            });
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
+    }, [userGivenName, userRole]);
+
     return (
         <Dropdown
             classNames={{
@@ -28,80 +44,52 @@ export const UsersDropdown = () => {
             }}
         >
             <DropdownTrigger className="cursor-pointer">
-                <div className="flex items-center gap-2">
-                    {User.logo}
-                    <div className="flex flex-col gap-4 pr-4">
-                        <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
-                            {User.name}
-                        </h3>
-                        <span className="text-xs font-medium text-default-500">
-                          {User.role}
-                        </span>
+                {loading ? (
+                    <div className="relative flex items-center gap-2 w-full">
+                        <Skeleton className="w-10 h-10 rounded-full"/>
+                        <div className="flex flex-col gap-3 pl-1 pr-4">
+                            <Skeleton className="w-24 h-4"/>
+                            <Skeleton className="w-16 h-3"/>
+                        </div>
                     </div>
-                    <ChevronUpDownIcon className="h-8 w-8 flex-shrink-0" />
-                </div>
+                ) : (
+                    <div className="relative flex items-center gap-2 w-full">
+                        {user?.logo}
+                        <div className="flex flex-col gap-3 pl-1 pr-4">
+                            <h3 className="text-md font-medium m-0 text-default-700 -mb-4 whitespace-nowrap">
+                                {user?.name}
+                            </h3>
+                            <span className="text-xs font-light text-default-500">
+                                {user?.role}
+                            </span>
+                        </div>
+                        <Icon icon="solar:alt-arrow-down-outline" className="absolute right-0 h-4 w-4 flex-shrink-0"/>
+                    </div>
+                )}
             </DropdownTrigger>
-            <DropdownMenu
-                onAction={(e) => {
-                    if (e === "1") {
-                        setUser({
-                            name: "John Doe",
-                            role: "Admin",
-                            logo: <UserIcon className="h-5 w-5" />,
-                        });
-                    }
-                    if (e === "2") {
-                        setUser({
-                            name: "Whitney Fitts",
-                            role: "User",
-                            logo: <UserIcon className="h-5 w-5" />,
-                        });
-                    }
-                    if (e === "3") {
-                        setUser({
-                            name: "Henry Lawson",
-                            role: "User",
-                            logo: <UserIcon className="h-5 w-5" />,
-                        });
-                    }
-                }}
-                aria-label="Avatar Actions"
-            >
-                <DropdownSection title="Companies">
+            <DropdownMenu aria-label="Avatar Actions">
+                <DropdownSection title="Users">
                     <DropdownItem
-                        key="1"
-                        startContent={<UserIcon className="h-5 w-5" />}
-                        description="Admin"
+                        color="primary"
+                        startContent={<Icon icon="solar:user-outline" className="h-5 w-5"/>}
                         classNames={{
-                            base: "py-4",
-                            title: "text-base font-semibold",
+                            base: "py-2",
+                            title: "text-base",
                         }}
                     >
-                        John Doe
+                        Profile
                     </DropdownItem>
                     <DropdownItem
-                        key="2"
-                        startContent={<UserIcon className="h-5 w-5"  />}
-                        description="User"
+                        color="danger"
+                        startContent={<Icon icon="solar:minus-circle-outline" className="h-5 w-5"/>}
                         classNames={{
-                            base: "py-4",
-                            title: "text-base font-semibold",
+                            base: "py-2",
+                            title: "text-base",
                         }}
+                        href="/logout"
                     >
-                        Whitney Fitts
+                        Log Out
                     </DropdownItem>
-                    <DropdownItem
-                        key="3"
-                        startContent={<UserIcon className="h-5 w-5" />}
-                        description="User"
-                        classNames={{
-                            base: "py-4",
-                            title: "text-base font-semibold",
-                        }}
-                    >
-                        Henry Lawson
-                    </DropdownItem>
-
                 </DropdownSection>
             </DropdownMenu>
         </Dropdown>

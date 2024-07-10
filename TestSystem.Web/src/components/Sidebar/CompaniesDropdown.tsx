@@ -1,13 +1,7 @@
 ﻿"use client";
-import {
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownSection,
-    DropdownTrigger,
-} from "@nextui-org/react";
-import React, { useState } from "react";
-import { BuildingStorefrontIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
+import {Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger,} from "@nextui-org/react";
+import React, {useState} from "react";
+import {BuildingStorefrontIcon, ChevronUpDownIcon} from "@heroicons/react/24/solid";
 
 interface Company {
     name: string;
@@ -19,7 +13,7 @@ export const CompaniesDropdown = () => {
     const [company, setCompany] = useState<Company>({
         name: "Acme Co.",
         location: "Palo Alto, CA",
-        logo: <BuildingStorefrontIcon className="h-5 w-5" />,
+        logo: <BuildingStorefrontIcon className="h-8 w-8"/>,
     });
 
     return (
@@ -48,28 +42,28 @@ export const CompaniesDropdown = () => {
                         setCompany({
                             name: "Facebook",
                             location: "San Francisco, CA",
-                            logo: <BuildingStorefrontIcon className="h-5 w-5" />,
+                            logo: <BuildingStorefrontIcon className="h-8 w-8"/>,
                         });
                     }
                     if (e === "2") {
                         setCompany({
                             name: "Instagram",
                             location: "Austin, TX",
-                            logo: <BuildingStorefrontIcon className="h-5 w-5" />,
+                            logo: <BuildingStorefrontIcon className="h-8 w-8"/>,
                         });
                     }
                     if (e === "3") {
                         setCompany({
                             name: "Twitter",
                             location: "Brooklyn, NY",
-                            logo: <BuildingStorefrontIcon className="h-5 w-5" />,
+                            logo: <BuildingStorefrontIcon className="h-8 w-8"/>,
                         });
                     }
                     if (e === "4") {
                         setCompany({
                             name: "Acme Co.",
                             location: "Palo Alto, CA",
-                            logo: <BuildingStorefrontIcon className="h-5 w-5" />,
+                            logo: <BuildingStorefrontIcon className="h-8 w-8"/>,
                         });
                     }
                 }}
@@ -78,7 +72,7 @@ export const CompaniesDropdown = () => {
                 <DropdownSection title="Companies">
                     <DropdownItem
                         key="1"
-                        startContent={<BuildingStorefrontIcon className="h-5 w-5" />}
+                        startContent={<BuildingStorefrontIcon className="h-8 w-8"/>}
                         description="San Francisco, CA"
                         classNames={{
                             base: "py-4",
@@ -89,7 +83,7 @@ export const CompaniesDropdown = () => {
                     </DropdownItem>
                     <DropdownItem
                         key="2"
-                        startContent={<BuildingStorefrontIcon className="h-5 w-5" />}
+                        startContent={<BuildingStorefrontIcon className="h-8 w-8"/>}
                         description="Austin, TX"
                         classNames={{
                             base: "py-4",
@@ -100,7 +94,7 @@ export const CompaniesDropdown = () => {
                     </DropdownItem>
                     <DropdownItem
                         key="3"
-                        startContent={<BuildingStorefrontIcon className="h-5 w-5" />}
+                        startContent={<BuildingStorefrontIcon className="h-8 w-8"/>}
                         description="Brooklyn, NY"
                         classNames={{
                             base: "py-4",
@@ -111,7 +105,7 @@ export const CompaniesDropdown = () => {
                     </DropdownItem>
                     <DropdownItem
                         key="4"
-                        startContent={<BuildingStorefrontIcon className="h-5 w-5" />}
+                        startContent={<BuildingStorefrontIcon className="h-8 w-8"/>}
                         description="Palo Alto, CA"
                         classNames={{
                             base: "py-4",
