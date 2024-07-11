@@ -12,12 +12,12 @@ namespace TestResultSystem.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class TestResultController : ControllerBase
+public class UserTestResultController : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
     private readonly ITestRepository _TestRepository;
 
-    public TestResultController(ITestRepository TestRepository,
+    public UserTestResultController(ITestRepository TestRepository,
         ICancellationTokenAccessor cancellationTokenAccessor)
     {
         _TestRepository = TestRepository;

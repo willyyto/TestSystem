@@ -11,12 +11,12 @@ namespace QuizSystem.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TestSubmission : ControllerBase
+public class UserTestSubmission : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
     private readonly ITestService _TestService;
 
-    public TestSubmission(ITestService TestService,
+    public UserTestSubmission(ITestService TestService,
         ICancellationTokenAccessor cancellationTokenAccessor)
     {
         _TestService = TestService;

@@ -3,30 +3,30 @@ import {useEffect, useState} from 'react';
 import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '@nextui-org/react';
 import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
-import {fetchResults, fetchTests} from 'contexts/ApiService';
+import {fetchUserResults, fetchUserTests} from 'contexts/UserApiService.tsx';
 import {Result, Test} from "types/Interfaces.ts";
 import {MagnifyingGlassIcon} from "@heroicons/react/24/outline";
 
 
 const Dashboard = () => {
-    const [tests, setTests] = useState<Test[]>([]);
-    const [results, setResults] = useState<Result[]>([]);
+    const [tests, setUserTests] = useState<Test[]>([]);
+    const [results, setUserResults] = useState<Result[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchData = async () => {
-            const testsData = await fetchTests();
+        const fetchUserData = async () => {
+            const testsData = await fetchUserTests();
             const testsWithEndDate = testsData.map((test: Test) => ({
                 ...test,
                 endDate: '2024-12-31' // Hardcoded end date
             }));
-            setTests(testsWithEndDate);
+            setUserTests(testsWithEndDate);
 
-            const resultsData = await fetchResults();
-            setResults(resultsData);
+            const resultsData = await fetchUserResults();
+            setUserResults(resultsData);
         };
 
-        fetchData();
+        fetchUserData();
     }, []);
 
     const formatDate = (dateString: string) => {

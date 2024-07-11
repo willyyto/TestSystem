@@ -8,12 +8,12 @@ namespace TestSystem.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class QuestionsController : ControllerBase
+public class AdminQuestionsController : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
     private readonly IQuestionRepository _questionRepository;
 
-    public QuestionsController(IQuestionRepository questionRepository,
+    public AdminQuestionsController(IQuestionRepository questionRepository,
         ICancellationTokenAccessor cancellationTokenAccessor)
     {
         _questionRepository = questionRepository;

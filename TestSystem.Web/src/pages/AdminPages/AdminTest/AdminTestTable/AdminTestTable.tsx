@@ -17,7 +17,7 @@ import {
 } from '@nextui-org/react';
 import {AdminTestTableColumns} from './AdminTestTableColumns.ts';
 import {capitalize} from 'utils/utils.tsx';
-import apiService from 'contexts/ApiService.tsx';
+import apiService from 'contexts/AdminApiService.tsx';
 import ViewTestModal from './ViewTestModal.tsx';
 import {Test} from 'types/Interfaces.ts';
 
@@ -48,16 +48,16 @@ const AdminTestTable: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchTests = async () => {
+        const fetchAdminTests = async () => {
             try {
-                const data = await apiService.fetchTests();
+                const data = await apiService.fetchAdminTests();
                 setTestData(data);
             } catch (error) {
                 console.error('Error fetching tests:', error);
             }
         };
 
-        fetchTests();
+        fetchAdminTests();
     }, []);
 
     const handleViewTest = (test: Test) => {

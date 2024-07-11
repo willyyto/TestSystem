@@ -44,7 +44,7 @@ export default function Home() {
                     <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                         <div
                             className="relative rounded-full px-3 py-1 text-sm leading-6 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-                            Announcing our next round of funding.{' '}
+                            Currently in poverty click more for to donate.
                             <a onClick={navigate("/login")} className="font-semibold text-indigo-600">
                                 <span aria-hidden="true" className="absolute inset-0"/>
                                 Read more <span aria-hidden="true">&rarr;</span>

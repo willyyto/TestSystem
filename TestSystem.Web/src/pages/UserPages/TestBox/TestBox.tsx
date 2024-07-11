@@ -2,7 +2,7 @@
 import { Button, Card, CardHeader, RadioGroup, Textarea } from '@nextui-org/react';
 import { useParams } from 'react-router-dom';
 import { CustomRadio } from 'components/Test/CustomRadio';
-import apiService from 'contexts/ApiService';
+import apiService from 'contexts/UserApiService.tsx';
 import {Test} from "types/Interfaces.ts";
 
 const TestBox: React.FC = () => {
@@ -12,16 +12,16 @@ const TestBox: React.FC = () => {
     const [answers, setAnswers] = useState<{ [key: string]: string }>({});
 
     useEffect(() => {
-        const fetchTest = async () => {
+        const fetchUserTest = async () => {
             try {
-                const data = await apiService.fetchTestById(testId);
+                const data = await apiService.fetchUserTestById(testId);
                 setTest(data);
             } catch (error) {
                 console.error("Error fetching test:", error);
             }
         };
 
-        fetchTest();
+        fetchUserTest();
     }, [testId]);
 
     const handleAnswerChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement>) => {
