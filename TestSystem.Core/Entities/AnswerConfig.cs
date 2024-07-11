@@ -15,7 +15,8 @@ public class AnswerConfig : IEntityTypeConfiguration<Answer>
 
         builder.HasOne(e => e.Question)
             .WithMany(q => q.Answers)
-            .HasForeignKey(e => e.QuestionId);
+            .HasForeignKey(e => e.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
     }

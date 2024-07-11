@@ -20,13 +20,42 @@ public class TestRepository : ITestRepository
 
     public async Task<IEnumerable<Test>> GetTestsAsync(CancellationToken ct)
     {
-        return await _tsDbContext.Tests.Include(c => c.Company).Include(q => q.Questions).ThenInclude(q => q.Answers).ToListAsync(ct);
+        return await _tsDbContext.Tests
+            .Include(t => t.Company)
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .OrderByDescending(t => t.Title)
+            .ToListAsync(ct);
     }
 
     public async Task<Test?> GetTestByIdAsync(CancellationToken ct, Guid id)
     {
-        return await _tsDbContext.Tests.Include(c => c.Company).Include(q => q.Questions).ThenInclude(q => q.Answers)
+        return await _tsDbContext.Tests
+            .Include(c => c.Company)
+            .Include(q => q.Questions)
+            .ThenInclude(q => q.Answers)
+            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .OrderByDescending(t => t.Title)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
+    }
+    
+    public async Task<Test?> DeleteTestByIdAsync(CancellationToken ct, Guid id)
+    {
+        var test = await _tsDbContext.Tests
+            .Include(t => t.Company)
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .Include(t => t.TestResults)
+            .FirstOrDefaultAsync(t => t.Id == id, ct);
+        
+        if (test == null) return null;
+        
+        _tsDbContext.TestResults.RemoveRange(test.TestResults);
+        _tsDbContext.Tests.Remove(test);
+        await _tsDbContext.SaveChangesAsync(ct);
+        
+        return test;
     }
 
     public async Task<IEnumerable<TestResult>> GetTestResultsAsync(CancellationToken ct)

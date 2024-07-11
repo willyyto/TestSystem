@@ -1,5 +1,6 @@
 ﻿using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
+using TestSystem.Core.Migrations;
 
 namespace TestSystem.Mappers;
 
@@ -11,7 +12,10 @@ public static class TestMapper
             test.Id,
             test.Title,
             test.Company.Name,
+            test.StartDate,
+            test.EndDate,
             test.Questions.Select(i => i.MapToQuestionDto()).ToList(),
+            test.IsArchived,
             test.IsActive
         );
     }

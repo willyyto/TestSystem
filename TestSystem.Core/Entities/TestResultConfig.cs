@@ -16,7 +16,7 @@ public class TestResultConfig : IEntityTypeConfiguration<TestResult>
         builder.HasOne(e => e.Test)
             .WithMany(t => t.TestResults)
             .HasForeignKey(e => e.TestId)
-            .OnDelete(DeleteBehavior.Restrict); // Change to Restrict or NoAction to prevent cascading deletes
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(e => e.QuestionResults)
             .WithOne(qr => qr.TestResult)

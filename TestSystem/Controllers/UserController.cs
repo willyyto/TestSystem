@@ -19,7 +19,7 @@ public class UserController : ControllerBase
         _cancellationTokenAccessor = cancellationTokenAccessor;
     }
 
-    [HttpGet("all")]
+    [HttpGet]
     public async Task<ActionResult<List<User>>> GetUsers()
     {
         var ct = _cancellationTokenAccessor.Token;
@@ -27,7 +27,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetUser()
     {
         var ct = _cancellationTokenAccessor.Token;

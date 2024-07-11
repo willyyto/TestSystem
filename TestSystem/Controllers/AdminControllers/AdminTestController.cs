@@ -9,12 +9,12 @@ namespace TestSystem.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TestController : ControllerBase
+public class AdminTestController : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
     private readonly ITestRepository _TestRepository;
 
-    public TestController(ITestRepository TestRepository,
+    public AdminTestController(ITestRepository TestRepository,
         ICancellationTokenAccessor cancellationTokenAccessor)
     {
         _TestRepository = TestRepository;
@@ -34,6 +34,15 @@ public class TestController : ControllerBase
     {
         var ct = _cancellationTokenAccessor.Token;
         var test = await _TestRepository.GetTestByIdAsync(ct, id);
+        if (test == null) return NotFound();
+        return Ok(test.MapToTestDto());
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Test>> DeleteTest(Guid id)
+    {
+        var ct = _cancellationTokenAccessor.Token;
+        var test = await _TestRepository.DeleteTestByIdAsync(ct, id);
         if (test == null) return NotFound();
         return Ok(test.MapToTestDto());
     }

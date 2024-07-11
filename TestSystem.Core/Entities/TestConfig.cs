@@ -11,6 +11,8 @@ public class TestConfig : IEntityTypeConfiguration<Test>
 
         builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
         builder.Property(e => e.Title).IsRequired();
+        builder.Property(e => e.StartDate).IsRequired();
+        builder.Property(e => e.EndDate).IsRequired();
 
         builder.HasOne(e => e.Company)
             .WithMany(c => c.Tests)
@@ -19,6 +21,11 @@ public class TestConfig : IEntityTypeConfiguration<Test>
         builder.HasMany(e => e.TestResults)
             .WithOne(tr => tr.Test)
             .HasForeignKey(tr => tr.TestId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(e => e.Questions)
+            .WithOne(q => q.Test)
+            .HasForeignKey(q => q.TestId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
