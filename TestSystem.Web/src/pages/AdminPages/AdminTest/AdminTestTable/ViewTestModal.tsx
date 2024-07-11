@@ -12,8 +12,8 @@ import {
     RadioGroup,
     Textarea
 } from '@nextui-org/react';
-import {Question, Test} from '../../../types/Interfaces.ts';
-import {CustomRadio} from "../../../components/Test/CustomRadio.tsx";
+import {Question, Test} from 'types/Interfaces.ts';
+import {CustomResultRadio} from "components/Test/CustomResultRadio.tsx";
 
 interface ViewTestModalProps {
     isOpen: boolean;
@@ -36,18 +36,18 @@ const ViewTestModal: React.FC<ViewTestModalProps> = ({ isOpen, onClose, test }) 
                         {question.type === 'MultipleChoice' && (
                             <RadioGroup value={question.answers.find((a) => a.isCorrect)?.text || ''} color={"success"}>
                                 {question.answers.map((option) => (
-                                    <CustomRadio key={option.id} value={option.text} isCorrect={option.isCorrect}>
+                                    <CustomResultRadio key={option.id} value={option.text} isCorrect={option.isCorrect}>
                                         {option.text}
-                                    </CustomRadio>
+                                    </CustomResultRadio>
                                 ))}
                             </RadioGroup>
                         )}
                         {question.type === 'TrueFalse' && (
                             <RadioGroup value={question.answers.find((a) => a.isCorrect)?.text || ''} color={"success"}>
                                 {question.answers.map((option) => (
-                                    <CustomRadio key={option.id} value={option.text} isCorrect={option.isCorrect}>
+                                    <CustomResultRadio key={option.id} value={option.text} isCorrect={option.isCorrect}>
                                         {option.text}
-                                    </CustomRadio>
+                                    </CustomResultRadio>
                                 ))}
                             </RadioGroup>
                         )}

@@ -2,7 +2,6 @@
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import {useNavigate} from 'react-router-dom';
-import {User} from 'components/Sidebar/UserDropdown'
 import {clearTokens, getRefreshToken, getToken, setRefreshToken, setToken} from 'contexts/TokenService';
 import API_BASE_URL from 'contexts/AppConfig';
 
@@ -52,7 +51,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUserRole(decodedToken.role);
             setUserGivenName(decodedToken.given_name);
             setUserEmail(decodedToken.email);
-            console.error(decodedToken.role);
             navigate('/dashboard');
         } catch (error) {
             console.error('Login failed', error);

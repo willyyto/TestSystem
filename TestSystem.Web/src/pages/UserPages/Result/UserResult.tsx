@@ -1,9 +1,9 @@
 ﻿import React, {useEffect, useState} from 'react';
 import {Card, CardBody, CardHeader, RadioGroup, Textarea} from '@nextui-org/react';
 import {useParams} from 'react-router-dom';
-import {CustomRadio} from 'components/Test/CustomRadio';
+import {CustomResultRadio} from 'components/Test/CustomResultRadio.tsx';
 import apiService from 'contexts/UserApiService.tsx';
-import {Result} from 'types/Interfaces'
+import {Result} from 'types/Interfaces.ts'
 
 const UserResult: React.FC = () => {
     const { resultId } = useParams<{ resultId: string }>();
@@ -55,13 +55,13 @@ const UserResult: React.FC = () => {
                             <RadioGroup value={questionResult.answer || ''}
                                         color={questionResult.isCorrect ? "success" : "danger"}>
                                 {questionResult.question.answers.map((option) => (
-                                    <CustomRadio
+                                    <CustomResultRadio
                                         key={option.id}
                                         value={option.text}
                                         isCorrect={option.isCorrect}
                                     >
                                         {option.text}
-                                    </CustomRadio>
+                                    </CustomResultRadio>
                                 ))}
                             </RadioGroup>
                         )}
@@ -69,13 +69,13 @@ const UserResult: React.FC = () => {
                             <RadioGroup value={questionResult.answer || ''}
                                         color={questionResult.isCorrect ? "success" : "danger"}>
                                 {questionResult.question.answers.map((option) => (
-                                    <CustomRadio
+                                    <CustomResultRadio
                                         key={option.id}
                                         value={option.text}
                                         isCorrect={option.isCorrect}
                                     >
                                         {option.text}
-                                    </CustomRadio>
+                                    </CustomResultRadio>
                                 ))}
                             </RadioGroup>
                         )}

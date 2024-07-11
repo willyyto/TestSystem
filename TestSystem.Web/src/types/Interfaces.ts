@@ -1,10 +1,17 @@
 ﻿export interface Test {
     id: string;
     title: string;
+    company: string
     questions: Question[];
     isActive: boolean;
-    company: string
-    endDate?: string;
+    startDate: Date;
+    endDate: Date;
+}
+
+export interface Company {
+    id: string;
+    name: string;
+    isActive: boolean;
 }
 
 export interface Question {

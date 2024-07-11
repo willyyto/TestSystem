@@ -12,35 +12,29 @@ const apiRequest = async (config) => {
 };
 
 // API methods
-export const fetchTests = async () => {
-    return await apiRequest({ url: '/test', method: 'GET' });
+export const fetchUserTests = async () => {
+    return await apiRequest({url: '/admintest', method: 'GET'});
+};
+export const fetchUserTestById = async (testId: string) => {
+    return await apiRequest({url: `/admintest/${testId}`, method: 'GET'});
 };
 
-export const fetchResults = async () => {
-    return await apiRequest({ url: '/testresult', method: 'GET' });
+export const fetchUserResults = async () => {
+    return await apiRequest({url: '/usertestresult', method: 'GET'});
 };
 
-export const fetchResultById = async (resultId: string) => {
-    return await apiRequest({ url: `/testresult/${resultId}`, method: 'GET' });
-};
-
-export const fetchTestById = async (testId: string) => {
-    return await apiRequest({ url: `/test/${testId}`, method: 'GET' });
+export const fetchUserResultById = async (resultId: string) => {
+    return await apiRequest({url: `/usertestresult/${resultId}`, method: 'GET'});
 };
 
 export const submitTest = async (testId: string, answers: { [key: string]: string }) => {
-    return await apiRequest({ url: '/testsubmission/submit', method: 'POST', data: { testId, answers } });
-};
-
-export const createTest = async (testData) => {
-    return await apiRequest({ url: '/test', method: 'POST', data: testData });
+    return await apiRequest({url: '/usertestsubmission/submit', method: 'POST', data: {testId, answers}});
 };
 
 export default {
-    fetchTests,
-    fetchResults,
-    fetchResultById,
-    fetchTestById,
-    submitTest,
-    createTest
+    fetchUserTests,
+    fetchUserTestById,
+    fetchUserResults,
+    fetchUserResultById,
+    submitTest
 };

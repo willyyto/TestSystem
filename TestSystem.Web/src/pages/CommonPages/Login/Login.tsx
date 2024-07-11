@@ -1,8 +1,8 @@
-﻿import { useState } from "react";
-import { Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer } from "@nextui-org/react";
-import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useAuth } from "contexts/AuthContext";
+﻿import {useState} from "react";
+import {Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer} from "@nextui-org/react";
+import {Icon} from "@iconify/react";
+import {AnimatePresence, motion} from "framer-motion";
+import {useAuth} from "contexts/AuthContext.tsx";
 
 export default function Login() {
     const [username, setUsername] = useState("");

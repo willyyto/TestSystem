@@ -1,4 +1,5 @@
 export type SiteConfig = typeof siteConfig;
+import AppRoutes from "navigation/AppRoutes.ts";
 
 export const siteConfig = {
   name: "Vite + NextUI",
@@ -6,29 +7,49 @@ export const siteConfig = {
   navItems: [
     {
       label: "Home",
-      href: "/",
+      href: AppRoutes.root,
     },
     {
-        label: "Dashboard",
-        href: "/Dashboard",
+      label: "Dashboard",
+      href: AppRoutes.dashboard,
     },
     {
-        label: "Login",
-        href: "/Login",
+      label: "Login",
+      href: AppRoutes.login,
     }
   ],
   navMenuItems: [
     {
       label: "Home",
-      href: "/dashboard",
+      href: AppRoutes.root,
     },
     {
       label: "Admin",
-      href: "/AdminDashboard",
+      href: AppRoutes.admindashboard,
     },
     {
       label: "Logout",
-      href: "/logout",
+      href: AppRoutes.logout,
+    },
+  ],
+  sidebarItems: [
+    {
+      title: "Overview",
+      items: [
+        {title: "Home", icon: "solar:home-2-outline", href: AppRoutes.root},
+        {title: "Dashboard", icon: "solar:widget-2-outline", href: AppRoutes.admindashboard},
+        {title: "Test", icon: "solar:checklist-minimalistic-outline", href: AppRoutes.admintest},
+        {title: "Company", icon: "solar:buildings-outline", href: AppRoutes.admincompany},
+        {title: "Result", icon: "solar:archive-minimalistic-outline", href: "#"},
+      ],
+    },
+    {
+      title: "General",
+      items: [
+        {title: "User View", icon: "solar:user-id-outline", href: AppRoutes.dashboard},
+        {title: "Analytics", icon: "solar:chart-outline", href: "#"},
+        {title: "Account Management", icon: "solar:users-group-rounded-outline", href: "#"},
+      ],
     },
   ],
   links: {

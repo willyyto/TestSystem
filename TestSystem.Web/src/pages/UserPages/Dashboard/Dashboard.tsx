@@ -1,10 +1,10 @@
 // Dashboard.tsx
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '@nextui-org/react';
 import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
-import {fetchUserResults, fetchUserTests} from 'contexts/UserApiService.tsx';
-import {Result, Test} from "types/Interfaces.ts";
+import {fetchUserResults, fetchUserTests} from '../../../contexts/UserApiService.tsx';
+import {Result, Test} from "../../../types/Interfaces.ts";
 import {MagnifyingGlassIcon} from "@heroicons/react/24/outline";
 
 
@@ -37,10 +37,7 @@ const Dashboard = () => {
     return (
         <div className="p-4">
             <div className="mb-2 flex justify-between items-center">
-                <h2 className="text-3xl font-bold mb-4">Tests Table</h2>
-                <Button color="primary" onClick={() => navigate('/createtest')}>
-                    Create Test
-                </Button>
+                <h1 className="text-5xl py-8 font-bold mb-4">User Tests</h1>
             </div>
             <Table aria-label="Tests table">
                 <TableHeader>
@@ -67,7 +64,7 @@ const Dashboard = () => {
 
             <div className="mt-16">
                 <div className="mb-2 flex justify-between items-center">
-                    <h2 className="text-3xl font-bold mb-4">Results Table</h2>
+                    <h1 className="text-5xl py-8 font-bold mb-4">User Results</h1>
                 </div>
 
                 <Table aria-label="Results table">

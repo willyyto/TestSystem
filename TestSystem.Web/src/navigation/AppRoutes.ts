@@ -8,6 +8,7 @@ const AppRoutes = Object.freeze({
     dashboard: '/dashboard',
     admindashboard: '/admin/dashboard',
     admintest: '/admin/test',
+    admincompany: '/admin/company',
     about: '/about',
     docs: '/docs',
     blog: '/blog',

@@ -1,4 +1,4 @@
-import { title } from "components/primitives";
+import {title} from "components/primitives.ts";
 
 export default function DocsPage() {
   return (

@@ -1,4 +1,4 @@
-﻿import React, {useCallback, useEffect, useMemo, useState} from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Chip,
@@ -15,24 +15,23 @@ import {
     TableHeader,
     TableRow,
 } from '@nextui-org/react';
-import {AdminTestTableColumns} from './AdminTestTableColumns';
-import {capitalize} from 'utils/utils';
+import { AdminCompanyTableColumns } from './AdminCompanyTableColumns';
+import { capitalize } from 'utils/utils';
 import apiService from 'contexts/AdminApiService';
-import ViewTestModal from './ViewTestModal.tsx';
 import ConfirmationModal from 'components/common/ConfirmationModal';
-import {Test} from 'types/Interfaces.ts';
-import {useNavigate} from 'react-router-dom';
-import {Icon} from '@iconify/react';
+import { Company } from 'types/Interfaces.ts';
+import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 import {format} from "date-fns";
 
-const INITIAL_VISIBLE_COLUMNS = ['title', 'company', 'questions', 'startDate', 'endDate', 'isActive', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['id','name', 'isActive', 'actions'];
 
 const statusColorMap = {
     true: 'success',
     false: 'danger',
 };
 
-const AdminTestTable: React.FC = () => {
+const AdminCompanyTable: React.FC = () => {
     const [filterValue, setFilterValue] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
@@ -43,44 +42,38 @@ const AdminTestTable: React.FC = () => {
         direction: 'ascending',
     });
     const [page, setPage] = useState(1);
-    const [testData, setTestData] = useState<Test[]>([]);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [companyData, setCompanyData] = useState<Company[]>([]);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirm modal
-    const [selectedTest, setSelectedTest] = useState<Test | null>(null);
-    const [testToDelete, setTestToDelete] = useState<Test | null>(null); // State for the test to delete
+    const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+    const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null); // State for the company to delete
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAdminTests = async () => {
+        const fetchAdminCompanies = async () => {
             try {
-                const data = await apiService.fetchAdminTests();
-                setTestData(data);
+                const data = await apiService.fetchAdminCompanies();
+                setCompanyData(data);
             } catch (error) {
-                console.error('Error fetching tests:', error);
+                console.error('Error fetching companys:', error);
             }
         };
 
-        fetchAdminTests();
+        fetchAdminCompanies();
     }, []);
-
-    const handleViewTest = (test: Test) => {
-        setSelectedTest(test);
-        setIsViewModalOpen(true);
-    };
-
-    const handleDeleteTest = async () => {
-        if (testToDelete) {
+    
+    const handleDeleteCompany = async () => {
+        if (companyToDelete) {
             try {
-                await apiService.deleteAdminTestById(testToDelete.id);
-                setTestData(testData.filter(test => test.id !== testToDelete.id));
+                await apiService.deleteAdminCompanyById(companyToDelete.id);
+                setCompanyData(companyData.filter(company => company.id !== companyToDelete.id));
                 setIsConfirmModalOpen(false);
-                setTestToDelete(null);
-                alert('Test deleted successfully.');
+                setCompanyToDelete(null);
+                alert('Company deleted successfully.');
             } catch (error) {
                 setIsConfirmModalOpen(false);
-                setTestToDelete(null);
-                console.error('Failed to delete test', error);
-                alert('Failed to delete test.');
+                setCompanyToDelete(null);
+                console.error('Failed to delete company', error);
+                alert('Failed to delete company.');
             }
         }
     };
@@ -93,28 +86,28 @@ const AdminTestTable: React.FC = () => {
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = useMemo(() => {
-        if (visibleColumns === 'all') return AdminTestTableColumns;
+        if (visibleColumns === 'all') return AdminCompanyTableColumns;
 
-        return AdminTestTableColumns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+        return AdminCompanyTableColumns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
     const filteredItems = useMemo(() => {
-        let filteredTests = [...testData];
+        let filteredCompanys = [...companyData];
 
         if (hasSearchFilter) {
-            filteredTests = filteredTests.filter((test) =>
-                test.title.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredCompanys = filteredCompanys.filter((company) =>
+                company.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
         if (statusFilter !== 'all') {
-            filteredTests = filteredTests.filter((test) =>
-                statusFilter === 'active' ? test.isActive : !test.isActive,
+            filteredCompanys = filteredCompanys.filter((company) =>
+                statusFilter === 'active' ? company.isActive : !company.isActive,
             );
         }
 
-        return filteredTests;
-    }, [testData, filterValue, statusFilter]);
+        return filteredCompanys;
+    }, [companyData, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -135,8 +128,8 @@ const AdminTestTable: React.FC = () => {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = useCallback((test, columnKey) => {
-        const cellValue = test[columnKey];
+    const renderCell = useCallback((company, columnKey) => {
+        const cellValue = company[columnKey];
 
         switch (columnKey) {
             case 'title':
@@ -147,8 +140,8 @@ const AdminTestTable: React.FC = () => {
                 );
             case 'isActive':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
-                        {test.isActive ? 'Active' : 'Inactive'}
+                    <Chip className="capitalize" color={statusColorMap[company.isActive]} size="sm" variant="flat">
+                        {company.isActive ? 'Active' : 'Inactive'}
                     </Chip>
                 );
             case 'startDate':
@@ -166,7 +159,7 @@ const AdminTestTable: React.FC = () => {
             case 'questions':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small">{test.questions.length}</p>
+                        <p className="text-bold text-small">{company.questions.length}</p>
                     </div>
                 );
             case 'actions':
@@ -179,12 +172,8 @@ const AdminTestTable: React.FC = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onPress={() => handleViewTest(test)}>View</DropdownItem>
                                 <DropdownItem>Edit</DropdownItem>
-                                <DropdownItem color="danger" onPress={() => {
-                                    setIsConfirmModalOpen(true);
-                                    setTestToDelete(test);
-                                }}>Delete</DropdownItem>
+                                <DropdownItem color="danger" onPress={() => { setIsConfirmModalOpen(true); setCompanyToDelete(company); }}>Delete</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -275,7 +264,7 @@ const AdminTestTable: React.FC = () => {
                                 selectionMode="multiple"
                                 onSelectionChange={setVisibleColumns}
                             >
-                                {AdminTestTableColumns.map((column) => (
+                                {AdminCompanyTableColumns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
                                         {capitalize(column.name)}
                                     </DropdownItem>
@@ -284,13 +273,13 @@ const AdminTestTable: React.FC = () => {
                         </Dropdown>
                         <Button color="primary" endContent={<Icon icon="heroicons-solid:plus"
                                                                   className="h-5 w-5 text-white"/>}
-                                onClick={() => navigate('/createtest')}>
+                                onClick={() => navigate('/createcompany')}>
                             Add New
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {testData.length} tests</span>
+                    <span className="text-default-400 text-small">Total {companyData.length} companys</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -309,7 +298,7 @@ const AdminTestTable: React.FC = () => {
         filterValue,
         visibleColumns,
         onRowsPerPageChange,
-        testData.length,
+        companyData.length,
         onSearchChange,
         onClear,
         statusFilter,
@@ -374,7 +363,7 @@ const AdminTestTable: React.FC = () => {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={'No tests found'} items={sortedItems}>
+                <TableBody emptyContent={'No companies found'} items={sortedItems}>
                     {(item) => (
                         <TableRow key={item.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -382,20 +371,14 @@ const AdminTestTable: React.FC = () => {
                     )}
                 </TableBody>
             </Table>
-
-            <ViewTestModal
-                isOpen={isViewModalOpen}
-                onClose={() => setIsViewModalOpen(false)}
-                test={selectedTest}
-            />
-
+            
             <ConfirmationModal
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
-                onConfirm={handleDeleteTest}
+                onConfirm={handleDeleteCompany}
             />
         </>
     );
 };
 
-export default AdminTestTable;
+export default AdminCompanyTable;

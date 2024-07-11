@@ -1,8 +1,19 @@
-﻿import React, { useState } from 'react';
-import { Button, Input, Spacer, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Card, Select, SelectItem } from '@nextui-org/react';
-import { useNavigate } from 'react-router-dom';
-import apiService from '../../../contexts/AdminApiService.tsx';
-import {CreateQuestion} from "../../../types/Interfaces.ts";
+﻿import React, {useState} from 'react';
+import {
+    Button,
+    Card,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Select,
+    SelectItem,
+    Spacer
+} from '@nextui-org/react';
+import {useNavigate} from 'react-router-dom';
+import apiService from 'contexts/AdminApiService.tsx';
+import {CreateQuestion} from "types/Interfaces.ts";
 
 const questionTypes = ['Multiple Choice', 'True/False', 'Short Answer'];
 

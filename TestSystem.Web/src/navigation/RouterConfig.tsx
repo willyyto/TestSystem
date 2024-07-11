@@ -1,23 +1,24 @@
 import type {RouteObject} from 'react-router';
 import {DefaultLayout, Layout} from 'layouts';
 import AppRoutes from 'navigation/AppRoutes';
-import Home from 'pages/Home';
-import BlogPage from 'pages/Blog';
-import DocsPage from 'pages/Docs';
-import PricingPage from 'pages/Pricing';
-import AboutPage from 'pages/About';
-import Login from "pages/Login";
-import Dashboard from "pages/Dashboard";
-import TestBox from "pages/TestBox";
-import Result from "pages/Result";
-import CreateTest from "pages/CreateTest";
+import Home from 'pages/CommonPages/Home';
+import BlogPage from 'pages/CommonPages/Blog';
+import DocsPage from 'pages/CommonPages/Docs';
+import PricingPage from 'pages/CommonPages/Pricing';
+import AboutPage from 'pages/CommonPages/About';
+import Login from "pages/CommonPages/Login";
+import Dashboard from "pages/UserPages/Dashboard";
+import TestBox from "pages/UserPages/TestBox";
+import Result from "pages/UserPages/Result";
+import CreateTest from "pages/AdminPages/AdminTest/CreateTest";
 import ProtectedRoute from "./ProtectedRoute.tsx";
-import Logout from "pages/Logout";
-import Page401 from "pages/AppStatus/Page401";
+import Logout from "pages/CommonPages/Logout";
+import Page401 from "pages/CommonPages/AppStatus/Page401";
 /*import Page404 from "pages/AppStatus/Page404";*/
-import AdminDashboard from "pages/AdminDashboard";
+import AdminDashboard from "pages/AdminPages/AdminDashboard";
 import {SideLayout} from "layouts/SideLayout.tsx";
-import AdminTest from "pages/AdminTest";
+import AdminTest from "pages/AdminPages/AdminTest";
+import AdminCompany from "pages/AdminPages/AdminCompany";
 
 const routes: RouteObject[] = [
     {
@@ -30,7 +31,7 @@ const routes: RouteObject[] = [
         path: AppRoutes.dashboard,
         element: (
             <SideLayout>
-                <ProtectedRoute roles={['user']}><Dashboard/></ProtectedRoute>
+                <ProtectedRoute><Dashboard/></ProtectedRoute>
             </SideLayout>
         ),
     },
@@ -38,7 +39,7 @@ const routes: RouteObject[] = [
         path: AppRoutes.admindashboard,
         element: (
             <SideLayout>
-                <ProtectedRoute><AdminDashboard/></ProtectedRoute>
+                <ProtectedRoute roles={['admin']}><AdminDashboard/></ProtectedRoute>
             </SideLayout>
         ),
     },
@@ -46,7 +47,15 @@ const routes: RouteObject[] = [
         path: AppRoutes.admintest,
         element: (
             <SideLayout>
-                <ProtectedRoute><AdminTest/></ProtectedRoute>
+                <ProtectedRoute roles={['admin']}><AdminTest/></ProtectedRoute>
+            </SideLayout>
+        ),
+    },
+    {
+        path: AppRoutes.admincompany,
+        element: (
+            <SideLayout>
+                <ProtectedRoute roles={['admin']}><AdminCompany/></ProtectedRoute>
             </SideLayout>
         ),
     },

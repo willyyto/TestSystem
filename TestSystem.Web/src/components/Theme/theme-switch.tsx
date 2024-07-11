@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {useTheme as useNextTheme} from "next-themes";
 import {Icon} from "@iconify/react";
 import {Link} from "@nextui-org/link";

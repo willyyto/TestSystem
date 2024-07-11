@@ -1,13 +1,13 @@
-﻿import {Sidebar} from "components/Sidebar/SidebarStyles";
+import {Sidebar} from "components/Sidebar/SidebarStyles";
 import {SidebarItem} from "components/Sidebar/SidebarItem";
 import {useSidebarContext} from "layouts/SideLayoutContext";
 import {useLocation} from "react-router-dom";
 import {Input, Link} from "@nextui-org/react";
 import {Icon} from '@iconify/react';
-import {UsersDropdown} from "./UserDropdown.tsx";
-import AppRoutes from "navigation/AppRoutes.ts";
-import {SidebarMenu} from "./SidebarMenu.tsx";
-import {ThemeSwitch} from "../Theme/theme-switch.tsx";
+import {UsersDropdown} from "./UserDropdown";
+import {SidebarMenu} from "./SidebarMenu";
+import {ThemeSwitch} from "components/Theme/theme-switch";
+import {siteConfig} from "config/site.ts";
 
 export const SidebarWrapper = () => {
     const pathname = useLocation().pathname;
@@ -29,7 +29,9 @@ export const SidebarWrapper = () => {
                         color="foreground"
                         href="/"
                     >
-                        <p className="font-bold text-inherit text-xl">TESTSYSTEM <span className="text-sm text-primary-500">ADMIN</span></p>
+                        <p className="font-bold text-inherit text-xl">
+                            TESTSYSTEM <span className="text-sm text-primary-500">ADMIN</span>
+                        </p>
                     </Link>
                 </div>
                 <div className="flex flex-col justify-between h-full">
@@ -46,99 +48,32 @@ export const SidebarWrapper = () => {
                             startContent={<Icon icon="solar:minimalistic-magnifer-outline" className="w-4 h-4"/>}
                         />
 
-                        <SidebarMenu title="Overview">
-                            <SidebarItem
-                                title="Home"
-                                icon={<Icon icon="solar:home-2-outline" className="h-6 w-6"/>}
-                                isActive={pathname === AppRoutes.root}
-                                href={AppRoutes.root}
-                            />
-                            <SidebarItem
-                                title="Dashboard"
-                                icon={<Icon icon="solar:widget-2-outline" className="h-6 w-6"/>}
-                                isActive={pathname === AppRoutes.admindashboard}
-                                href={AppRoutes.admindashboard}
-                            />
-                            <SidebarItem
-                                title="Test"
-                                icon={<Icon icon="solar:checklist-minimalistic-outline" className="h-6 w-6"/>}
-                                isActive={pathname === AppRoutes.admintest}
-                                href={AppRoutes.admintest}
-                            />
-                            <SidebarItem
-                                title="Company"
-                                icon={<Icon icon="solar:buildings-outline" className="h-6 w-6"/>}
-                                isActive={pathname === "#"}
-                                href="#"
-                            />
-                            <SidebarItem
-                                title="Result"
-                                icon={<Icon icon="solar:archive-minimalistic-outline" className="h-6 w-6"/>}
-                                isActive={pathname === AppRoutes.dashboard}
-                                href={AppRoutes.dashboard}
-                            />
-                        </SidebarMenu>
-                        <SidebarMenu title="General">
-                            <SidebarItem
-                                title="User View"
-                                icon={<Icon icon="solar:user-id-outline" className="h-6 w-6"/>}
-                                isActive={pathname === AppRoutes.dashboard}
-                                href={AppRoutes.dashboard}
-                            />
-                            <SidebarItem
-                                title="Analytics"
-                                icon={<Icon icon="solar:chart-outline" className="h-6 w-6"/>}
-                                isActive={pathname === "#"}
-                                href="#"
-                            />
-                            <SidebarItem
-                                title="Account Management"
-                                icon={<Icon icon="solar:users-group-rounded-outline" className="h-6 w-6"/>}
-                                isActive={pathname === "#"}
-                                href="#"
-                            />
-                            
-                        </SidebarMenu>
-
-
-                        {/*<CollapseItems
-                            icon={<HomeIcon className="h-5 w-5" />}
-                            items={["Banks Accounts", "Credit Cards", "Loans"]}
-                            title="Balances"
-                        />*/}
-                        {/*<SidebarMenu title="Main Menu">
-                            <SidebarItem
-                                isActive={pathname === "/accounts"}
-                                title="Accounts"
-                                icon={<HomeIcon className="h-5 w-5"/>}
-                                href="accounts"
-                            />
-                        </SidebarMenu>*/}
-
+                        {siteConfig.sidebarItems.map((menu) => (
+                            <SidebarMenu key={menu.title} title={menu.title}>
+                                {menu.items.map((item) => (
+                                    <SidebarItem
+                                        title={item.title}
+                                        icon={<Icon icon={item.icon} className="h-6 w-6"/>}
+                                        isActive={pathname === item.href}
+                                        href={item.href}
+                                    />
+                                ))}
+                            </SidebarMenu>
+                        ))}
                     </div>
                     <div className={Sidebar.Footer()}>
                         <ThemeSwitch isSidebar={true}/>
                         <SidebarItem
                             title="Settings"
-                            size="38px"
                             icon={<Icon icon="solar:settings-outline" className="h-6 w-6"/>}
                             isActive={pathname === "#"}
                             href="#"
                         />
                         <SidebarItem
                             title="Help & Information"
-                            size="38px"
                             icon={<Icon icon="solar:info-square-outline" className="h-6 w-6"/>}
                             isActive={pathname === "#"}
                             href="#"
-                        />
-                        <SidebarItem
-                            title="Log Out"
-                            size="38px"
-                            color="danger"
-                            icon={<Icon icon="solar:minus-circle-outline" className="h-6 w-6"/>}
-                            isActive={pathname === "#"}
-                            href="/logout"
                         />
                     </div>
                 </div>

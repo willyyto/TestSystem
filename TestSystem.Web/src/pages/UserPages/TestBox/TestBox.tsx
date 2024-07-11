@@ -1,9 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Button, Card, CardHeader, RadioGroup, Textarea } from '@nextui-org/react';
-import { useParams } from 'react-router-dom';
-import { CustomRadio } from 'components/Test/CustomRadio';
-import apiService from 'contexts/UserApiService.tsx';
-import {Test} from "types/Interfaces.ts";
+﻿import React, {useEffect, useState} from 'react';
+import {Button, Card, CardHeader, RadioGroup, Textarea} from '@nextui-org/react';
+import {useParams} from 'react-router-dom';
+import {CustomTestRadio} from 'components/Test/CustomTestRadio';
+import apiService from 'contexts/UserApiService';
+import {Test} from "types/Interfaces";
 
 const TestBox: React.FC = () => {
     const { testId } = useParams<{ testId: string }>();
@@ -73,9 +73,9 @@ const TestBox: React.FC = () => {
                         onChange={(event) => handleAnswerChange(currentQuestion.id, event)}
                     >
                         {currentQuestion.answers.map((answer) => (
-                            <CustomRadio key={answer.text} value={answer.text}>
+                            <CustomTestRadio key={answer.text} value={answer.text}>
                                 {answer.text}
-                            </CustomRadio>
+                            </CustomTestRadio>
                         ))}
                     </RadioGroup>
                 )}
@@ -85,12 +85,12 @@ const TestBox: React.FC = () => {
                         value={answers[currentQuestion.id] || ''}
                         onChange={(event) => handleAnswerChange(currentQuestion.id, event)}
                     >
-                        <CustomRadio description="" value="True">
+                        <CustomTestRadio value="True">
                             True
-                        </CustomRadio>
-                        <CustomRadio description="" value="False">
+                        </CustomTestRadio>
+                        <CustomTestRadio value="False">
                             False
-                        </CustomRadio>
+                        </CustomTestRadio>
                     </RadioGroup>
                 )}
 
