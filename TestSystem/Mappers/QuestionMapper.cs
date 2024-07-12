@@ -11,7 +11,9 @@ public static class QuestionMapper
             question.Id,
             question.Text,
             question.Type.ToString(),
-            question.Answers.Select(I => I.MapToAnswerDto()).ToList()
+            question.Weight,
+            question.Answers.Select(a => a.MapToAnswerDto()).ToList(),
+            question.MatchPairs?.Select(mp => mp.MapToMatchPairDto()).ToList() ?? new List<MatchPairDto>()
         );
     }
 }

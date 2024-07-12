@@ -23,6 +23,8 @@ public class TestRepository : ITestRepository
         return await _tsDbContext.Tests
             .Include(t => t.Company)
             .Include(t => t.Questions)
+            .ThenInclude(q => q.MatchPairs)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
             .Where(t => (t.IsActive == true && t.IsArchived == false) )
             .OrderByDescending(t => t.Name)
@@ -32,8 +34,10 @@ public class TestRepository : ITestRepository
     public async Task<Test?> GetTestByIdAsync(CancellationToken ct, Guid id)
     {
         return await _tsDbContext.Tests
-            .Include(c => c.Company)
-            .Include(q => q.Questions)
+            .Include(t => t.Company)
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.MatchPairs)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
             .Where(t => (t.IsActive == true && t.IsArchived == false) )
             .OrderByDescending(t => t.Name)
@@ -45,8 +49,11 @@ public class TestRepository : ITestRepository
         var test = await _tsDbContext.Tests
             .Include(t => t.Company)
             .Include(t => t.Questions)
+            .ThenInclude(q => q.MatchPairs)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .Include(t => t.TestResults)
+            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .OrderByDescending(t => t.Name)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
         
         if (test == null) return null;

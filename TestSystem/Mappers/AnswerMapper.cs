@@ -10,7 +10,8 @@ public static class AnswerMapper
         return new AnswerDto(
             answer.Id,
             answer.Text,
-            answer.IsCorrect
+            answer.IsCorrect,
+            answer.IsFillInTheBlank
         );
     }
 }

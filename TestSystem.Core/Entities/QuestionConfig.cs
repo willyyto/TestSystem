@@ -12,6 +12,7 @@ public class QuestionConfig : IEntityTypeConfiguration<Question>
         builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
         builder.Property(e => e.Text).IsRequired();
         builder.Property(e => e.Type).IsRequired();
+        builder.Property(e => e.Weight).IsRequired().HasDefaultValue(1.0);
 
         builder.HasOne(e => e.Test)
             .WithMany(t => t.Questions)
@@ -26,7 +27,12 @@ public class QuestionConfig : IEntityTypeConfiguration<Question>
         builder.HasMany(e => e.QuestionResults)
             .WithOne(qr => qr.Question)
             .HasForeignKey(qr => qr.QuestionId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.MatchPairs)
+            .WithOne(mp => mp.Question)
+            .HasForeignKey(mp => mp.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
     }

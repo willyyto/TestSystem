@@ -16,6 +16,7 @@ public class TestDbMigrationContext : DbContext
     public DbSet<Answer> Answers => Set<Answer>();
     public DbSet<TestResult> TestResults => Set<TestResult>();
     public DbSet<QuestionResult> QuestionResults => Set<QuestionResult>();
+    public DbSet<MatchPair> MatchPairs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -26,5 +27,6 @@ public class TestDbMigrationContext : DbContext
         new AnswerConfig().Configure(builder.Entity<Answer>());
         new TestResultConfig().Configure(builder.Entity<TestResult>());
         new QuestionResultConfig().Configure(builder.Entity<QuestionResult>());
+        new MatchPairConfig().Configure(builder.Entity<MatchPair>());
     }
 }

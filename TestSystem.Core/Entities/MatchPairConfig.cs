@@ -3,19 +3,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TestSystem.Core.Entities
 {
-    public class AnswerConfig : IEntityTypeConfiguration<Answer>
+    public class MatchPairConfig : IEntityTypeConfiguration<MatchPair>
     {
-        public void Configure(EntityTypeBuilder<Answer> builder)
+        public void Configure(EntityTypeBuilder<MatchPair> builder)
         {
-            builder.ToTable(nameof(Answer));
+            builder.ToTable(nameof(MatchPair));
 
             builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
-            builder.Property(e => e.Text).IsRequired();
-            builder.Property(e => e.IsCorrect).IsRequired();
-            builder.Property(e => e.IsFillInTheBlank).IsRequired();
 
             builder.HasOne(e => e.Question)
-                .WithMany(q => q.Answers)
+                .WithMany(q => q.MatchPairs)
                 .HasForeignKey(e => e.QuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
