@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Chip,
@@ -23,6 +23,7 @@ import { Company } from 'types/Interfaces.ts';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import {format} from "date-fns";
+import RowsPerPageDropdown from "../../../../components/common/RowsPerPageDropdown.tsx";
 
 const INITIAL_VISIBLE_COLUMNS = ['id','name', 'isActive', 'actions'];
 
@@ -38,7 +39,7 @@ const AdminCompanyTable: React.FC = () => {
     const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [sortDescriptor, setSortDescriptor] = useState({
-        column: 'title',
+        column: 'name',
         direction: 'ascending',
     });
     const [page, setPage] = useState(1);
@@ -132,7 +133,7 @@ const AdminCompanyTable: React.FC = () => {
         const cellValue = company[columnKey];
 
         switch (columnKey) {
-            case 'title':
+            case 'name':
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">{cellValue}</p>
@@ -195,8 +196,8 @@ const AdminCompanyTable: React.FC = () => {
         }
     }, [page]);
 
-    const onRowsPerPageChange = useCallback((e) => {
-        setRowsPerPage(Number(e.target.value));
+    const onRowsPerPageChange = useCallback((e: number) => {
+        setRowsPerPage(e);
         setPage(1);
     }, []);
 
@@ -279,18 +280,12 @@ const AdminCompanyTable: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {companyData.length} companys</span>
-                    <label className="flex items-center text-default-400 text-small">
+                    <span className="text-default-400 text-small">Total {companyData.length} Companies</span>
+                    <label className="flex items-center text-default-400 text-small gap-2">
                         Rows per page:
-                        <select
-                            className="bg-transparent outline-none text-default-400 text-small"
-                            onChange={onRowsPerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
+                        <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
                     </label>
+
                 </div>
             </div>
         );

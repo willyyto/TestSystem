@@ -1,6 +1,6 @@
 ﻿export interface Test {
     id: string;
-    title: string;
+    name: string;
     company: string
     questions: Question[];
     isActive: boolean;
@@ -39,7 +39,7 @@ export interface Result {
     id: string;
     userId: string;
     testId: string;
-    attemptDate: string;
+    completedDate: string;
     score: number;
     test: Test;
     questionResults: QuestionResult[];

@@ -24,15 +24,15 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.root,
         element: (
-            <Layout> <Home/></Layout>
+            <Layout><Home/></Layout>
         ),
     },
     {
         path: AppRoutes.dashboard,
         element: (
-            <SideLayout>
+            <Layout>
                 <ProtectedRoute><Dashboard/></ProtectedRoute>
-            </SideLayout>
+            </Layout>
         ),
     },
     {
@@ -56,6 +56,14 @@ const routes: RouteObject[] = [
         element: (
             <SideLayout>
                 <ProtectedRoute roles={['admin']}><AdminCompany/></ProtectedRoute>
+            </SideLayout>
+        ),
+    },
+    {
+        path: AppRoutes.adminuserview,
+        element: (
+            <SideLayout>
+                <ProtectedRoute roles={['admin']}><Dashboard/></ProtectedRoute>
             </SideLayout>
         ),
     },
@@ -132,7 +140,7 @@ const routes: RouteObject[] = [
         ),
     },
     {
-        path: AppRoutes.createtest,
+        path: AppRoutes.admintestcreate,
         element: (
             <Layout> 
                 <ProtectedRoute><CreateTest/></ProtectedRoute>

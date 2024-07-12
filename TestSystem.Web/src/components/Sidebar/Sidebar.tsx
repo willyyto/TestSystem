@@ -8,6 +8,7 @@ import {UsersDropdown} from "./UserDropdown";
 import {SidebarMenu} from "./SidebarMenu";
 import {ThemeSwitch} from "components/Theme/theme-switch";
 import {siteConfig} from "config/site.ts";
+import {CompaniesDropdown} from "./CompaniesDropdown.tsx";
 
 export const SidebarWrapper = () => {
     const pathname = useLocation().pathname;
@@ -62,6 +63,7 @@ export const SidebarWrapper = () => {
                         ))}
                     </div>
                     <div className={Sidebar.Footer()}>
+                        <CompaniesDropdown/>
                         <ThemeSwitch isSidebar={true}/>
                         <SidebarItem
                             title="Settings"

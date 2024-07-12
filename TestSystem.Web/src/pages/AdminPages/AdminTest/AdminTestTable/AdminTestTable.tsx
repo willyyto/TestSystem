@@ -16,7 +16,7 @@ import {
     TableRow,
 } from '@nextui-org/react';
 import {AdminTestTableColumns} from './AdminTestTableColumns';
-import {capitalize} from 'utils/utils';
+import {capitalize, formatDate} from 'utils/utils';
 import apiService from 'contexts/AdminApiService';
 import ViewTestModal from './ViewTestModal.tsx';
 import ConfirmationModal from 'components/common/ConfirmationModal';
@@ -24,8 +24,9 @@ import {Test} from 'types/Interfaces.ts';
 import {useNavigate} from 'react-router-dom';
 import {Icon} from '@iconify/react';
 import {format} from "date-fns";
+import RowsPerPageDropdown from "../../../../components/common/RowsPerPageDropdown.tsx";
 
-const INITIAL_VISIBLE_COLUMNS = ['title', 'company', 'questions', 'startDate', 'endDate', 'isActive', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['name', 'company', 'questions', 'startDate', 'endDate', 'isActive', 'actions'];
 
 const statusColorMap = {
     true: 'success',
@@ -39,7 +40,7 @@ const AdminTestTable: React.FC = () => {
     const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [sortDescriptor, setSortDescriptor] = useState({
-        column: 'title',
+        column: 'name',
         direction: 'ascending',
     });
     const [page, setPage] = useState(1);
@@ -84,12 +85,7 @@ const AdminTestTable: React.FC = () => {
             }
         }
     };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return format(date, 'dd/MM/yyyy');
-    };
-
+    
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = useMemo(() => {
@@ -103,7 +99,7 @@ const AdminTestTable: React.FC = () => {
 
         if (hasSearchFilter) {
             filteredTests = filteredTests.filter((test) =>
-                test.title.toLowerCase().includes(filterValue.toLowerCase()),
+                test.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
@@ -139,7 +135,7 @@ const AdminTestTable: React.FC = () => {
         const cellValue = test[columnKey];
 
         switch (columnKey) {
-            case 'title':
+            case 'name':
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">{cellValue}</p>
@@ -206,8 +202,8 @@ const AdminTestTable: React.FC = () => {
         }
     }, [page]);
 
-    const onRowsPerPageChange = useCallback((e) => {
-        setRowsPerPage(Number(e.target.value));
+    const onRowsPerPageChange = useCallback((e: number) => {
+        setRowsPerPage(e);
         setPage(1);
     }, []);
 
@@ -277,30 +273,22 @@ const AdminTestTable: React.FC = () => {
                             >
                                 {AdminTestTableColumns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
+                                        {column.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
                         <Button color="primary" endContent={<Icon icon="heroicons-solid:plus"
                                                                   className="h-5 w-5 text-white"/>}
-                                onClick={() => navigate('/createtest')}>
+                                onClick={() => navigate('/admin/test/create')}>
                             Add New
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {testData.length} tests</span>
-                    <label className="flex items-center text-default-400 text-small">
-                        Rows per page:
-                        <select
-                            className="bg-transparent outline-none text-default-400 text-small"
-                            onChange={onRowsPerPageChange}
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
+                    <span className="text-default-400 text-small">Total {testData.length} Tests</span>
+                    <label className="flex items-center text-default-400 text-small gap-2">
+                        Rows per page:  <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
                     </label>
                 </div>
             </div>

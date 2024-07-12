@@ -15,6 +15,11 @@ public class UserConfig
 
         builder.Property(e => e.Username).IsRequired();
         builder.Property(e => e.Password).IsRequired();
+        
+        builder.HasOne(e => e.Company)
+            .WithMany(c => c.Users)
+            .HasForeignKey(e => e.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive().ConfigureLockable();
     }

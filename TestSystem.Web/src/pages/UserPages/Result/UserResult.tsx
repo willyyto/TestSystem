@@ -31,9 +31,9 @@ const UserResult: React.FC = () => {
                     <h2 className="text-2xl font-bold mb-4">Test Result</h2>
                 </CardHeader>
                 <CardBody>
-                    <h3 className="text-xl font-bold mb-4">{result.test.title}</h3>
+                    <h3 className="text-xl font-bold mb-4">{result.test.name}</h3>
                     <p>Score: {result.score}</p>
-                    <p>Attempt Date: {new Date(result.attemptDate).toLocaleString()}</p>
+                    <p>Attempt Date: {new Date(result.completedDate).toLocaleString()}</p>
                 </CardBody>
             </Card>
 

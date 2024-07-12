@@ -10,7 +10,7 @@ public class TestResultConfig : IEntityTypeConfiguration<TestResult>
         builder.ToTable(nameof(TestResult));
 
         builder.Property(e => e.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
-        builder.Property(e => e.AttemptDate).IsRequired();
+        builder.Property(e => e.CompletedDate).IsRequired();
         builder.Property(e => e.Score).IsRequired();
 
         builder.HasOne(e => e.Test)

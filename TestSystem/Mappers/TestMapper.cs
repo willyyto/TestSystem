@@ -10,7 +10,7 @@ public static class TestMapper
     {
         return new TestDto(
             test.Id,
-            test.Title,
+            test.Name,
             test.Company.Name,
             test.StartDate,
             test.EndDate,

@@ -25,7 +25,7 @@ public class TestRepository : ITestRepository
             .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
             .Where(t => (t.IsActive == true && t.IsArchived == false) )
-            .OrderByDescending(t => t.Title)
+            .OrderByDescending(t => t.Name)
             .ToListAsync(ct);
     }
 
@@ -36,7 +36,7 @@ public class TestRepository : ITestRepository
             .Include(q => q.Questions)
             .ThenInclude(q => q.Answers)
             .Where(t => (t.IsActive == true && t.IsArchived == false) )
-            .OrderByDescending(t => t.Title)
+            .OrderByDescending(t => t.Name)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
     

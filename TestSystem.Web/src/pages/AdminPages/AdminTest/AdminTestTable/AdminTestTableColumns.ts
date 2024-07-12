@@ -1,6 +1,6 @@
 ﻿export const AdminTestTableColumns = [
     { name: "Id", uid: "id", sortable: true },
-    { name: "Title", uid: "title", sortable: true },
+    { name: "Name", uid: "name", sortable: true },
     {name: "Company", uid: "company", sortable: true},
     {name: "StartDate", uid: "startDate", sortable: true},
     {name: "EndDate", uid: "endDate", sortable: true},

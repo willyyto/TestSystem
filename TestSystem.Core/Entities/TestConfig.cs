@@ -10,7 +10,7 @@ public class TestConfig : IEntityTypeConfiguration<Test>
         builder.ToTable(nameof(Test));
 
         builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
-        builder.Property(e => e.Title).IsRequired();
+        builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.StartDate).IsRequired();
         builder.Property(e => e.EndDate).IsRequired();
 

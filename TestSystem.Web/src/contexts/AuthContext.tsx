@@ -51,7 +51,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUserRole(decodedToken.role);
             setUserGivenName(decodedToken.given_name);
             setUserEmail(decodedToken.email);
-            navigate('/dashboard');
+            if (hasRole("user")) navigate('/dashboard');
+            else navigate('/admin/dashboard');
         } catch (error) {
             console.error('Login failed', error);
             throw new Error('Login failed. Please check your credentials and try again.');

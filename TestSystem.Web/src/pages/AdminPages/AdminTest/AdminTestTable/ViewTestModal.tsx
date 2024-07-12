@@ -14,6 +14,7 @@ import {
 } from '@nextui-org/react';
 import {Question, Test} from 'types/Interfaces.ts';
 import {CustomResultRadio} from "components/Test/CustomResultRadio.tsx";
+import {format} from "date-fns";
 
 interface ViewTestModalProps {
     isOpen: boolean;
@@ -22,6 +23,11 @@ interface ViewTestModalProps {
 }
 
 const ViewTestModal: React.FC<ViewTestModalProps> = ({ isOpen, onClose, test }) => {
+    const formatDate = (dateString: string,) => {
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM yyyy');
+    };
+    
     const renderQuestion = (question: Question, index: number) => {
         return (
             <div className="py-4">
@@ -71,12 +77,14 @@ const ViewTestModal: React.FC<ViewTestModalProps> = ({ isOpen, onClose, test }) 
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            {test?.title}
+                            {test?.name}
                         </ModalHeader>
                         <ModalBody>
                             {test ? (
                                 <div>
                                     <p><strong>Company:</strong> {test.company}</p>
+                                    <p><strong>StartDate:</strong> {formatDate(test.startDate)}</p>
+                                    <p><strong>EndDate:</strong> {formatDate(test.endDate)}</p>
                                     <p><strong>Status:</strong> {test.isActive ? "Active" : "Inactive"}</p>
                                     <div className="mt-4">
                                         {test.questions.map((question, index) => renderQuestion(question, index))}

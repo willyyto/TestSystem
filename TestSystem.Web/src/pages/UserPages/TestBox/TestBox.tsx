@@ -64,7 +64,7 @@ const TestBox: React.FC = () => {
                 </p>
             </CardHeader>
             <div className="container mx-auto p-4">
-                <h2 className="text-2xl font-bold mb-4">{test.title}</h2>
+                <h2 className="text-2xl font-bold mb-4">{test.name}</h2>
                 <h4 className="text-xl mb-4">{currentQuestion.text}</h4>
 
                 {currentQuestion.type === 'MultipleChoice' && (

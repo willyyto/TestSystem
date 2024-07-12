@@ -18,7 +18,7 @@ import {CreateQuestion} from "types/Interfaces.ts";
 const questionTypes = ['Multiple Choice', 'True/False', 'Short Answer'];
 
 const CreateTest: React.FC = () => {
-    const [title, setTitle] = useState('');
+    const [name, setName] = useState('');
     const [questions, setQuestions] = useState<CreateQuestion[]>([]);
     const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const CreateTest: React.FC = () => {
 
     const handleCreateTest = async () => {
         try {
-            await apiService.createTest({ title, questions });
+            await apiService.createTest({ name, questions });
             navigate('/dashboard');
         } catch (error) {
             console.error('Failed to create test', error);
@@ -51,11 +51,11 @@ const CreateTest: React.FC = () => {
         <div className="p-6 max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold mb-6">Create Test</h2>
             <Input
-                label="Title"
-                placeholder="Test title"
+                label="Name"
+                placeholder="Test name"
                 fullWidth
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="mb-4"
             />
             <Button onClick={handleAddQuestion} className="mb-4">

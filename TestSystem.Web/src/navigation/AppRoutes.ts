@@ -9,16 +9,17 @@ const AppRoutes = Object.freeze({
     admindashboard: '/admin/dashboard',
     admintest: '/admin/test',
     admincompany: '/admin/company',
-    about: '/about',
-    docs: '/docs',
-    blog: '/blog',
-    pricing: '/pricing',
+    adminuserview: '/admin/userview',
     login: '/login',
     logout: '/logout',
     unauthorised: '/unauthorised',
     quiz: '/quiz/:testId',
     result: '/result/:resultId',
-    createtest: '/createtest',
+    admintestcreate: '/admin/test/create',
+    about: '/about',
+    docs: '/docs',
+    blog: '/blog',
+    pricing: '/pricing',
 });
 
 export default AppRoutes;

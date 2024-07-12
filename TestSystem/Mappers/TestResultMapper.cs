@@ -11,7 +11,7 @@ public static class TestResultMapper
             testResult.Id,
             testResult.UserId,
             testResult.TestId,
-            testResult.AttemptDate,
+            testResult.CompletedDate,
             testResult.Score,
             testResult.Test.MapToTestDto(),
             testResult.QuestionResults.Select(qr => qr.MapToQuestionResultDto()).ToList()

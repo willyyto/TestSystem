@@ -24,8 +24,8 @@ export const siteConfig = {
       href: AppRoutes.root,
     },
     {
-      label: "Admin",
-      href: AppRoutes.admindashboard,
+      label: "Dashboard",
+      href: AppRoutes.dashboard,
     },
     {
       label: "Logout",
@@ -46,7 +46,7 @@ export const siteConfig = {
     {
       title: "General",
       items: [
-        {title: "User View", icon: "solar:user-id-outline", href: AppRoutes.dashboard},
+        {title: "User View", icon: "solar:user-id-outline", href: AppRoutes.adminuserview},
         {title: "Analytics", icon: "solar:chart-outline", href: "#"},
         {title: "Account Management", icon: "solar:users-group-rounded-outline", href: "#"},
       ],

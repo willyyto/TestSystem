@@ -48,7 +48,7 @@ public class TestService : ITestService
             Id = Guid.NewGuid(),
             UserId = userId,
             TestId = test.Id,
-            AttemptDate = DateTime.UtcNow,
+            CompletedDate = DateTime.UtcNow,
             Score = score,
             QuestionResults = test.Questions.Select(q => new QuestionResult
             {
