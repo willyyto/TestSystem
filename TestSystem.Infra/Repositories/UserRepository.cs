@@ -32,7 +32,7 @@ public class UserRepository : IUserRepository
 
     public async Task<List<User>> GetAllUsersAsync(CancellationToken ct)
     {
-        var users = await _tsDbContext.Users.ToListAsync(ct);
+        var users = await _tsDbContext.Users.Include(u => u.Company).ToListAsync(ct);
         return users;
     }
 
@@ -55,5 +55,26 @@ public class UserRepository : IUserRepository
     {
         _tsDbContext.Users.Update(user);
         await _tsDbContext.SaveChangesAsync(ct);
+    }
+    
+    
+    public async Task<User?> DeleteUserAsync(CancellationToken ct, Guid id)
+    {
+        var user = await _tsDbContext.Users
+            .Include(t => t.Company)
+            .FirstOrDefaultAsync(t => t.Id == id, ct);
+        
+        if (user == null) return null;
+        
+        var testresults = await _tsDbContext.TestResults
+            .Include(t => t.QuestionResults)
+            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .FirstOrDefaultAsync(t => t.UserId == id, ct);
+        
+        _tsDbContext.TestResults.RemoveRange(testresults);
+        _tsDbContext.Users.Remove(user);
+        await _tsDbContext.SaveChangesAsync(ct);
+        
+        return user;
     }
 }

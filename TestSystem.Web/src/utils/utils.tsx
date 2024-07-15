@@ -6,5 +6,5 @@ export function capitalize(str: string) {
 
 export function formatDate(dateString: string) {
     const date = new Date(dateString);
-    return format(date, 'do MMMM yyyy');
+    return format(date, 'dd/MM/yyyy');
 }

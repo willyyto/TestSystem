@@ -37,7 +37,7 @@ public class AdminTestController : ControllerBase
         if (test == null) return NotFound();
         return Ok(test.MapToTestDto());
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult<Test>> DeleteTest(Guid id)
     {

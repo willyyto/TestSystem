@@ -118,12 +118,18 @@ namespace TestSystem.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("LeftItemId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RightItem")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RightItemId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");

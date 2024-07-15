@@ -1,25 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace TestSystem.Core.Entities
+namespace TestSystem.Core.Entities;
+
+public class AnswerConfig : IEntityTypeConfiguration<Answer>
 {
-    public class AnswerConfig : IEntityTypeConfiguration<Answer>
+    public void Configure(EntityTypeBuilder<Answer> builder)
     {
-        public void Configure(EntityTypeBuilder<Answer> builder)
-        {
-            builder.ToTable(nameof(Answer));
+        builder.ToTable(nameof(Answer));
 
-            builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
-            builder.Property(e => e.Text).IsRequired();
-            builder.Property(e => e.IsCorrect).IsRequired();
-            builder.Property(e => e.IsFillInTheBlank).IsRequired();
+        builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
+        builder.Property(e => e.Text).IsRequired();
+        builder.Property(e => e.IsCorrect).IsRequired();
+        builder.Property(e => e.IsFillInTheBlank).IsRequired();
 
-            builder.HasOne(e => e.Question)
-                .WithMany(q => q.Answers)
-                .HasForeignKey(e => e.QuestionId)
-                .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(e => e.Question)
+            .WithMany(q => q.Answers)
+            .HasForeignKey(e => e.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
-        }
+        builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
     }
 }

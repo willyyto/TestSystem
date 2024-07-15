@@ -179,7 +179,9 @@ namespace TestSystem.Core.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LeftItem = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LeftItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RightItem = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RightItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsArchived = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),

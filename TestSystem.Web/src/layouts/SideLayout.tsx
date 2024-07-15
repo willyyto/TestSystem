@@ -28,7 +28,7 @@ export const SideLayout = ({ children }: Props) => {
                     <SidebarWrapper />
                     <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
                         <main className="container mx-auto max-w-full px-6 flex-grow pt-16">
-                            <div className="my-14 lg:px-6 max-w-[95rem] mx-auto w-full flex flex-col gap-4">
+                            <div className="my-14 lg:px-6 mx-auto w-full flex flex-col gap-4">
                                 {children}
                             </div>
                             

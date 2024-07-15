@@ -1,3 +1,5 @@
-﻿namespace TestSystem.Core.Dtos;
+﻿using TestSystem.Core.Entities;
 
-public record UserDto(string Username, string Password, string Name, string Email, string Role);
+namespace TestSystem.Core.Dtos;
+
+public record UserDto(Guid Id, string Username, string Name, string Email, string Role, CompanyDto? Company, bool IsArchived, bool IsActive, bool Islocked);

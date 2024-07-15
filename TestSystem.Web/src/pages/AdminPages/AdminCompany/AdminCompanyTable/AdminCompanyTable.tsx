@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     Button,
     Chip,
@@ -15,17 +15,20 @@ import {
     TableHeader,
     TableRow,
 } from '@nextui-org/react';
-import { AdminCompanyTableColumns } from './AdminCompanyTableColumns';
-import { capitalize } from 'utils/utils';
-import apiService from 'contexts/AdminApiService';
-import ConfirmationModal from 'components/common/ConfirmationModal';
-import { Company } from 'types/Interfaces.ts';
-import { useNavigate } from 'react-router-dom';
-import { Icon } from '@iconify/react';
-import {format} from "date-fns";
-import RowsPerPageDropdown from "../../../../components/common/RowsPerPageDropdown.tsx";
 
-const INITIAL_VISIBLE_COLUMNS = ['id','name', 'isActive', 'actions'];
+import {capitalize} from 'utils/utils';
+
+import {useNavigate} from 'react-router-dom';
+import {Icon} from '@iconify/react';
+import {format} from "date-fns";
+
+import {Company} from 'types/Interfaces.ts';
+import apiService from 'contexts/AdminApiService';
+import {AdminCompanyTableColumns} from './AdminCompanyTableColumns';
+import ConfirmationModal from 'components/common/ConfirmationModal';
+import RowsPerPageDropdown from "components/common/RowsPerPageDropdown.tsx";
+
+const INITIAL_VISIBLE_COLUMNS = ['name', 'isActive', 'actions'];
 
 const statusColorMap = {
     true: 'success',
@@ -136,7 +139,7 @@ const AdminCompanyTable: React.FC = () => {
             case 'name':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
+                        <p className="text-sm capitalize">{cellValue}</p>
                     </div>
                 );
             case 'isActive':
@@ -148,19 +151,19 @@ const AdminCompanyTable: React.FC = () => {
             case 'startDate':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{formatDate(cellValue)}</p>
+                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
                     </div>
                 );
             case 'endDate':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{formatDate(cellValue)}</p>
+                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
                     </div>
                 );
             case 'questions':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small">{company.questions.length}</p>
+                        <p className="text-sm">{company.questions.length}</p>
                     </div>
                 );
             case 'actions':
@@ -280,8 +283,8 @@ const AdminCompanyTable: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {companyData.length} Companies</span>
-                    <label className="flex items-center text-default-400 text-small gap-2">
+                    <span className="text-default-400 text-sm">Total {companyData.length} Companies</span>
+                    <label className="flex items-center text-default-400 text-sm gap-2">
                         Rows per page:
                         <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
                     </label>
@@ -302,7 +305,7 @@ const AdminCompanyTable: React.FC = () => {
     const bottomContent = useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <span className="w-[30%] text-sm text-default-400">
           {selectedKeys === 'all'
               ? 'All items selected'
               : `${selectedKeys.size} of ${filteredItems.length} selected`}

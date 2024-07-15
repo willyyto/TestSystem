@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using TestSystem;
 using TestSystem.Core.Dtos;
 using TestSystem.Infra.Interfaces;
@@ -37,7 +36,7 @@ public class UserTestSubmission : ControllerBase
 
             if (score == null) return NotFound("Test not found.");
 
-            return Ok(new { Message = "Test submitted successfully", Score = score });
+            return Ok(new {Message = "Test submitted successfully", Score = score});
         }
         catch (UnauthorizedAccessException)
         {

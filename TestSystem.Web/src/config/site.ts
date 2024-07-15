@@ -48,7 +48,7 @@ export const siteConfig = {
       items: [
         {title: "User View", icon: "solar:user-id-outline", href: AppRoutes.adminuserview},
         {title: "Analytics", icon: "solar:chart-outline", href: "#"},
-        {title: "Account Management", icon: "solar:users-group-rounded-outline", href: "#"},
+          {title: "Account Management", icon: "solar:users-group-rounded-outline", href: AppRoutes.adminuser},
       ],
     },
   ],

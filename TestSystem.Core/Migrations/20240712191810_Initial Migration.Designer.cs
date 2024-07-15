@@ -12,7 +12,7 @@ using TestSystem.Core;
 namespace TestSystem.Core.Migrations
 {
     [DbContext(typeof(TestDbMigrationContext))]
-    [Migration("20240712150426_Initial Migration")]
+    [Migration("20240712191810_Initial Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -121,12 +121,18 @@ namespace TestSystem.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("LeftItemId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RightItem")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RightItemId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");

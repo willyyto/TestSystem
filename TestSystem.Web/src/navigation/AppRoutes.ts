@@ -9,6 +9,7 @@ const AppRoutes = Object.freeze({
     admindashboard: '/admin/dashboard',
     admintest: '/admin/test',
     admincompany: '/admin/company',
+    adminuser: '/admin/user',
     adminuserview: '/admin/userview',
     login: '/login',
     logout: '/logout',

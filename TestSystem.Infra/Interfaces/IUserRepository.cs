@@ -1,4 +1,5 @@
-﻿using TestSystem.Core.Entities;
+﻿using TestSystem.Core.Dtos;
+using TestSystem.Core.Entities;
 
 namespace TestSystem.Infra.Interfaces;
 
@@ -8,5 +9,6 @@ public interface IUserRepository
     Task<User> GetById(CancellationToken ct, Guid id);
     Task<Guid> AddUserAsync(CancellationToken ct, User user);
     Task<User?> GetByUsername(CancellationToken ct, string username);
+    Task<User?> DeleteUserAsync(CancellationToken ct, Guid id);
     Task UpdateUserAsync(CancellationToken ct, User user);
 }

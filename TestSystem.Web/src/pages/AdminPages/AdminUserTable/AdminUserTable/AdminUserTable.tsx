@@ -1,4 +1,5 @@
-﻿import React, {useCallback, useEffect, useMemo, useState} from 'react';
+// AdminUserTable.jsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Chip,
@@ -15,25 +16,25 @@ import {
     TableHeader,
     TableRow,
 } from '@nextui-org/react';
-import {AdminTestTableColumns} from './AdminTestTableColumns';
-import {formatDate} from 'utils/utils';
-import apiService from 'contexts/AdminApiService';
-import ViewTestModal from './ViewTestModal.tsx';
-import ConfirmationModal from 'components/common/ConfirmationModal';
-import {Test} from 'types/Interfaces.ts';
-import {useNavigate} from 'react-router-dom';
-import {Icon} from '@iconify/react';
+import { AdminUserTableColumns } from './AdminUserTableColumns.ts';
+import { capitalize } from 'utils/utils.tsx';
+import apiService from 'contexts/AdminApiService.tsx';
+import ConfirmationModal from 'components/common/ConfirmationModal.tsx';
+import AddUserModal from './AddUserModal.jsx';
+import { User } from 'types/Interfaces.ts';
+import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+import { format } from "date-fns";
 import RowsPerPageDropdown from "components/common/RowsPerPageDropdown.tsx";
-import RetakePolicyModal from 'components/Test/RetakePolicyModal'; // Import the new component
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'company', 'testType', 'duration', 'passMark', 'isTimed', 'shuffleQuestions', 'maximumAttempts', 'feedback', 'testAccessControl', 'gradingScheme', 'visibility', 'questions', 'retakePolicy', 'startDate', 'endDate', 'isActive', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['name', 'username', 'role', 'email', 'company', 'isActive', 'isArchived', 'isLocked', 'actions'];
 
 const statusColorMap = {
     true: 'success',
     false: 'danger',
 };
 
-const AdminTestTable: React.FC = () => {
+const AdminUserTable: React.FC = () => {
     const [filterValue, setFilterValue] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
@@ -44,79 +45,73 @@ const AdminTestTable: React.FC = () => {
         direction: 'ascending',
     });
     const [page, setPage] = useState(1);
-    const [testData, setTestData] = useState<Test[]>([]);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [userData, setUserData] = useState<User[]>([]);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirm modal
-    const [isRetakePolicyModalOpen, setIsRetakePolicyModalOpen] = useState(false); // State for retake policy modal
-    const [selectedTest, setSelectedTest] = useState<Test | null>(null);
-    const [testToDelete, setTestToDelete] = useState<Test | null>(null); // State for the test to delete
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false); // State for new user modal
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [userToDelete, setUserToDelete] = useState<User | null>(null); // State for the user to delete
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAdminTests = async () => {
+        const fetchAdminUsers = async () => {
             try {
-                const data = await apiService.fetchAdminTests();
-                setTestData(data);
+                const data = await apiService.fetchAdminUsers();
+                setUserData(data);
             } catch (error) {
-                console.error('Error fetching tests:', error);
+                console.error('Error fetching users:', error);
             }
         };
 
-        fetchAdminTests();
+        fetchAdminUsers();
     }, []);
 
-    const handleViewTest = (test: Test) => {
-        setSelectedTest(test);
-        setIsViewModalOpen(true);
-    };
-
-    const handleDeleteTest = async () => {
-        if (testToDelete) {
+    const handleDeleteUser = async () => {
+        if (userToDelete) {
             try {
-                await apiService.deleteAdminTestById(testToDelete.id);
-                setTestData(testData.filter(test => test.id !== testToDelete.id));
+                await apiService.deleteAdminUserById(userToDelete.id);
+                setUserData(userData.filter(user => user.id !== userToDelete.id));
                 setIsConfirmModalOpen(false);
-                setTestToDelete(null);
-                alert('Test deleted successfully.');
+                setUserToDelete(null);
+                alert('User deleted successfully.');
             } catch (error) {
                 setIsConfirmModalOpen(false);
-                setTestToDelete(null);
-                console.error('Failed to delete test', error);
-                alert('Failed to delete test.');
+                setUserToDelete(null);
+                console.error('Failed to delete user', error);
+                alert('Failed to delete user.');
             }
         }
     };
 
-    const handleViewRetakePolicy = (test: Test) => {
-        setSelectedTest(test);
-        setIsRetakePolicyModalOpen(true);
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return format(date, 'dd/MM/yyyy');
     };
 
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = useMemo(() => {
-        if (visibleColumns === 'all') return AdminTestTableColumns;
+        if (visibleColumns === 'all') return AdminUserTableColumns;
 
-        return AdminTestTableColumns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+        return AdminUserTableColumns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
     const filteredItems = useMemo(() => {
-        let filteredTests = [...testData];
+        let filteredUsers = [...userData];
 
         if (hasSearchFilter) {
-            filteredTests = filteredTests.filter((test) =>
-                test.name.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredUsers = filteredUsers.filter((user) =>
+                user.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
         if (statusFilter !== 'all') {
-            filteredTests = filteredTests.filter((test) =>
-                statusFilter === 'active' ? test.isActive : !test.isActive,
+            filteredUsers = filteredUsers.filter((user) =>
+                statusFilter === 'active' ? user.isActive : !user.isActive,
             );
         }
 
-        return filteredTests;
-    }, [testData, filterValue, statusFilter]);
+        return filteredUsers;
+    }, [userData, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -137,61 +132,45 @@ const AdminTestTable: React.FC = () => {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = useCallback((test, columnKey) => {
-        const cellValue = test[columnKey];
+    const renderCell = useCallback((user, columnKey) => {
+        const cellValue = user[columnKey];
+
         switch (columnKey) {
             case 'name':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-sm capitalize">{cellValue}</p>
+                        <p className="capitalize">{cellValue}</p>
                     </div>
                 );
             case 'isActive':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
-                        {test.isActive ? 'Active' : 'Inactive'}
+                    <Chip className="capitalize" color={statusColorMap[user.isActive]} size="sm" variant="flat">
+                        {user.isActive ? 'Active' : 'Inactive'}
                     </Chip>
                 );
-            case 'isTimed':
+            case 'isArchived':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
-                        {test.isTimed ? 'Active' : 'Inactive'}
+                    <Chip className="capitalize" color={statusColorMap[user.isArchived]} size="sm" variant="flat">
+                        {user.isArchived ? 'Active' : 'Inactive'}
                     </Chip>
                 );
-            case 'shuffleQuestions':
+            case 'isLocked':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
-                        {test.shuffleQuestions ? 'Active' : 'Inactive'}
+                    <Chip className="capitalize" color={statusColorMap[user.isLocked]} size="sm" variant="flat">
+                        {user.isLocked ? 'Active' : 'Inactive'}
                     </Chip>
                 );
-            case 'startDate':
+            case 'company':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
+                        {user.company ? (
+                            <p className="text-sm">{user.company.name}</p>
+                        ) : (
+                            <></>
+                        )}
                     </div>
                 );
-            case 'endDate':
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
-                    </div>
-                );
-            case 'questions':
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-sm">{test.questions.length}</p>
-                    </div>
-                );
-            case 'retakePolicy':
-                return (
-                    <div className="flex flex-col">
-                        <Button size="sm" variant="ghost"
-                                endContent={<Icon icon="solar:arrow-right-up-outline" className="h-3 w-3"/>}
-                                onClick={() => handleViewRetakePolicy(test)}>
-                            View
-                        </Button>
-                    </div>
-                );
+
             case 'actions':
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -202,12 +181,8 @@ const AdminTestTable: React.FC = () => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onPress={() => handleViewTest(test)}>View</DropdownItem>
                                 <DropdownItem>Edit</DropdownItem>
-                                <DropdownItem color="danger" onPress={() => {
-                                    setIsConfirmModalOpen(true);
-                                    setTestToDelete(test);
-                                }}>Delete</DropdownItem>
+                                <DropdownItem color="danger" onPress={() => { setIsConfirmModalOpen(true); setUserToDelete(user); }}>Delete</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -298,25 +273,27 @@ const AdminTestTable: React.FC = () => {
                                 selectionMode="multiple"
                                 onSelectionChange={setVisibleColumns}
                             >
-                                {AdminTestTableColumns.map((column) => (
+                                {AdminUserTableColumns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
-                                        {column.name}
+                                        {capitalize(column.name)}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
                         <Button color="primary" endContent={<Icon icon="heroicons-solid:plus"
                                                                   className="h-5 w-5 text-white"/>}
-                                onClick={() => navigate('/admin/test/create')}>
+                                onClick={() => setIsUserModalOpen(true)}>
                             Add New
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-sm">Total {testData.length} Tests</span>
+                    <span className="text-default-400 text-sm">Total {userData.length} Users</span>
                     <label className="flex items-center text-default-400 text-sm gap-2">
-                        Rows per page:  <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
+                        Rows per page:
+                        <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
                     </label>
+
                 </div>
             </div>
         );
@@ -324,7 +301,7 @@ const AdminTestTable: React.FC = () => {
         filterValue,
         visibleColumns,
         onRowsPerPageChange,
-        testData.length,
+        userData.length,
         onSearchChange,
         onClear,
         statusFilter,
@@ -368,7 +345,7 @@ const AdminTestTable: React.FC = () => {
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
                 classNames={{
-                    wrapper: 'max-h-[500px] max-h-full',
+                    wrapper: 'max-h-[382px]',
                 }}
                 selectedKeys={selectedKeys}
                 selectionMode="multiple"
@@ -389,7 +366,7 @@ const AdminTestTable: React.FC = () => {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={'No tests found'} items={sortedItems}>
+                <TableBody emptyContent={'No companies found'} items={sortedItems}>
                     {(item) => (
                         <TableRow key={item.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -398,27 +375,18 @@ const AdminTestTable: React.FC = () => {
                 </TableBody>
             </Table>
 
-            <ViewTestModal
-                isOpen={isViewModalOpen}
-                onClose={() => setIsViewModalOpen(false)}
-                test={selectedTest}
+            <AddUserModal
+                isOpen={isUserModalOpen}
+                onClose={() => setIsUserModalOpen(false)}
             />
 
             <ConfirmationModal
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
-                onConfirm={handleDeleteTest}
+                onConfirm={handleDeleteUser}
             />
-
-            {selectedTest && (
-                <RetakePolicyModal
-                    isOpen={isRetakePolicyModalOpen}
-                    onClose={() => setIsRetakePolicyModalOpen(false)}
-                    retakePolicy={selectedTest.retakePolicy}
-                />
-            )}
         </>
     );
 };
 
-export default AdminTestTable;
+export default AdminUserTable;

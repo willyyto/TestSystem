@@ -1,21 +1,11 @@
-﻿import {
-    Button,
-    Input,
-    Pagination,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-} from "@nextui-org/react";
-import { columns } from "./UserResultTableColumns";
-import { UserResultTableCells } from "./UserResultTableCells";
-import { fetchUserResults } from "contexts/UserApiService";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Result } from "types/Interfaces";
-import { Icon } from "@iconify/react";
-import RowsPerPageDropdown from "components/common/RowsPerPageDropdown"; 
+﻿import {Input, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow,} from "@nextui-org/react";
+import {columns} from "./UserResultTableColumns";
+import {UserResultTableCells} from "./UserResultTableCells";
+import {fetchUserResults} from "contexts/UserApiService";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {Result} from "types/Interfaces";
+import {Icon} from "@iconify/react";
+import RowsPerPageDropdown from "components/common/RowsPerPageDropdown";
 
 const UserResultTestTable: React.FC = () => {
     const [results, setUserResults] = useState<Result[]>([]);
@@ -126,7 +116,7 @@ const UserResultTestTable: React.FC = () => {
     const bottomContent = useMemo(() => {
         return (
             <div className=" px-2 flex justify-between items-center">
-                <span className="text-default-400  w-[20%] text-small">Total {results.length} results</span>
+                <span className="text-default-400  w-[20%] text-sm">Total {results.length} results</span>
                 <Pagination
                     isCompact
                     showControls
@@ -137,7 +127,7 @@ const UserResultTestTable: React.FC = () => {
                     onChange={setPage}
                 />
                 <div className="hidden sm:flex w-[20%] justify-end gap-2">
-                    <label className="flex items-center text-default-400 text-small">
+                    <label className="flex items-center text-default-400 text-sm">
                         Rows per page:
                     </label>
                     <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />

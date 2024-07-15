@@ -1,28 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace TestSystem.Core.Entities
+namespace TestSystem.Core.Entities;
+
+public class CompanyConfig : IEntityTypeConfiguration<Company>
 {
-    public class CompanyConfig : IEntityTypeConfiguration<Company>
+    public void Configure(EntityTypeBuilder<Company> builder)
     {
-        public void Configure(EntityTypeBuilder<Company> builder)
-        {
-            builder.ToTable(nameof(Company));
+        builder.ToTable(nameof(Company));
 
-            builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
-            builder.Property(e => e.Name).IsRequired();
+        builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
+        builder.Property(e => e.Name).IsRequired();
 
-            builder.HasMany(e => e.Tests)
-                .WithOne(t => t.Company)
-                .HasForeignKey(t => t.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(e => e.Tests)
+            .WithOne(t => t.Company)
+            .HasForeignKey(t => t.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(e => e.Users)
-                .WithOne(u => u.Company)
-                .HasForeignKey(u => u.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(e => e.Users)
+            .WithOne(u => u.Company)
+            .HasForeignKey(u => u.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
-        }
+        builder.ConfigureMetaData().ConfigureArchivable().ConfigureActive();
     }
 }

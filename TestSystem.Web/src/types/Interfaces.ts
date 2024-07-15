@@ -8,7 +8,7 @@ export interface Test {
     isActive: boolean;
     startDate: Date;
     endDate: Date;
-    duration: number; // Duration in minutes
+    duration: number;
     passMark: number;
     isTimed: boolean;
     shuffleQuestions: boolean;
@@ -20,6 +20,18 @@ export interface Test {
     testAccessControl: AccessControl;
     gradingScheme: GradingScheme;
     retakePolicy: RetakePolicy;
+}
+
+export interface User {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+    company: Company;
+    role: string;
+    isActive: boolean;
+    isArchived: boolean;
+    isLocked: boolean;
 }
 
 export interface Company {
@@ -79,6 +91,6 @@ export interface CreateQuestion {
 export interface RetakePolicy {
     allowRetakes: boolean;
     maxRetakes: number;
-    retakeInterval: number; // Interval in days
+    retakeInterval: number;
 }
 

@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
+using TestSystem.Infra.Repositories;
 
 namespace TestSystem.Infra.Services;
 
@@ -17,13 +18,15 @@ public class UserService : IUserService
     private readonly IConfiguration _configuration;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IUserRepository _userRepository;
+    private readonly ICompanyRepository _companyRepository;
 
-    public UserService(IConfiguration configuration, IUserRepository userRepository,
+    public UserService(IConfiguration configuration, IUserRepository userRepository, ICompanyRepository companyRepository,
         IPasswordHasher<User> passwordHasher)
     {
         _configuration = configuration;
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _companyRepository = companyRepository;
     }
 
     public async Task<Guid> AddUserAsync(CancellationToken ct, RegisterDto request)
@@ -47,7 +50,30 @@ public class UserService : IUserService
         var userId = await _userRepository.AddUserAsync(ct, user);
         return userId;
     }
-
+    
+    public async Task<Guid> AddUserAsync(CancellationToken ct, AddUserDto request)
+    {
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = request.Username,
+            Password = request.Password,
+            CompanyId = request.CompanyId,
+            Name = request.Name,
+            Email = request.Email,
+            Role = request.Role,
+            IsActive = true,
+            CreatedOn = DateTime.UtcNow,
+            UpdatedOn = DateTime.UtcNow,
+            RefreshToken = "",
+            TokenExpires = DateTime.UtcNow,
+            TokenCreated = DateTime.UtcNow
+        };
+        user.Password = _passwordHasher.HashPassword(user, user.Password);
+        var userId = await _userRepository.AddUserAsync(ct, user);
+        return userId;
+    }
+    
     public async Task<bool> ValidateUserAsync(CancellationToken ct, string username, string password)
     {
         var user = await _userRepository.GetByUsername(ct, username);

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using TestSystem;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;

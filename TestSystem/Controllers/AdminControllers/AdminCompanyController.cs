@@ -37,17 +37,17 @@ public class AdminCompanyController : ControllerBase
         if (Company == null) return NotFound();
         return Ok(Company.MapToCompanyDto());
     }
-    
-    [HttpPost()]
+
+    [HttpPost]
     public async Task<ActionResult<Company>> AddCompany(Company company)
     {
         var ct = _cancellationTokenAccessor.Token;
-        
+
         var Company = await _CompanyRepository.AddCompanyAsync(ct, company);
         if (Company == null) return NotFound();
         return Ok(Company.MapToCompanyDto());
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult<Company>> DeleteCompany(Guid id)
     {

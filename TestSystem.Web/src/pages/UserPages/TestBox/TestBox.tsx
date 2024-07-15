@@ -1,9 +1,9 @@
-﻿import React, { useEffect, useState } from 'react';
-import { Button, Card, CardHeader, RadioGroup, Textarea, Input, Select, SelectItem } from '@nextui-org/react';
-import { useParams } from 'react-router-dom';
-import { CustomTestRadio } from 'components/Test/CustomTestRadio';
+﻿import React, {useEffect, useState} from 'react';
+import {Button, Card, CardHeader, Input, RadioGroup, Select, SelectItem, Textarea} from '@nextui-org/react';
+import {useParams} from 'react-router-dom';
+import {CustomTestRadio} from 'components/Test/CustomTestRadio';
 import apiService from 'contexts/UserApiService';
-import { Test, Question } from 'types/Interfaces';
+import {Question, Test} from 'types/Interfaces';
 
 const shuffleArray = (array: any[]) => {
     return array.sort(() => Math.random() - 0.5);
@@ -26,9 +26,12 @@ const TestBox: React.FC = () => {
     const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<{ [key: string]: string }>({});
+    const [matchingAnswers, setMatchingAnswers] = useState<{ [key: string]: { [pairId: string]: string } }>({});
+    const [feedback, setFeedback] = useState<{ [key: string]: boolean }>({});
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [timerActive, setTimerActive] = useState<boolean>(false);
     const [showInstructions, setShowInstructions] = useState<boolean>(true);
+    const [showFeedback, setShowFeedback] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchUserTest = async () => {
@@ -49,28 +52,61 @@ const TestBox: React.FC = () => {
     }, [testId]);
 
     const handleAnswerChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+        const answerValue = event.target.value;
         setAnswers({
             ...answers,
-            [questionId]: event.target.value,
+            [questionId]: answerValue,
         });
     };
 
     const handleTextareaChange = (questionId: string, event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const answerValue = event.target.value;
         setAnswers({
             ...answers,
-            [questionId]: event.target.value,
+            [questionId]: answerValue,
         });
     };
 
     const handleSelectChange = (questionId: string, pairId: string, value: string) => {
-        setAnswers({
-            ...answers,
-            [`${questionId}-${pairId}`]: value,
+        setMatchingAnswers({
+            ...matchingAnswers,
+            [questionId]: {
+                ...matchingAnswers[questionId],
+                [pairId]: value,
+            },
+        });
+    };
+
+    const evaluateFeedback = (questionId: string) => {
+        const currentQuestion = shuffledQuestions.find(q => q.id === questionId);
+        if (!currentQuestion) return;
+
+        let isCorrect = false;
+        if (currentQuestion.type === 'MultipleChoice' || currentQuestion.type === 'TrueFalse') {
+            isCorrect = currentQuestion.answers.some(answer => answer.id === answers[questionId] && answer.isCorrect);
+        } else if (currentQuestion.type === 'ShortAnswer' || currentQuestion.type === 'FillInTheBlank' || currentQuestion.type === 'Essay') {
+            isCorrect = currentQuestion.answers.some(answer => answer.text === answers[questionId] && answer.isCorrect);
+        } else if (currentQuestion.type === 'Matching') {
+            isCorrect = currentQuestion.matchPairs.every(pair =>
+                matchingAnswers[questionId]?.[pair.leftItemId] === pair.rightItemId
+            );
+        }
+
+        setFeedback({
+            ...feedback,
+            [questionId]: isCorrect,
         });
     };
 
     const handleNextQuestion = () => {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        const questionId = shuffledQuestions[currentQuestionIndex].id;
+        if (!showFeedback && test?.feedback === 'Immediate') {
+            evaluateFeedback(questionId);
+            setShowFeedback(true);
+        } else {
+            setShowFeedback(false);
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
     };
 
     const handleStartTest = () => {
@@ -80,7 +116,7 @@ const TestBox: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await apiService.submitTest(test?.id as string, answers);
+            const response = await apiService.submitTest(test?.id as string, {answers, matchingAnswers});
             alert(response.message);
             window.location.href = '/dashboard';
         } catch (error) {
@@ -104,12 +140,13 @@ const TestBox: React.FC = () => {
     if (showInstructions) {
         return (
             <Card radius="sm" fullWidth className="p-4">
-                <CardHeader>
+                <CardHeader className="flex justify-between">
                     <h2 className="text-2xl font-bold mb-4">{test.name}</h2>
+                    <h2 className="text-right">Total Time: <b>{formatTime(timeLeft)}</b></h2>
                 </CardHeader>
                 <div className="container mx-auto p-4">
                     <h4 className="text-xl mb-4">Instructions:</h4>
-                    <p>{test.instructions}</p>
+                    <p className="mb-4 mt-2">{test.instructions}</p>
                     <Button color="primary" onClick={handleStartTest}>Start Test</Button>
                 </div>
             </Card>
@@ -117,6 +154,8 @@ const TestBox: React.FC = () => {
     }
 
     const currentQuestion = shuffledQuestions[currentQuestionIndex];
+    const currentQuestionId = currentQuestion.id;
+    const currentFeedback = feedback[currentQuestionId];
 
     return (
         <Card radius="sm" fullWidth className="p-4">
@@ -124,7 +163,7 @@ const TestBox: React.FC = () => {
                 <p>
                     Question <b>{currentQuestionIndex + 1}</b> of {shuffledQuestions.length}
                 </p>
-                <p className="text-right">Time left: {formatTime(timeLeft)}</p>
+                <h2 className="text-right">Time left: <b>{formatTime(timeLeft)}</b></h2>
             </CardHeader>
             <div className="container mx-auto p-4">
                 <h2 className="text-2xl font-bold mb-4">{test.name}</h2>
@@ -132,11 +171,14 @@ const TestBox: React.FC = () => {
 
                 {currentQuestion.type === 'MultipleChoice' && (
                     <RadioGroup
-                        value={answers[currentQuestion.id] || ''}
-                        onChange={(event) => handleAnswerChange(currentQuestion.id, event)}
+                        value={answers[currentQuestionId] || ''}
+                        isReadOnly={showFeedback}
+                        isDisabled={showFeedback}
+                        onChange={(event) => handleAnswerChange(currentQuestionId, event)}
                     >
                         {currentQuestion.answers.map((answer) => (
-                            <CustomTestRadio key={answer.id} value={answer.id}>
+                            <CustomTestRadio key={answer.id} value={answer.id}
+                                             className={showFeedback && currentFeedback !== undefined && answer.isCorrect ? 'border-green-500' : ''}>
                                 {answer.text}
                             </CustomTestRadio>
                         ))}
@@ -145,31 +187,44 @@ const TestBox: React.FC = () => {
 
                 {currentQuestion.type === 'TrueFalse' && (
                     <RadioGroup
-                        value={answers[currentQuestion.id] || ''}
-                        onChange={(event) => handleAnswerChange(currentQuestion.id, event)}
+                        value={answers[currentQuestionId] || ''}
+                        isReadOnly={showFeedback}
+                        isDisabled={showFeedback}
+                        onChange={(event) => handleAnswerChange(currentQuestionId, event)}
                     >
-                        <CustomTestRadio value="True">
-                            True
-                        </CustomTestRadio>
-                        <CustomTestRadio value="False">
-                            False
-                        </CustomTestRadio>
+                        {currentQuestion.answers.map((answer) => (
+                            <CustomTestRadio key={answer.id} value={answer.id}
+                                             className={showFeedback && currentFeedback !== undefined && answer.isCorrect ? 'border-green-500' : ''}>
+                                {answer.text}
+                            </CustomTestRadio>
+                        ))}
                     </RadioGroup>
                 )}
 
                 {currentQuestion.type === 'ShortAnswer' && (
                     <Textarea
                         placeholder="Your answer"
-                        value={answers[currentQuestion.id] || ''}
-                        onChange={(e) => handleTextareaChange(currentQuestion.id, e)}
+                        value={answers[currentQuestionId] || ''}
+                        onChange={(e) => handleTextareaChange(currentQuestionId, e)}
+                        className={showFeedback && currentFeedback !== undefined && currentQuestion.answers.find(a => a.text === answers[currentQuestionId] && a.isCorrect) ? 'border-green-500' : ''}
+                    />
+                )}
+
+                {currentQuestion.type === 'Essay' && (
+                    <Textarea
+                        placeholder="Your answer"
+                        value={answers[currentQuestionId] || ''}
+                        onChange={(e) => handleTextareaChange(currentQuestionId, e)}
+                        className={showFeedback && currentFeedback !== undefined && currentQuestion.answers.find(a => a.text === answers[currentQuestionId] && a.isCorrect) ? 'border-green-500' : ''}
                     />
                 )}
 
                 {currentQuestion.type === 'FillInTheBlank' && (
                     <Input
                         placeholder="Your answer"
-                        value={answers[currentQuestion.id] || ''}
-                        onChange={(e) => handleAnswerChange(currentQuestion.id, e)}
+                        value={answers[currentQuestionId] || ''}
+                        onChange={(e) => handleAnswerChange(currentQuestionId, e)}
+                        className={showFeedback && currentFeedback !== undefined && currentQuestion.answers.find(a => a.text === answers[currentQuestionId] && a.isCorrect) ? 'border-green-500' : ''}
                     />
                 )}
 
@@ -180,9 +235,11 @@ const TestBox: React.FC = () => {
                                 <p>{pair.leftItem}</p>
                                 <Select
                                     placeholder="Select match"
-                                    value={answers[`${currentQuestion.id}-${pair.id}`] || ''}
-                                    onChange={(e) => handleSelectChange(currentQuestion.id, pair.id, e.target.value)}
+                                    value={matchingAnswers[currentQuestionId]?.[pair.id] || ''}
+                                    onChange={(e) => handleSelectChange(currentQuestionId, pair.id, e.target.value)}
                                     className="max-w-xs"
+                                    isReadOnly={showFeedback}
+                                    isDisabled={showFeedback}
                                 >
                                     {currentQuestion.matchPairs.map((optionPair) => (
                                         <SelectItem key={optionPair.id} value={optionPair.rightItem}>
@@ -195,11 +252,24 @@ const TestBox: React.FC = () => {
                     </div>
                 )}
 
+                {test?.feedback === 'Immediate' && showFeedback && currentFeedback !== undefined && (
+                    <div className={`mt-4 ${currentFeedback ? 'text-green-500' : 'text-red-500'}`}>
+                        {currentFeedback ? 'Correct!' : 'Incorrect'}
+                    </div>
+                )}
+
                 <div className="mt-6">
                     {currentQuestionIndex < shuffledQuestions.length - 1 ? (
                         <Button color="primary" onClick={handleNextQuestion}>Next</Button>
                     ) : (
-                        <Button color="success" onClick={handleSubmit}>Submit</Button>
+                        showFeedback ? (
+                            <Button color="success" onClick={handleSubmit}>Submit</Button>
+                        ) : (
+                            <Button color="primary" onClick={() => {
+                                evaluateFeedback(currentQuestionId);
+                                setShowFeedback(true);
+                            }}>Next</Button>
+                        )
                     )}
                 </div>
             </div>

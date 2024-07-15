@@ -1,85 +1,106 @@
--- Insert companies
-INSERT INTO Company (Id, Name, IsActive, IsArchived, UpdatedOn, CreatedOn)
+-- Insert sample data into dbo.[Company]
+INSERT INTO dbo.[Company] (Id, Name, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), 'Tech Solutions', 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Health Innovations', 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Edu World', 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Finance Group', 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Marketing Masters', 1, 0, GETDATE(), GETDATE());
+    (NEWID(), 'Tech Solutions Inc.', 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'HealthCare Ltd.', 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'EduWorld Co.', 1, 0, GETDATE(), GETDATE());
 
--- Insert users
-INSERT INTO [User] (Id, Name, Username, Password, Email, Role, RefreshToken, TokenCreated, TokenExpires, CompanyId, IsActive, IsArchived, IsLocked, UpdatedOn, CreatedOn)
+-- Insert sample data into dbo.[User]
+INSERT INTO dbo.[User] (Id, Name, Username, Password, Email, Role, RefreshToken, TokenCreated, TokenExpires, CompanyId, IsActive, IsArchived, IsLocked, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), 'John Doe', 'jdoe', 'password123', 'jdoe@techsolutions.com', 'Admin', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), NULL, 1, 0, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Jane Smith', 'jsmith', 'password123', 'jsmith@healthinnovations.com', 'User', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), (SELECT TOP 1 Id FROM Company WHERE Name = 'Health Innovations'), 1, 0, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Emily Johnson', 'ejohnson', 'password123', 'ejohnson@eduworld.com', 'User', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), (SELECT TOP 1 Id FROM Company WHERE Name = 'Edu World'), 1, 0, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Alice Brown', 'abrown', 'password123', 'abrown@techsolutions.com', 'User', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), (SELECT TOP 1 Id FROM Company WHERE Name = 'Tech Solutions'), 1, 0, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Bob Martin', 'bmartin', 'password123', 'bmartin@healthinnovations.com', 'Admin', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), NULL, 1, 0, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Sarah Connor', 'sconnor', 'password123', 'sconnor@financegroup.com', 'User', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), (SELECT TOP 1 Id FROM Company WHERE Name = 'Finance Group'), 1, 0, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Michael Jordan', 'mjordan', 'password123', 'mjordan@marketingmasters.com', 'Admin', '', GETDATE(), DATEADD(YEAR, 1, GETDATE()), (SELECT TOP 1 Id FROM Company WHERE Name = 'Marketing Masters'), 1, 0, 0, GETDATE(), GETDATE());
+    (NEWID(), 'John Doe', 'jdoe', 'password1', 'jdoe@techsolutions.com', 'Admin', 'token1', GETDATE(), DATEADD(day, 7, GETDATE()), NULL, 1, 0, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Jane Smith', 'jsmith', 'password2', 'jsmith@healthcare.com', 'User', 'token2', GETDATE(), DATEADD(day, 7, GETDATE()), (SELECT Id FROM dbo.[Company] WHERE Name = 'HealthCare Ltd.'), 1, 0, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Alice Johnson', 'ajohnson', 'password3', 'ajohnson@eduworld.com', 'User', 'token3', GETDATE(), DATEADD(day, 7, GETDATE()), (SELECT Id FROM dbo.[Company] WHERE Name = 'EduWorld Co.'), 1, 0, 0, GETDATE(), GETDATE());
 
--- Insert tests
-INSERT INTO Test (Id, Name, Description, CompanyId, StartDate, EndDate, Duration, PassMark, IsTimed, ShuffleQuestions, MaximumAttempts, Visibility, TestType, Instructions, Feedback, TestAccessControl, GradingScheme, IsActive, IsArchived, UpdatedOn, CreatedOn, RetakePolicy_AllowRetakes, RetakePolicy_MaxRetakes, RetakePolicy_RetakeInterval)
+-- Insert sample data into dbo.[Test]
+INSERT INTO dbo.[Test] (Id, Name, Description, CompanyId, StartDate, EndDate, Duration, PassMark, IsTimed, ShuffleQuestions, MaximumAttempts, Visibility, TestType, Instructions, Feedback, TestAccessControl, GradingScheme, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), 'Tech Basics Quiz', 'A quiz to test basic tech knowledge', (SELECT TOP 1 Id FROM Company WHERE Name = 'Tech Solutions'), GETDATE(), DATEADD(DAY, 30, GETDATE()), '01:00:00', 60, 1, 1, 3, 0, 0, 'Answer all questions to the best of your knowledge.', 1, 0, 1, 1, 0, GETDATE(), GETDATE(), 1, 3, '01:00:00'),
-(NEWID(), 'Health Safety Exam', 'An exam on health safety protocols', (SELECT TOP 1 Id FROM Company WHERE Name = 'Health Innovations'), GETDATE(), DATEADD(DAY, 30, GETDATE()), '02:00:00', 75, 1, 0, 2, 1, 1, 'Follow all instructions carefully.', 2, 1, 0, 1, 0, GETDATE(), GETDATE(), 1, 2, '02:00:00'),
-(NEWID(), 'Education Strategies Survey', 'A survey on effective education strategies', (SELECT TOP 1 Id FROM Company WHERE Name = 'Edu World'), GETDATE(), DATEADD(DAY, 30, GETDATE()), '00:30:00', 50, 0, 1, 1, 2, 2, 'Provide your feedback honestly.', 0, 2, 2, 1, 0, GETDATE(), GETDATE(), 0, 1, '01:00:00'),
-(NEWID(), 'Advanced Tech Exam', 'An advanced exam to test deep tech knowledge', (SELECT TOP 1 Id FROM Company WHERE Name = 'Tech Solutions'), GETDATE(), DATEADD(DAY, 30, GETDATE()), '02:00:00', 70, 1, 1, 2, 0, 1, 'Read each question carefully.', 1, 0, 1, 1, 0, GETDATE(), GETDATE(), 1, 2, '01:30:00'),
-(NEWID(), 'Finance Fundamentals Quiz', 'A quiz on basic finance knowledge', (SELECT TOP 1 Id FROM Company WHERE Name = 'Finance Group'), GETDATE(), DATEADD(DAY, 30, GETDATE()), '01:00:00', 60, 1, 1, 3, 0, 0, 'Answer all questions to the best of your knowledge.', 1, 0, 1, 1, 0, GETDATE(), GETDATE(), 1, 3, '01:00:00'),
-(NEWID(), 'Marketing Essentials Exam', 'An exam on fundamental marketing concepts', (SELECT TOP 1 Id FROM Company WHERE Name = 'Marketing Masters'), GETDATE(), DATEADD(DAY, 30, GETDATE()), '01:30:00', 70, 1, 0, 2, 1, 1, 'Follow all instructions carefully.', 2, 1, 0, 1, 0, GETDATE(), GETDATE(), 1, 2, '01:30:00');
+    (NEWID(), 'Tech Solutions Assessment', 'Assessment for tech solutions', (SELECT Id FROM dbo.[Company] WHERE Name = 'Tech Solutions Inc.'), GETDATE(), DATEADD(day, 30, GETDATE()), '01:00:00', 50, 1, 1, 3, 1, 1, 'Follow the instructions', 2, 1, 1, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'HealthCare Knowledge Test', 'Knowledge test for healthcare employees', (SELECT Id FROM dbo.[Company] WHERE Name = 'HealthCare Ltd.'), GETDATE(), DATEADD(day, 30, GETDATE()), '00:45:00', 60, 1, 1, 2, 2, 2, 'Answer all questions', 2, 1, 2, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'EduWorld Quiz', 'Quiz for educational purposes', (SELECT Id FROM dbo.[Company] WHERE Name = 'EduWorld Co.'), GETDATE(), DATEADD(day, 30, GETDATE()), '00:30:00', 70, 1, 1, 1, 3, 3, 'Complete the quiz', 2, 1, 3, 1, 0, GETDATE(), GETDATE());
 
--- Insert questions
-INSERT INTO Question (Id, Text, Type, TestId, Weight, IsActive, IsArchived, UpdatedOn, CreatedOn)
+-- Insert sample data into dbo.[Question]
+INSERT INTO dbo.[Question] (Id, Text, Type, TestId, Weight, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), 'What is the capital of France?', 0, (SELECT TOP 1 Id FROM Test WHERE Name = 'Tech Basics Quiz'), 1.0, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Is the earth round?', 1, (SELECT TOP 1 Id FROM Test WHERE Name = 'Health Safety Exam'), 1.5, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Describe the process of photosynthesis.', 2, (SELECT TOP 1 Id FROM Test WHERE Name = 'Education Strategies Survey'), 2.0, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'What is the chemical symbol for water?', 0, (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam'), 1.0, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Is fire hot?', 1, (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam'), 1.0, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Match the following items: (1) CPU - (a) Central Processing Unit, (2) RAM - (b) Random Access Memory', 5, (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam'), 2.0, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'What is the formula for calculating compound interest?', 2, (SELECT TOP 1 Id FROM Test WHERE Name = 'Finance Fundamentals Quiz'), 2.0, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'What is the main goal of marketing?', 0, (SELECT TOP 1 Id FROM Test WHERE Name = 'Marketing Essentials Exam'), 1.5, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'Explain the importance of customer segmentation.', 2, (SELECT TOP 1 Id FROM Test WHERE Name = 'Marketing Essentials Exam'), 2.0, 1, 0, GETDATE(), GETDATE());
+    (NEWID(), 'What is the capital of France?', 0, (SELECT Id FROM dbo.[Test] WHERE Name = 'Tech Solutions Assessment'), 1.0, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Which organ is responsible for pumping blood?', 1, (SELECT Id FROM dbo.[Test] WHERE Name = 'HealthCare Knowledge Test'), 1.0, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'What is 2 + 2?', 0, (SELECT Id FROM dbo.[Test] WHERE Name = 'EduWorld Quiz'), 1.0, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Explain the theory of relativity.', 3, (SELECT Id FROM dbo.[Test] WHERE Name = 'Tech Solutions Assessment'), 2.0, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Complete the following sentence: "The quick brown fox jumps over the _____ dog."', 4, (SELECT Id FROM dbo.[Test] WHERE Name = 'HealthCare Knowledge Test'), 1.5, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Match the countries with their capitals.', 5, (SELECT Id FROM dbo.[Test] WHERE Name = 'Tech Solutions Assessment'), 1.0, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'What is the boiling point of water?', 0, (SELECT Id FROM dbo.[Test] WHERE Name = 'HealthCare Knowledge Test'), 1.2, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'What is the powerhouse of the cell?', 1, (SELECT Id FROM dbo.[Test] WHERE Name = 'EduWorld Quiz'), 1.3, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Who developed the theory of evolution?', 1, (SELECT Id FROM dbo.[Test] WHERE Name = 'EduWorld Quiz'), 1.4, 1, 0, GETDATE(), GETDATE());
 
--- Insert answers
-INSERT INTO Answer (Id, Text, IsCorrect, IsFillInTheBlank, QuestionId, IsActive, IsArchived, UpdatedOn, CreatedOn)
+-- Insert sample data into dbo.[Answer]
+INSERT INTO dbo.[Answer] (Id, Text, IsCorrect, IsFillInTheBlank, QuestionId, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), 'Paris', 1, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the capital of France?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'London', 0, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the capital of France?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'True', 1, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'Is the earth round?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'False', 0, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'Is the earth round?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'H2O', 1, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the chemical symbol for water?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'CO2', 0, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the chemical symbol for water?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'True', 1, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'Is fire hot?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'False', 0, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'Is fire hot?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'To maximize profits', 0, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the main goal of marketing?'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'To meet customer needs', 1, 0, (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the main goal of marketing?'), 1, 0, GETDATE(), GETDATE());
+    (NEWID(), 'Paris', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the capital of France?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Berlin', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the capital of France?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Heart', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'Which organ is responsible for pumping blood?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Lungs', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'Which organ is responsible for pumping blood?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), '4', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is 2 + 2?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), '3', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is 2 + 2?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'lazy', 1, 1, (SELECT Id FROM dbo.[Question] WHERE Text = 'Complete the following sentence: "The quick brown fox jumps over the _____ dog."'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), '100°C', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the boiling point of water?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Mitochondria', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the powerhouse of the cell?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Nucleus', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the powerhouse of the cell?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Charles Darwin', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'Who developed the theory of evolution?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Albert Einstein', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'Who developed the theory of evolution?'), 1, 0, GETDATE(), GETDATE());
 
--- Insert match pairs
-INSERT INTO MatchPair (Id, LeftItem, RightItem, QuestionId, IsActive, IsArchived, UpdatedOn, CreatedOn)
+-- Insert sample data into dbo.[MatchPair]
+INSERT INTO dbo.[MatchPair] (Id, LeftItem, RightItem, LeftItemId, RightItemId, QuestionId, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), 'CPU', 'Central Processing Unit', (SELECT TOP 1 Id FROM Question WHERE Text LIKE 'Match the following items%'), 1, 0, GETDATE(), GETDATE()),
-(NEWID(), 'RAM', 'Random Access Memory', (SELECT TOP 1 Id FROM Question WHERE Text LIKE 'Match the following items%'), 1, 0, GETDATE(), GETDATE());
+    (NEWID(), 'France', 'Paris', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the countries with their capitals.'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Germany', 'Berlin', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the countries with their capitals.'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Italy', 'Rome', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the countries with their capitals.'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Spain', 'Madrid', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the countries with their capitals.'), 1, 0, GETDATE(), GETDATE());
 
--- Insert test results
-INSERT INTO TestResult (Id, UserId, TestId, CompletedDate, Score, IsActive, IsArchived, UpdatedOn, CreatedOn)
+-- Insert additional sample data into dbo.[Test]
+INSERT INTO dbo.[Test] (Id, Name, Description, CompanyId, StartDate, EndDate, Duration, PassMark, IsTimed, ShuffleQuestions, MaximumAttempts, Visibility, TestType, Instructions, Feedback, TestAccessControl, GradingScheme, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), (SELECT TOP 1 Id FROM [User] WHERE Username = 'jsmith'), (SELECT TOP 1 Id FROM Test WHERE Name = 'Health Safety Exam'), GETDATE(), 80, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM [User] WHERE Username = 'ejohnson'), (SELECT TOP 1 Id FROM Test WHERE Name = 'Education Strategies Survey'), GETDATE(), 90, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM [User] WHERE Username = 'abrown'), (SELECT TOP 1 Id FROM Test WHERE Name = 'Tech Basics Quiz'), GETDATE(), 70, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM [User] WHERE Username = 'bmartin'), (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam'), GETDATE(), 85, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM [User] WHERE Username = 'sconnor'), (SELECT TOP 1 Id FROM Test WHERE Name = 'Finance Fundamentals Quiz'), GETDATE(), 88, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM [User] WHERE Username = 'mjordan'), (SELECT TOP 1 Id FROM Test WHERE Name = 'Marketing Essentials Exam'), GETDATE(), 92, 1, 0, GETDATE(), GETDATE());
+    (NEWID(), 'Advanced Tech Solutions Assessment', 'Advanced assessment for tech solutions', (SELECT Id FROM dbo.[Company] WHERE Name = 'Tech Solutions Inc.'), GETDATE(), DATEADD(day, 45, GETDATE()), '01:30:00', 70, 1, 1, 3, 1, 1, 'Read each question carefully', 2, 1, 1, 1, 0, GETDATE(), GETDATE());
 
--- Insert question results
-INSERT INTO QuestionResult (Id, TestResultId, QuestionId, Answer, IsCorrect, IsActive, IsArchived, UpdatedOn, CreatedOn)
+-- Insert additional sample data into dbo.[Question]
+INSERT INTO dbo.[Question] (Id, Text, Type, TestId, Weight, IsActive, IsArchived, UpdatedOn, CreatedOn)
 VALUES 
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'jsmith') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Health Safety Exam')), (SELECT TOP 1 Id FROM Question WHERE Text = 'Is the earth round?'), 'True', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'ejohnson') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Education Strategies Survey')), (SELECT TOP 1 Id FROM Question WHERE Text = 'Describe the process of photosynthesis.'), 'It is the process by which green plants use sunlight to synthesize foods with the help of chlorophyll.', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'abrown') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Tech Basics Quiz')), (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the capital of France?'), 'Paris', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'bmartin') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam')), (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the chemical symbol for water?'), 'H2O', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'bmartin') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam')), (SELECT TOP 1 Id FROM Question WHERE Text = 'Is fire hot?'), 'True', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'bmartin') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Advanced Tech Exam')), (SELECT TOP 1 Id FROM Question WHERE Text LIKE 'Match the following items%'), 'CPU - Central Processing Unit, RAM - Random Access Memory', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'sconnor') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Finance Fundamentals Quiz')), (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the formula for calculating compound interest?'), 'Compound interest formula', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'mjordan') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Marketing Essentials Exam')), (SELECT TOP 1 Id FROM Question WHERE Text = 'What is the main goal of marketing?'), 'To meet customer needs', 1, 1, 0, GETDATE(), GETDATE()),
-(NEWID(), (SELECT TOP 1 Id FROM TestResult WHERE UserId = (SELECT TOP 1 Id FROM [User] WHERE Username = 'mjordan') AND TestId = (SELECT TOP 1 Id FROM Test WHERE Name = 'Marketing Essentials Exam')), (SELECT TOP 1 Id FROM Question WHERE Text = 'Explain the importance of customer segmentation.'), 'It helps in targeting specific groups more effectively.', 1, 1, 0, GETDATE(), GETDATE());
+    (NEWID(), 'What is the speed of light?', 0, (SELECT Id FROM dbo.[Test] WHERE Name = 'Advanced Tech Solutions Assessment'), 1.5, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Define Newtons First Law.', 3, (SELECT Id FROM dbo.[Test] WHERE Name = 'Advanced Tech Solutions Assessment'), 2.5, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'What is the capital of Japan?', 0, (SELECT Id FROM dbo.[Test] WHERE Name = 'Advanced Tech Solutions Assessment'), 1.0, 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Match the programming languages with their creators.', 5, (SELECT Id FROM dbo.[Test] WHERE Name = 'Advanced Tech Solutions Assessment'), 1.5, 1, 0, GETDATE(), GETDATE());
+
+-- Insert additional sample data into dbo.[Answer]
+INSERT INTO dbo.[Answer] (Id, Text, IsCorrect, IsFillInTheBlank, QuestionId, IsActive, IsArchived, UpdatedOn, CreatedOn)
+VALUES 
+    (NEWID(), '299,792,458 ms', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the speed of light?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), '9.8 ms', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the speed of light?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Tokyo', 1, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the capital of Japan?'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Kyoto', 0, 0, (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the capital of Japan?'), 1, 0, GETDATE(), GETDATE());
+
+-- Insert additional sample data into dbo.[MatchPair]
+INSERT INTO dbo.[MatchPair] (Id, LeftItem, RightItem, LeftItemId, RightItemId, QuestionId, IsActive, IsArchived, UpdatedOn, CreatedOn)
+VALUES 
+    (NEWID(), 'Python', 'Guido van Rossum', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the programming languages with their creators.'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Java', 'James Gosling', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the programming languages with their creators.'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'C', 'Dennis Ritchie', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the programming languages with their creators.'), 1, 0, GETDATE(), GETDATE()),
+    (NEWID(), 'Ruby', 'Yukihiro Matsumoto', NEWID(), NEWID(), (SELECT Id FROM dbo.[Question] WHERE Text = 'Match the programming languages with their creators.'), 1, 0, GETDATE(), GETDATE());
+
+-- Insert sample data into dbo.[TestResult]
+INSERT INTO dbo.[TestResult] (Id, UserId, TestId, CompletedDate, Score, IsArchived, UpdatedOn, CreatedOn, IsActive)
+VALUES 
+    (NEWID(), (SELECT Id FROM dbo.[User] WHERE Username = 'jdoe'), (SELECT Id FROM dbo.[Test] WHERE Name = 'Tech Solutions Assessment'), GETDATE(), 85, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[User] WHERE Username = 'jsmith'), (SELECT Id FROM dbo.[Test] WHERE Name = 'HealthCare Knowledge Test'), GETDATE(), 75, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[User] WHERE Username = 'ajohnson'), (SELECT Id FROM dbo.[Test] WHERE Name = 'EduWorld Quiz'), GETDATE(), 90, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[User] WHERE Username = 'jdoe'), (SELECT Id FROM dbo.[Test] WHERE Name = 'Advanced Tech Solutions Assessment'), GETDATE(), 95, 0, GETDATE(), GETDATE(), 1);
+
+-- Insert sample data into dbo.[QuestionResult]
+INSERT INTO dbo.[QuestionResult] (Id, TestResultId, QuestionId, Answer, IsCorrect, IsArchived, UpdatedOn, CreatedOn, IsActive)
+VALUES 
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 85), (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the capital of France?'), 'Paris', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 75), (SELECT Id FROM dbo.[Question] WHERE Text = 'Which organ is responsible for pumping blood?'), 'Heart', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 90), (SELECT Id FROM dbo.[Question] WHERE Text = 'What is 2 + 2?'), '4', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 85), (SELECT Id FROM dbo.[Question] WHERE Text = 'Complete the following sentence: "The quick brown fox jumps over the _____ dog."'), 'lazy', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 75), (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the boiling point of water?'), '100°C', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 90), (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the powerhouse of the cell?'), 'Mitochondria', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 95), (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the speed of light?'), '299,792,458 m/s', 1, 0, GETDATE(), GETDATE(), 1),
+    (NEWID(), (SELECT Id FROM dbo.[TestResult] WHERE Score = 95), (SELECT Id FROM dbo.[Question] WHERE Text = 'What is the capital of Japan?'), 'Tokyo', 1, 0, GETDATE(), GETDATE(), 1);
