@@ -38,7 +38,7 @@ export const deleteAdminCompanyById = async (companyid: string) => await apiRequ
     method: 'DELETE'
 });
 
-export const addAdminCompanyById = async (company) => await apiRequest({url: '/admincompany', method: 'POST', data: company});
+export const addAdminCompany= async (company) => await apiRequest({url: '/admincompany', method: 'POST', data: company});
 
 /* Admin User */
 export const fetchAdminUsers = async () => await apiRequest({url: '/user', method: 'GET'});
@@ -80,7 +80,7 @@ export default {
     fetchAdminCompanies,
     fetchAdminCompanyById,
     deleteAdminCompanyById,
-    addAdminCompanyById,
+    addAdminCompany,
     fetchAdminUsers,
     fetchAdminUserById,
     deleteAdminUserById,

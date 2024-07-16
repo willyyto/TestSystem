@@ -4,5 +4,5 @@ public class TestSubmissionDto
 {
     public Guid TestId { get; set; }
     public Dictionary<Guid, string> Answers { get; set; }
-    public Dictionary<Guid, Dictionary<Guid, Guid>> MatchingAnswers { get; set; }
+    public Dictionary<Guid, Dictionary<Guid, string>> MatchingAnswers { get; set; } = new();
 }

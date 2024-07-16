@@ -27,7 +27,7 @@ import { Icon } from '@iconify/react';
 import { format } from "date-fns";
 import RowsPerPageDropdown from "components/common/RowsPerPageDropdown.tsx";
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'username', 'role', 'email', 'company', 'isActive', 'isArchived', 'isLocked', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['name', 'username', 'role', 'email', 'company', 'isActive', 'actions'];
 
 const statusColorMap = {
     true: 'success',

@@ -50,31 +50,31 @@ public class UserRepository : IUserRepository
 
         return user.Id;
     }
-    
+
     public async Task UpdateUserAsync(CancellationToken ct, User user)
     {
         _tsDbContext.Users.Update(user);
         await _tsDbContext.SaveChangesAsync(ct);
     }
-    
-    
+
+
     public async Task<User?> DeleteUserAsync(CancellationToken ct, Guid id)
     {
         var user = await _tsDbContext.Users
             .Include(t => t.Company)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
-        
+
         if (user == null) return null;
-        
+
         var testresults = await _tsDbContext.TestResults
             .Include(t => t.QuestionResults)
-            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .Where(t => t.IsActive == true && t.IsArchived == false)
             .FirstOrDefaultAsync(t => t.UserId == id, ct);
-        
-        _tsDbContext.TestResults.RemoveRange(testresults);
+
+        if (testresults != null) _tsDbContext.TestResults.RemoveRange(testresults);
         _tsDbContext.Users.Remove(user);
         await _tsDbContext.SaveChangesAsync(ct);
-        
+
         return user;
     }
 }

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Chip,
@@ -15,17 +15,15 @@ import {
     TableHeader,
     TableRow,
 } from '@nextui-org/react';
-
-import {capitalize} from 'utils/utils';
-
-import {useNavigate} from 'react-router-dom';
-import {Icon} from '@iconify/react';
-import {format} from "date-fns";
-
-import {Company} from 'types/Interfaces.ts';
-import apiService from 'contexts/AdminApiService';
-import {AdminCompanyTableColumns} from './AdminCompanyTableColumns';
+import { capitalize } from 'utils/utils';
+import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+import { format } from "date-fns";
+import { Company } from 'types/Interfaces.ts';
+import apiService from 'contexts/AdminApiService.tsx';
+import { AdminCompanyTableColumns } from './AdminCompanyTableColumns';
 import ConfirmationModal from 'components/common/ConfirmationModal';
+import AddCompanyModal from './AddCompanyModal'; // Import the AddCompanyModal component
 import RowsPerPageDropdown from "components/common/RowsPerPageDropdown.tsx";
 
 const INITIAL_VISIBLE_COLUMNS = ['name', 'isActive', 'actions'];
@@ -36,19 +34,19 @@ const statusColorMap = {
 };
 
 const AdminCompanyTable: React.FC = () => {
-    const [filterValue, setFilterValue] = useState('');
+    const [filterValue, setFilterValue] = useState<string>('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
-    const [selectedKeys, setSelectedKeys] = useState(new Set([]));
-    const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [sortDescriptor, setSortDescriptor] = useState({
+    const [selectedKeys, setSelectedKeys] = useState<Set<React.Key>>(new Set());
+    const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set(INITIAL_VISIBLE_COLUMNS));
+    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+    const [sortDescriptor, setSortDescriptor] = useState<{ column: string; direction: 'ascending' | 'descending' }>({
         column: 'name',
         direction: 'ascending',
     });
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState<number>(1);
     const [companyData, setCompanyData] = useState<Company[]>([]);
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirm modal
-    const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false); // State for confirm modal
+    const [isCompanyModalOpen, setIsCompanyModalOpen] = useState<boolean>(false); // State for new company modal
     const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null); // State for the company to delete
     const navigate = useNavigate();
 
@@ -58,13 +56,13 @@ const AdminCompanyTable: React.FC = () => {
                 const data = await apiService.fetchAdminCompanies();
                 setCompanyData(data);
             } catch (error) {
-                console.error('Error fetching companys:', error);
+                console.error('Error fetching companies:', error);
             }
         };
 
         fetchAdminCompanies();
     }, []);
-    
+
     const handleDeleteCompany = async () => {
         if (companyToDelete) {
             try {
@@ -96,21 +94,21 @@ const AdminCompanyTable: React.FC = () => {
     }, [visibleColumns]);
 
     const filteredItems = useMemo(() => {
-        let filteredCompanys = [...companyData];
+        let filteredCompanies = [...companyData];
 
         if (hasSearchFilter) {
-            filteredCompanys = filteredCompanys.filter((company) =>
+            filteredCompanies = filteredCompanies.filter((company) =>
                 company.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
         if (statusFilter !== 'all') {
-            filteredCompanys = filteredCompanys.filter((company) =>
+            filteredCompanies = filteredCompanies.filter((company) =>
                 statusFilter === 'active' ? company.isActive : !company.isActive,
             );
         }
 
-        return filteredCompanys;
+        return filteredCompanies;
     }, [companyData, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -132,7 +130,7 @@ const AdminCompanyTable: React.FC = () => {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = useCallback((company, columnKey) => {
+    const renderCell = useCallback((company: Company, columnKey: string) => {
         const cellValue = company[columnKey];
 
         switch (columnKey) {
@@ -147,24 +145,6 @@ const AdminCompanyTable: React.FC = () => {
                     <Chip className="capitalize" color={statusColorMap[company.isActive]} size="sm" variant="flat">
                         {company.isActive ? 'Active' : 'Inactive'}
                     </Chip>
-                );
-            case 'startDate':
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
-                    </div>
-                );
-            case 'endDate':
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
-                    </div>
-                );
-            case 'questions':
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-sm">{company.questions.length}</p>
-                    </div>
                 );
             case 'actions':
                 return (
@@ -204,7 +184,7 @@ const AdminCompanyTable: React.FC = () => {
         setPage(1);
     }, []);
 
-    const onSearchChange = useCallback((value) => {
+    const onSearchChange = useCallback((value: string) => {
         if (value) {
             setFilterValue(value);
             setPage(1);
@@ -277,7 +257,7 @@ const AdminCompanyTable: React.FC = () => {
                         </Dropdown>
                         <Button color="primary" endContent={<Icon icon="heroicons-solid:plus"
                                                                   className="h-5 w-5 text-white"/>}
-                                onClick={() => navigate('/createcompany')}>
+                                onClick={() => setIsCompanyModalOpen(true)}>
                             Add New
                         </Button>
                     </div>
@@ -288,7 +268,6 @@ const AdminCompanyTable: React.FC = () => {
                         Rows per page:
                         <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
                     </label>
-
                 </div>
             </div>
         );
@@ -305,11 +284,11 @@ const AdminCompanyTable: React.FC = () => {
     const bottomContent = useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-sm text-default-400">
-          {selectedKeys === 'all'
-              ? 'All items selected'
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
+                <span className="w-[30%] text-sm text-default-400">
+                    {selectedKeys === 'all'
+                        ? 'All items selected'
+                        : `${selectedKeys.size} of ${filteredItems.length} selected`}
+                </span>
                 <Pagination
                     isCompact
                     showControls
@@ -369,7 +348,12 @@ const AdminCompanyTable: React.FC = () => {
                     )}
                 </TableBody>
             </Table>
-            
+
+            <AddCompanyModal
+                isOpen={isCompanyModalOpen}
+                onClose={() => setIsCompanyModalOpen(false)}
+            />
+
             <ConfirmationModal
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}

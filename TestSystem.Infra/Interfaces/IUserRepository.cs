@@ -1,5 +1,4 @@
-﻿using TestSystem.Core.Dtos;
-using TestSystem.Core.Entities;
+﻿using TestSystem.Core.Entities;
 
 namespace TestSystem.Infra.Interfaces;
 

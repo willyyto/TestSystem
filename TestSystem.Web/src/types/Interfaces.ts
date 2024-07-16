@@ -58,7 +58,9 @@ export interface Answer {
 
 export interface MatchPair {
     id: string;
+    leftItemId: string;
     leftItem: string;
+    rightItemId: string;
     rightItem: string;
 }
 

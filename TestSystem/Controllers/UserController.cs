@@ -52,7 +52,7 @@ public class UserController : ControllerBase
         var id = await _userService.AddUserAsync(ct, User);
         return Ok(id);
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult<Guid?>> DeleteUser(Guid id)
     {

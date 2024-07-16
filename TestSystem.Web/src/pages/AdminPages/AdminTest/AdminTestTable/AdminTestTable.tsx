@@ -16,7 +16,7 @@ import {
     TableRow,
 } from '@nextui-org/react';
 import {AdminTestTableColumns} from './AdminTestTableColumns';
-import {formatDate} from 'utils/utils';
+import {formatDate, formatDuration} from 'utils/utils';
 import apiService from 'contexts/AdminApiService';
 import ViewTestModal from './ViewTestModal.tsx';
 import ConfirmationModal from 'components/common/ConfirmationModal';
@@ -163,6 +163,12 @@ const AdminTestTable: React.FC = () => {
                     <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
                         {test.shuffleQuestions ? 'Active' : 'Inactive'}
                     </Chip>
+                );
+            case 'duration':
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-sm capitalize">{formatDuration(cellValue)}</p>
+                    </div>
                 );
             case 'startDate':
                 return (

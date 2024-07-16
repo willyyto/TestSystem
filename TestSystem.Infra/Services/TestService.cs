@@ -42,10 +42,11 @@ public class TestService : ITestService
                 if (submission.Answers.TryGetValue(question.Id, out var answer))
                 {
                     var correctAnswer = question.Answers.FirstOrDefault(a => a.IsCorrect);
-                    if (correctAnswer != null && correctAnswer.Text == answer) isCorrect = true;
+                    if (correctAnswer != null && correctAnswer.Id == Guid.Parse(answer)) isCorrect = true;
                 }
             }
-            else if (question.Type == QuestionType.FillInTheBlank)
+            else if (question.Type == QuestionType.FillInTheBlank || question.Type == QuestionType.ShortAnswer ||
+                     question.Type == QuestionType.Essay)
             {
                 if (submission.Answers.TryGetValue(question.Id, out var answer))
                 {
@@ -60,7 +61,7 @@ public class TestService : ITestService
                     isCorrect = true;
                     foreach (var pair in question.MatchPairs)
                         if (!submittedPairs.TryGetValue(pair.LeftItemId, out var rightItemId) ||
-                            rightItemId != pair.RightItemId)
+                            rightItemId != pair.RightItemId.ToString())
                         {
                             isCorrect = false;
                             break;

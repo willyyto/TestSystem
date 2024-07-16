@@ -9,7 +9,9 @@ public static class MatchPairMapper
     {
         return new MatchPairDto(
             matchPair.Id,
+            matchPair.LeftItemId,
             matchPair.LeftItem,
+            matchPair.RightItemId,
             matchPair.RightItem
         );
     }

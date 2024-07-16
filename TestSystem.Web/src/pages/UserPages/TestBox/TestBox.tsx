@@ -1,9 +1,9 @@
-﻿import React, {useEffect, useState} from 'react';
-import {Button, Card, CardHeader, Input, RadioGroup, Select, SelectItem, Textarea} from '@nextui-org/react';
-import {useParams} from 'react-router-dom';
-import {CustomTestRadio} from 'components/Test/CustomTestRadio';
+﻿import React, { useEffect, useState } from 'react';
+import { Button, Card, CardHeader, Input, RadioGroup, Select, SelectItem, Textarea } from '@nextui-org/react';
+import { useParams } from 'react-router-dom';
+import { CustomTestRadio } from 'components/Test/CustomTestRadio';
 import apiService from 'contexts/UserApiService';
-import {Question, Test} from 'types/Interfaces';
+import { Question, Test } from 'types/Interfaces';
 
 const shuffleArray = (array: any[]) => {
     return array.sort(() => Math.random() - 0.5);
@@ -26,7 +26,7 @@ const TestBox: React.FC = () => {
     const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<{ [key: string]: string }>({});
-    const [matchingAnswers, setMatchingAnswers] = useState<{ [key: string]: { [pairId: string]: string } }>({});
+    const [matchingAnswers, setMatchingAnswers] = useState<{ [key: string]: { [leftItemId: string]: string } }>({});
     const [feedback, setFeedback] = useState<{ [key: string]: boolean }>({});
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [timerActive, setTimerActive] = useState<boolean>(false);
@@ -67,12 +67,12 @@ const TestBox: React.FC = () => {
         });
     };
 
-    const handleSelectChange = (questionId: string, pairId: string, value: string) => {
+    const handleSelectChange = (questionId: string, leftItemId: string, value: string) => {
         setMatchingAnswers({
             ...matchingAnswers,
             [questionId]: {
                 ...matchingAnswers[questionId],
-                [pairId]: value,
+                [leftItemId]: value,
             },
         });
     };
@@ -116,13 +116,20 @@ const TestBox: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await apiService.submitTest(test?.id as string, {answers, matchingAnswers});
+            const payload = {
+                testId: test?.id,
+                answers: answers,
+                matchingAnswers: matchingAnswers
+            };
+
+            const response = await apiService.submitTest(payload);
             alert(response.message);
             window.location.href = '/dashboard';
         } catch (error) {
             console.error("Error submitting test:", error);
         }
     };
+
 
     useEffect(() => {
         if (timerActive && timeLeft > 0) {
@@ -177,8 +184,7 @@ const TestBox: React.FC = () => {
                         onChange={(event) => handleAnswerChange(currentQuestionId, event)}
                     >
                         {currentQuestion.answers.map((answer) => (
-                            <CustomTestRadio key={answer.id} value={answer.id}
-                                             className={showFeedback && currentFeedback !== undefined && answer.isCorrect ? 'border-green-500' : ''}>
+                            <CustomTestRadio key={answer.id} value={answer.id} className={showFeedback && currentFeedback !== undefined && answer.isCorrect ? 'border-green-500' : ''}>
                                 {answer.text}
                             </CustomTestRadio>
                         ))}
@@ -193,8 +199,7 @@ const TestBox: React.FC = () => {
                         onChange={(event) => handleAnswerChange(currentQuestionId, event)}
                     >
                         {currentQuestion.answers.map((answer) => (
-                            <CustomTestRadio key={answer.id} value={answer.id}
-                                             className={showFeedback && currentFeedback !== undefined && answer.isCorrect ? 'border-green-500' : ''}>
+                            <CustomTestRadio key={answer.id} value={answer.id} className={showFeedback && currentFeedback !== undefined && answer.isCorrect ? 'border-green-500' : ''}>
                                 {answer.text}
                             </CustomTestRadio>
                         ))}
@@ -235,14 +240,14 @@ const TestBox: React.FC = () => {
                                 <p>{pair.leftItem}</p>
                                 <Select
                                     placeholder="Select match"
-                                    value={matchingAnswers[currentQuestionId]?.[pair.id] || ''}
-                                    onChange={(e) => handleSelectChange(currentQuestionId, pair.id, e.target.value)}
+                                    value={matchingAnswers[currentQuestionId]?.[pair.leftItemId] || ''}
+                                    onChange={(e) => handleSelectChange(currentQuestionId, pair.leftItemId, e.target.value)}
                                     className="max-w-xs"
                                     isReadOnly={showFeedback}
                                     isDisabled={showFeedback}
                                 >
                                     {currentQuestion.matchPairs.map((optionPair) => (
-                                        <SelectItem key={optionPair.id} value={optionPair.rightItem}>
+                                        <SelectItem key={optionPair.rightItemId} value={optionPair.rightItemId}>
                                             {optionPair.rightItem}
                                         </SelectItem>
                                     ))}

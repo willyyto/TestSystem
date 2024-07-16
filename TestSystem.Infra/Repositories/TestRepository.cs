@@ -26,7 +26,7 @@ public class TestRepository : ITestRepository
             .ThenInclude(q => q.MatchPairs)
             .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .Where(t => t.IsActive == true && t.IsArchived == false)
             .OrderByDescending(t => t.Name)
             .ToListAsync(ct);
     }
@@ -39,11 +39,11 @@ public class TestRepository : ITestRepository
             .ThenInclude(q => q.MatchPairs)
             .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .Where(t => t.IsActive == true && t.IsArchived == false)
             .OrderByDescending(t => t.Name)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
-    
+
     public async Task<Test?> DeleteTestByIdAsync(CancellationToken ct, Guid id)
     {
         var test = await _tsDbContext.Tests
@@ -53,13 +53,13 @@ public class TestRepository : ITestRepository
             .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
-        
+
         if (test == null) return null;
-        
+
         _tsDbContext.TestResults.RemoveRange(test.TestResults);
         _tsDbContext.Tests.Remove(test);
         await _tsDbContext.SaveChangesAsync(ct);
-        
+
         return test;
     }
 
@@ -86,7 +86,7 @@ public class TestRepository : ITestRepository
             .OrderByDescending(t => t.CompletedDate)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
-    
+
     public async Task<IEnumerable<TestResult>> GetTestResultsByUserIdAsync(CancellationToken ct, Guid userId)
     {
         return await _tsDbContext.TestResults
