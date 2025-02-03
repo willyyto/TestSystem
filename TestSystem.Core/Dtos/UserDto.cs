@@ -1,3 +1,12 @@
 ﻿namespace TestSystem.Core.Dtos;
 
-public record UserDto(string Username, string Password, string Name, string Email, string Role);
+public record UserDto(
+    Guid Id,
+    string Username,
+    string Name,
+    string Email,
+    string Role,
+    CompanyDto? Company,
+    bool IsArchived,
+    bool IsActive,
+    bool Islocked);

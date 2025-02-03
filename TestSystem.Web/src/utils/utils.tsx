@@ -6,5 +6,11 @@ export function capitalize(str: string) {
 
 export function formatDate(dateString: string) {
     const date = new Date(dateString);
-    return format(date, 'do MMMM yyyy');
+    return format(date, 'dd/MM/yyyy');
 }
+
+// utils/formatDuration.ts
+export const formatDuration = (duration: string): string => {
+    const [hours, minutes] = duration.split(':');
+    return `${hours} hr, ${minutes} min`;
+};

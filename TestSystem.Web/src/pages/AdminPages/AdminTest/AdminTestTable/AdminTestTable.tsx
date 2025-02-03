@@ -16,17 +16,17 @@ import {
     TableRow,
 } from '@nextui-org/react';
 import {AdminTestTableColumns} from './AdminTestTableColumns';
-import {capitalize, formatDate} from 'utils/utils';
+import {formatDate, formatDuration} from 'utils/utils';
 import apiService from 'contexts/AdminApiService';
 import ViewTestModal from './ViewTestModal.tsx';
 import ConfirmationModal from 'components/common/ConfirmationModal';
 import {Test} from 'types/Interfaces.ts';
 import {useNavigate} from 'react-router-dom';
 import {Icon} from '@iconify/react';
-import {format} from "date-fns";
-import RowsPerPageDropdown from "../../../../components/common/RowsPerPageDropdown.tsx";
+import RowsPerPageDropdown from "components/common/RowsPerPageDropdown.tsx";
+import RetakePolicyModal from 'components/Test/RetakePolicyModal'; // Import the new component
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'company', 'questions', 'startDate', 'endDate', 'isActive', 'actions'];
+const INITIAL_VISIBLE_COLUMNS = ['name', 'company', 'testType', 'duration', 'passMark', 'isTimed', 'shuffleQuestions', 'maximumAttempts', 'feedback', 'testAccessControl', 'gradingScheme', 'visibility', 'questions', 'retakePolicy', 'startDate', 'endDate', 'isActive', 'actions'];
 
 const statusColorMap = {
     true: 'success',
@@ -47,6 +47,7 @@ const AdminTestTable: React.FC = () => {
     const [testData, setTestData] = useState<Test[]>([]);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirm modal
+    const [isRetakePolicyModalOpen, setIsRetakePolicyModalOpen] = useState(false); // State for retake policy modal
     const [selectedTest, setSelectedTest] = useState<Test | null>(null);
     const [testToDelete, setTestToDelete] = useState<Test | null>(null); // State for the test to delete
     const navigate = useNavigate();
@@ -85,7 +86,12 @@ const AdminTestTable: React.FC = () => {
             }
         }
     };
-    
+
+    const handleViewRetakePolicy = (test: Test) => {
+        setSelectedTest(test);
+        setIsRetakePolicyModalOpen(true);
+    };
+
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = useMemo(() => {
@@ -133,12 +139,11 @@ const AdminTestTable: React.FC = () => {
 
     const renderCell = useCallback((test, columnKey) => {
         const cellValue = test[columnKey];
-
         switch (columnKey) {
             case 'name':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
+                        <p className="text-sm capitalize">{cellValue}</p>
                     </div>
                 );
             case 'isActive':
@@ -147,22 +152,50 @@ const AdminTestTable: React.FC = () => {
                         {test.isActive ? 'Active' : 'Inactive'}
                     </Chip>
                 );
+            case 'isTimed':
+                return (
+                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
+                        {test.isTimed ? 'Active' : 'Inactive'}
+                    </Chip>
+                );
+            case 'shuffleQuestions':
+                return (
+                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
+                        {test.shuffleQuestions ? 'Active' : 'Inactive'}
+                    </Chip>
+                );
+            case 'duration':
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-sm capitalize">{formatDuration(cellValue)}</p>
+                    </div>
+                );
             case 'startDate':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{formatDate(cellValue)}</p>
+                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
                     </div>
                 );
             case 'endDate':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{formatDate(cellValue)}</p>
+                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
                     </div>
                 );
             case 'questions':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small">{test.questions.length}</p>
+                        <p className="text-sm">{test.questions.length}</p>
+                    </div>
+                );
+            case 'retakePolicy':
+                return (
+                    <div className="flex flex-col">
+                        <Button size="sm" variant="ghost"
+                                endContent={<Icon icon="solar:arrow-right-up-outline" className="h-3 w-3"/>}
+                                onClick={() => handleViewRetakePolicy(test)}>
+                            View
+                        </Button>
                     </div>
                 );
             case 'actions':
@@ -286,8 +319,8 @@ const AdminTestTable: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {testData.length} Tests</span>
-                    <label className="flex items-center text-default-400 text-small gap-2">
+                    <span className="text-default-400 text-sm">Total {testData.length} Tests</span>
+                    <label className="flex items-center text-default-400 text-sm gap-2">
                         Rows per page:  <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
                     </label>
                 </div>
@@ -306,7 +339,7 @@ const AdminTestTable: React.FC = () => {
     const bottomContent = useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <span className="w-[30%] text-sm text-default-400">
           {selectedKeys === 'all'
               ? 'All items selected'
               : `${selectedKeys.size} of ${filteredItems.length} selected`}
@@ -341,7 +374,7 @@ const AdminTestTable: React.FC = () => {
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
                 classNames={{
-                    wrapper: 'max-h-[382px]',
+                    wrapper: 'max-h-[500px] max-h-full',
                 }}
                 selectedKeys={selectedKeys}
                 selectionMode="multiple"
@@ -382,6 +415,14 @@ const AdminTestTable: React.FC = () => {
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={handleDeleteTest}
             />
+
+            {selectedTest && (
+                <RetakePolicyModal
+                    isOpen={isRetakePolicyModalOpen}
+                    onClose={() => setIsRetakePolicyModalOpen(false)}
+                    retakePolicy={selectedTest.retakePolicy}
+                />
+            )}
         </>
     );
 };

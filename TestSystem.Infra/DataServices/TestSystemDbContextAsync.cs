@@ -14,6 +14,8 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
     {
     }
 
+    public DbSet<MatchPair> MatchPairs { get; set; }
+
     public DbSet<User> Users => Set<User>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Test> Tests => Set<Test>();
@@ -31,5 +33,6 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
         new AnswerConfig().Configure(builder.Entity<Answer>());
         new TestResultConfig().Configure(builder.Entity<TestResult>());
         new QuestionResultConfig().Configure(builder.Entity<QuestionResult>());
+        new MatchPairConfig().Configure(builder.Entity<MatchPair>());
     }
 }

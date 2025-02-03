@@ -27,8 +27,8 @@ export const fetchUserResultById = async (resultId: string) => {
     return await apiRequest({url: `/usertestresult/${resultId}`, method: 'GET'});
 };
 
-export const submitTest = async (testId: string, answers: { [key: string]: string }) => {
-    return await apiRequest({url: '/usertestsubmission/submit', method: 'POST', data: {testId, answers}});
+export const submitTest = async (payload: any) => {
+    return await apiRequest({url: '/usertestsubmission/submit', method: 'POST', data: payload });
 };
 
 export default {

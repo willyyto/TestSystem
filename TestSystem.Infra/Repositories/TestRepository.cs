@@ -23,8 +23,10 @@ public class TestRepository : ITestRepository
         return await _tsDbContext.Tests
             .Include(t => t.Company)
             .Include(t => t.Questions)
+            .ThenInclude(q => q.MatchPairs)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .Where(t => t.IsActive == true && t.IsArchived == false)
             .OrderByDescending(t => t.Name)
             .ToListAsync(ct);
     }
@@ -32,29 +34,32 @@ public class TestRepository : ITestRepository
     public async Task<Test?> GetTestByIdAsync(CancellationToken ct, Guid id)
     {
         return await _tsDbContext.Tests
-            .Include(c => c.Company)
-            .Include(q => q.Questions)
+            .Include(t => t.Company)
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.MatchPairs)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .Where(t => (t.IsActive == true && t.IsArchived == false) )
+            .Where(t => t.IsActive == true && t.IsArchived == false)
             .OrderByDescending(t => t.Name)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
-    
+
     public async Task<Test?> DeleteTestByIdAsync(CancellationToken ct, Guid id)
     {
         var test = await _tsDbContext.Tests
             .Include(t => t.Company)
             .Include(t => t.Questions)
+            .ThenInclude(q => q.MatchPairs)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-            .Include(t => t.TestResults)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
-        
+
         if (test == null) return null;
-        
+
         _tsDbContext.TestResults.RemoveRange(test.TestResults);
         _tsDbContext.Tests.Remove(test);
         await _tsDbContext.SaveChangesAsync(ct);
-        
+
         return test;
     }
 
@@ -65,7 +70,9 @@ public class TestRepository : ITestRepository
             .ThenInclude(c => c.Company)
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
-            .ThenInclude(a => a.Answers).ToListAsync(ct);
+            .ThenInclude(a => a.Answers)
+            .OrderByDescending(t => t.CompletedDate)
+            .ToListAsync(ct);
     }
 
     public async Task<TestResult?> GetTestResultByIdAsync(CancellationToken ct, Guid id)
@@ -75,9 +82,11 @@ public class TestRepository : ITestRepository
             .ThenInclude(c => c.Company)
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
-            .ThenInclude(a => a.Answers).FirstOrDefaultAsync(t => t.Id == id, ct);
+            .ThenInclude(a => a.Answers)
+            .OrderByDescending(t => t.CompletedDate)
+            .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
-    
+
     public async Task<IEnumerable<TestResult>> GetTestResultsByUserIdAsync(CancellationToken ct, Guid userId)
     {
         return await _tsDbContext.TestResults
@@ -87,6 +96,7 @@ public class TestRepository : ITestRepository
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers)
             .Where(tr => tr.UserId == userId)
+            .OrderByDescending(t => t.CompletedDate)
             .ToListAsync(ct);
     }
 
@@ -98,6 +108,7 @@ public class TestRepository : ITestRepository
             .Include(r => r.QuestionResults)
             .ThenInclude(q => q.Question)
             .ThenInclude(a => a.Answers)
+            .OrderByDescending(t => t.CompletedDate)
             .FirstOrDefaultAsync(tr => tr.Id == id && tr.UserId == userId, ct);
     }
 }

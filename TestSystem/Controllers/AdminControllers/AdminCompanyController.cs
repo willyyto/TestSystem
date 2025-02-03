@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
 using TestSystem.Mappers;
@@ -13,11 +14,13 @@ public class AdminCompanyController : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
     private readonly ICompanyRepository _CompanyRepository;
+    private readonly ICompanyService _companyService;
 
-    public AdminCompanyController(ICompanyRepository CompanyRepository,
+    public AdminCompanyController(ICompanyRepository CompanyRepository, ICompanyService companyService,
         ICancellationTokenAccessor cancellationTokenAccessor)
     {
         _CompanyRepository = CompanyRepository;
+        _companyService = companyService;
         _cancellationTokenAccessor = cancellationTokenAccessor;
     }
 
@@ -37,17 +40,16 @@ public class AdminCompanyController : ControllerBase
         if (Company == null) return NotFound();
         return Ok(Company.MapToCompanyDto());
     }
-    
-    [HttpPost()]
-    public async Task<ActionResult<Company>> AddCompany(Company company)
+
+    [HttpPost]
+    public async Task<ActionResult<Company>> AddCompany(AddCompanyDto company)
     {
         var ct = _cancellationTokenAccessor.Token;
-        
-        var Company = await _CompanyRepository.AddCompanyAsync(ct, company);
+        var Company = await _companyService.AddCompanyAsync(ct, company);
         if (Company == null) return NotFound();
         return Ok(Company.MapToCompanyDto());
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult<Company>> DeleteCompany(Guid id)
     {

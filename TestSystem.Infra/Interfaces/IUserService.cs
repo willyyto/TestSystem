@@ -7,6 +7,7 @@ namespace TestSystem.Infra.Interfaces;
 public interface IUserService
 {
     Task<Guid> AddUserAsync(CancellationToken ct, RegisterDto request);
+    Task<Guid> AddUserAsync(CancellationToken ct, AddUserDto request);
     Task<bool> ValidateUserAsync(CancellationToken ct, string username, string password);
     Task<string> CreateToken(CancellationToken ct, LoginDto request);
     string GenerateJwtToken(User user);

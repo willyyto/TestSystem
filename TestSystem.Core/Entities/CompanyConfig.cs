@@ -14,8 +14,9 @@ public class CompanyConfig : IEntityTypeConfiguration<Company>
 
         builder.HasMany(e => e.Tests)
             .WithOne(t => t.Company)
-            .HasForeignKey(t => t.CompanyId);
-        
+            .HasForeignKey(t => t.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(e => e.Users)
             .WithOne(u => u.Company)
             .HasForeignKey(u => u.CompanyId)

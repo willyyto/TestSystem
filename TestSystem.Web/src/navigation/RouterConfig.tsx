@@ -19,6 +19,7 @@ import AdminDashboard from "pages/AdminPages/AdminDashboard";
 import {SideLayout} from "layouts/SideLayout.tsx";
 import AdminTest from "pages/AdminPages/AdminTest";
 import AdminCompany from "pages/AdminPages/AdminCompany";
+import AdminUser from "../pages/AdminPages/AdminUserTable";
 
 const routes: RouteObject[] = [
     {
@@ -56,6 +57,14 @@ const routes: RouteObject[] = [
         element: (
             <SideLayout>
                 <ProtectedRoute roles={['admin']}><AdminCompany/></ProtectedRoute>
+            </SideLayout>
+        ),
+    },
+    {
+        path: AppRoutes.adminuser,
+        element: (
+            <SideLayout>
+                <ProtectedRoute roles={['admin']}><AdminUser/></ProtectedRoute>
             </SideLayout>
         ),
     },

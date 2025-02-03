@@ -34,17 +34,17 @@ public class CompanyRepository : ICompanyRepository
     {
         return await _tsDbContext.Companies.SingleOrDefaultAsync(c => c.Id == id);
     }
-    
+
     public async Task<Company?> DeleteCompanyByIdAsync(CancellationToken ct, Guid id)
     {
         var company = await _tsDbContext.Companies
             .FirstOrDefaultAsync(t => t.Id == id, ct);
-        
+
         if (company == null) return null;
-        
+
         _tsDbContext.Companies.Remove(company);
         await _tsDbContext.SaveChangesAsync(ct);
-        
+
         return company;
     }
 }

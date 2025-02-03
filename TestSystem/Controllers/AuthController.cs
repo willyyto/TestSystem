@@ -37,12 +37,12 @@ public class AuthController : ControllerBase
         if (!await _userService.ValidateUserAsync(ct, request.Username, request.Password)) return Unauthorized();
 
         var user = await _userRepository.GetByUsername(ct, request.Username);
-        
+
         var token = _userService.GenerateJwtToken(user);
         var refreshToken = _userService.GenerateRefreshToken();
-        
+
         await _userRepository.UpdateUserAsync(ct, user);
-        return Ok(new TokenDto { Token = token, RefreshToken = refreshToken });
+        return Ok(new TokenDto {Token = token, RefreshToken = refreshToken});
     }
 
     [HttpPost("refresh")]

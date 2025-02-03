@@ -1,34 +1,40 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
+using userSystem.Mappers;
 
 namespace TestSystem.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class UserController : ControllerBase
 {
     private readonly ICancellationTokenAccessor _cancellationTokenAccessor;
     private readonly IUserRepository _userRepository;
+    private readonly IUserService _userService;
 
     public UserController(IUserRepository userRepository,
-        ICancellationTokenAccessor cancellationTokenAccessor)
+        ICancellationTokenAccessor cancellationTokenAccessor, IUserService userService)
     {
         _userRepository = userRepository;
         _cancellationTokenAccessor = cancellationTokenAccessor;
+        _userService = userService;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<User>>> GetUsers()
     {
         var ct = _cancellationTokenAccessor.Token;
-        var user = await _userRepository.GetAllUsersAsync(ct);
-        return Ok(user);
+        var users = await _userRepository.GetAllUsersAsync(ct);
+        return Ok(users.Select(i => i.MapToUserDto()).ToList());
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser()
+    public async Task<ActionResult<UserDto>> GetUser()
     {
         var ct = _cancellationTokenAccessor.Token;
         var userId = User.FindFirstValue(ClaimTypes.Name);
@@ -36,14 +42,23 @@ public class UserController : ControllerBase
 
         if (user == null) return NotFound();
 
-        return Ok(new {user, role = user.Role});
+        return Ok(user.MapToUserDto());
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid?>> AddUser(User User)
+    public async Task<ActionResult<Guid?>> AddUser(AddUserDto User)
     {
         var ct = _cancellationTokenAccessor.Token;
-        var id = await _userRepository.AddUserAsync(ct, User);
+        var id = await _userService.AddUserAsync(ct, User);
         return Ok(id);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Guid?>> DeleteUser(Guid id)
+    {
+        var ct = _cancellationTokenAccessor.Token;
+        var user = await _userRepository.DeleteUserAsync(ct, id);
+        if (user == null) return NotFound();
+        return Ok(user);
     }
 }

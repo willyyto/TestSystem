@@ -12,6 +12,7 @@ public class AnswerConfig : IEntityTypeConfiguration<Answer>
         builder.Property(e => e.Id).HasValueGenerator<IdGenerator>();
         builder.Property(e => e.Text).IsRequired();
         builder.Property(e => e.IsCorrect).IsRequired();
+        builder.Property(e => e.IsFillInTheBlank).IsRequired();
 
         builder.HasOne(e => e.Question)
             .WithMany(q => q.Answers)

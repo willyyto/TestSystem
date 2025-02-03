@@ -18,6 +18,4 @@ public class User : IArchivable, IMetaData, IActive, ILockable
     public bool IsLocked { get; set; }
     public DateTime UpdatedOn { get; set; }
     public DateTime CreatedOn { get; set; }
-
-
 }

@@ -1,19 +1,11 @@
-﻿import {
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-} from "@nextui-org/react";
-import { columns } from "./UserTestTableColumns";
-import { RenderCell } from "./UserTestTableCells";
-import { fetchUserTests } from "contexts/UserApiService";
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { Test } from "types/Interfaces";
+﻿import {Input, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow,} from "@nextui-org/react";
+import {columns} from "./UserTestTableColumns";
+import {RenderCell} from "./UserTestTableCells";
+import {fetchUserTests} from "contexts/UserApiService";
+import {useCallback, useEffect, useMemo, useState} from "react";
+import {Test} from "types/Interfaces";
 import RowsPerPageDropdown from "components/common/RowsPerPageDropdown";
-import { Input, Pagination } from "@nextui-org/react";
-import { Icon } from "@iconify/react";
+import {Icon} from "@iconify/react";
 
 const UserTestTable: React.FC = () => {
     const [tests, setUserTests] = useState<Test[]>([]);
@@ -124,7 +116,7 @@ const UserTestTable: React.FC = () => {
     const bottomContent = useMemo(() => {
         return (
             <div className="px-2 flex justify-between items-center">
-                <span className="text-default-400 w-[20%] text-small">Total {tests.length} Tests</span>
+                <span className="text-default-400 w-[20%] text-sm">Total {tests.length} Tests</span>
                 <Pagination
                     isCompact
                     showControls
@@ -135,7 +127,7 @@ const UserTestTable: React.FC = () => {
                     onChange={setPage}
                 />
                 <div className="hidden sm:flex w-[20%] justify-end gap-2">
-                    <label className="flex items-center text-default-400 text-small">
+                    <label className="flex items-center text-default-400 text-sm">
                         Rows per page:
                     </label>
                     <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
