@@ -3,6 +3,6 @@
  * as the source of truth
  */
 const API_BASE_URL = Object.freeze({
-    Dev: 'https://localhost:44395/api',
+    Dev: 'https://localhost:7207/api',
 });
 export default API_BASE_URL;
