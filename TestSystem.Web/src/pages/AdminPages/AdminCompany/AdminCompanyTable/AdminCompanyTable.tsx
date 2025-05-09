@@ -14,7 +14,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { capitalize } from 'utils/utils';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';

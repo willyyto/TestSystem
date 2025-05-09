@@ -1,4 +1,4 @@
-﻿import {cn, Radio, RadioProps} from "@nextui-org/react";
+﻿import {cn, Radio, RadioProps} from "@heroui/react";
 import React, {ReactNode} from "react";
 
 // Define the interface for the props

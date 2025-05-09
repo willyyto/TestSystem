@@ -1,6 +1,6 @@
 ﻿// ConfirmDeleteModal.tsx
 import React from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@heroui/react';
 
 interface ConfirmationModalProps {
     isOpen: boolean;

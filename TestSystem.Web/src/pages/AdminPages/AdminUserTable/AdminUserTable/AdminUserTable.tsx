@@ -15,7 +15,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { AdminUserTableColumns } from './AdminUserTableColumns.ts';
 import { capitalize } from 'utils/utils.tsx';
 import apiService from 'contexts/AdminApiService.tsx';

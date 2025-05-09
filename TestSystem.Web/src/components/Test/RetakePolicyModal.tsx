@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react';
 import {RetakePolicy} from "types/Interfaces.ts";
 
 interface RetakePolicyModalProps {

@@ -1,4 +1,4 @@
-import {Link} from "@nextui-org/link";
+import {Link} from "@heroui/link";
 
 export const Footer = () => {
   return(<footer className="w-full flex items-center justify-center py-3">

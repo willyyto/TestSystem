@@ -1,8 +1,8 @@
 import {FC, useEffect, useState} from "react";
 import {useTheme as useNextTheme} from "next-themes";
 import {Icon} from "@iconify/react";
-import {Link} from "@nextui-org/link";
-import {cn, Switch} from "@nextui-org/react";
+import {Link} from "@heroui/link";
+import {cn, Switch} from "@heroui/react";
 
 export interface ThemeSwitchProps {
     className?: string;

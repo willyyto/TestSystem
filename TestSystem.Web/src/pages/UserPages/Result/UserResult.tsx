@@ -1,5 +1,5 @@
 ﻿import React, {useEffect, useState} from 'react';
-import {Card, CardBody, CardHeader, RadioGroup, Textarea} from '@nextui-org/react';
+import {Card, CardBody, CardHeader, RadioGroup, Textarea} from '@heroui/react';
 import {useParams} from 'react-router-dom';
 import {CustomResultRadio} from 'components/Test/CustomResultRadio.tsx';
 import apiService from 'contexts/UserApiService.tsx';

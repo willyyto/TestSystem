@@ -1,7 +1,7 @@
 // AdminDashboard.tsx
 import React from "react";
 import {BarChart, LineChart} from './Chart';
-import {Card} from "@nextui-org/react";
+import {Card} from "@heroui/react";
 
 const AdminDashboard: React.FC = () => {
     return (

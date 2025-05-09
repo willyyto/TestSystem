@@ -1,4 +1,4 @@
-﻿import { Tooltip } from "@nextui-org/react";
+﻿import { Tooltip } from "@heroui/react";
 import React from "react";
 import { Result } from"types/Interfaces";
 import {Icon} from "@iconify/react";

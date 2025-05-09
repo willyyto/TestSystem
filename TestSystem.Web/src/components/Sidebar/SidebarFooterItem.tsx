@@ -1,4 +1,4 @@
-﻿import {Link} from "@nextui-org/link";
+﻿import {Link} from "@heroui/link";
 import React from "react";
 import {useSidebarContext} from "layouts/SideLayoutContext";
 import clsx from "clsx";

@@ -11,7 +11,7 @@ import {
     ModalHeader,
     RadioGroup,
     Textarea
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {Question, Test} from 'types/Interfaces.ts';
 import {CustomResultRadio} from "components/Test/CustomResultRadio.tsx";
 import {format} from "date-fns";

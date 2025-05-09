@@ -1,4 +1,4 @@
-import { NextUIProvider } from "@nextui-org/system";
+import { HeroUIProvider } from "@heroui/system";
 import { useNavigate } from "react-router-dom";
 import { AuthProvider } from 'contexts/AuthContext';
 import {ThemeProvider as NextThemesProvider} from "next-themes";
@@ -10,11 +10,11 @@ export default function Provider({
   const navigate = useNavigate();
   return (
       <AuthProvider>
-        <NextUIProvider navigate={navigate}>
+        <HeroUIProvider navigate={navigate}>
           <NextThemesProvider attribute="class" defaultTheme="dark">
             {children}
           </NextThemesProvider>
-        </NextUIProvider>
+        </HeroUIProvider>
       </AuthProvider>
   );
 }

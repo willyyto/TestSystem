@@ -1,4 +1,4 @@
-﻿import {Input, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow,} from "@nextui-org/react";
+﻿import {Input, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow,} from "@heroui/react";
 import {columns} from "./UserTestTableColumns";
 import {RenderCell} from "./UserTestTableCells";
 import {fetchUserTests} from "contexts/UserApiService";

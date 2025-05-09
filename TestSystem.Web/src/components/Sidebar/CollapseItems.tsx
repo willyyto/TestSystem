@@ -1,7 +1,7 @@
 ﻿"use client";
 import React, {useState} from "react";
 import {ChevronUpIcon} from "@heroicons/react/24/solid";
-import {Accordion, AccordionItem} from "@nextui-org/react";
+import {Accordion, AccordionItem} from "@heroui/react";
 
 interface Props {
     icon: React.ReactNode;

@@ -14,7 +14,7 @@ import {
     TableColumn,
     TableHeader,
     TableRow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {AdminTestTableColumns} from './AdminTestTableColumns';
 import {formatDate, formatDuration} from 'utils/utils';
 import apiService from 'contexts/AdminApiService';

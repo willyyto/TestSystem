@@ -7,7 +7,7 @@ import {
     ModalFooter,
     Button,
     Input
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { v4 as uuidv4 } from 'uuid';
 import apiService, {addAdminCompany} from 'contexts/AdminApiService.tsx'; // Assuming this is the service for API calls
 

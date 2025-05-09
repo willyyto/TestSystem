@@ -1,5 +1,5 @@
 ﻿import {useState} from "react";
-import {Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer} from "@nextui-org/react";
+import {Button, Card, CardBody, CardHeader, Checkbox, Input, Spacer} from "@heroui/react";
 import {Icon} from "@iconify/react";
 import {AnimatePresence, motion} from "framer-motion";
 import {useAuth} from "contexts/AuthContext.tsx";

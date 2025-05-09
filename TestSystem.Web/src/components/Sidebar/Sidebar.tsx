@@ -2,7 +2,7 @@ import {Sidebar} from "components/Sidebar/SidebarStyles";
 import {SidebarItem} from "components/Sidebar/SidebarItem";
 import {useSidebarContext} from "layouts/SideLayoutContext";
 import {useLocation} from "react-router-dom";
-import {Input, Link} from "@nextui-org/react";
+import {Input, Link} from "@heroui/react";
 import {Icon} from '@iconify/react';
 import {UsersDropdown} from "./UserDropdown";
 import {SidebarMenu} from "./SidebarMenu";

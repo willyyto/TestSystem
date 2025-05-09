@@ -1,4 +1,4 @@
-import {Link} from "@nextui-org/link";
+import {Link} from "@heroui/link";
 import {
     Navbar as NextUINavbar,
     NavbarBrand,
@@ -7,8 +7,8 @@ import {
     NavbarMenu,
     NavbarMenuItem,
     NavbarMenuToggle,
-} from "@nextui-org/navbar";
-import {link as linkStyles} from "@nextui-org/theme";
+} from "@heroui/navbar";
+import {link as linkStyles} from "@heroui/theme";
 import clsx from "clsx";
 import {siteConfig} from "config/site";
 import {ThemeSwitch} from "components/Theme/theme-switch";

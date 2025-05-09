@@ -1,7 +1,7 @@
 ﻿import React, {useEffect} from 'react';
 import {useAuth} from 'contexts/AuthContext.tsx';
 import {useNavigate} from 'react-router-dom';
-import {Spinner} from '@nextui-org/react'; // Assuming you are using Next UI
+import {Spinner} from '@heroui/react'; // Assuming you are using Next UI
 
 const Logout: React.FC = () => {
     const { logout } = useAuth();

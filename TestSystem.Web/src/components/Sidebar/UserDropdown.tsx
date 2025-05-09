@@ -8,7 +8,7 @@ import {
     DropdownSection,
     DropdownTrigger,
     Skeleton,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {Icon} from "@iconify/react";
 import {useAuth} from "contexts/AuthContext";
 import {capitalize} from "utils/utils.tsx"; // Adjust the import path as needed

@@ -1,5 +1,5 @@
 ﻿"use client";
-import {Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger,} from "@nextui-org/react";
+import {Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger,} from "@heroui/react";
 import React, {useState} from "react";
 import {BuildingStorefrontIcon, ChevronUpDownIcon} from "@heroicons/react/24/solid";
 

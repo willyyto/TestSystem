@@ -10,7 +10,7 @@ import {
     Select,
     SelectItem,
     Spacer
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {useNavigate} from 'react-router-dom';
 import apiService from 'contexts/AdminApiService.tsx';
 import {CreateQuestion} from "types/Interfaces.ts";
