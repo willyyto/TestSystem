@@ -24,8 +24,4 @@
         <ProjectReference Include="..\TestSystem.Infra\TestSystem.Infra.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Controllers\UserControllers\" />
-    </ItemGroup>
-
 </Project>

@@ -4,6 +4,9 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using TestSystem.Core.Dtos;
+using TestSystem.Filters;
 
 namespace TestSystem;
 
@@ -22,6 +25,11 @@ public class Startup
     /// <param name="services"></param>
     public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
     {
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<ValidateModelAttribute>();
+        });
+        
         services.AddControllers();
 
         services.Configure<RouteOptions>(options =>
@@ -130,5 +138,30 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+    }
+}
+// Extension for Swagger configuration
+public static class SwaggerExtensions
+{
+    public static void ConfigureForApiResponseDto(this SwaggerGenOptions options)
+    {
+        // Add custom schema for ApiResponseDto
+        options.MapType<ApiResponseDto<object>>(() => new OpenApiSchema
+        {
+            Type = "object",
+            Properties = new Dictionary<string, OpenApiSchema>
+            {
+                ["success"] = new OpenApiSchema { Type = "boolean" },
+                ["data"] = new OpenApiSchema { Type = "object" },
+                ["message"] = new OpenApiSchema { Type = "string", Nullable = true },
+                ["errors"] = new OpenApiSchema 
+                { 
+                    Type = "array", 
+                    Items = new OpenApiSchema { Type = "string" },
+                    Nullable = true 
+                },
+                ["statusCode"] = new OpenApiSchema { Type = "integer", Nullable = true }
+            }
+        });
     }
 }

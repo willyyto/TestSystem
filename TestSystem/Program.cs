@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TestSystem;
 using TestSystem.Core;
+using TestSystem.Extensions; // Add this
+using TestSystem.Filters; // Add this
 
 // retrieve and inject the application configuration
 var appConfig = new ConfigurationBuilder()
@@ -24,6 +26,9 @@ var app = builder.Build();
 
 // Configure the app and web request pipeline
 startup.Configure(app, builder.Environment);
+
+// Add the API response middleware BEFORE other middleware
+app.UseApiResponseMiddleware(); // Add this line
 
 // only attempt to auto-run migrations outside of development environs to speed up build-times
 if (!builder.Environment.IsDevelopment())
