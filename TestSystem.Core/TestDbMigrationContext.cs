@@ -22,7 +22,7 @@ public class TestDbMigrationContext : DbContext
     public DbSet<OrderingItem> OrderingItems => Set<OrderingItem>();
     public DbSet<TestAttempt> TestAttempts => Set<TestAttempt>();
     public DbSet<TestSchedule> TestSchedules => Set<TestSchedule>();
-
+    public DbSet<Notification> Notifications => Set<Notification>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         Console.WriteLine("Configuring entity models for migration context...");
@@ -39,12 +39,10 @@ public class TestDbMigrationContext : DbContext
         new OrderingItemConfig().Configure(builder.Entity<OrderingItem>());
         new TestAttemptConfig().Configure(builder.Entity<TestAttempt>());
         new TestScheduleConfig().Configure(builder.Entity<TestSchedule>());
-
+        new NotificationConfig().Configure(builder.Entity<Notification>());
+        
         // Configure custom value converters for enums
         ConfigureEnumConversions(builder);
-
-        // Configure default values that need special handling
-        ConfigureDefaultValues(builder);
 
         Console.WriteLine("Entity model configuration completed.");
 
@@ -77,51 +75,6 @@ public class TestDbMigrationContext : DbContext
         builder.Entity<Test>()
             .Property(t => t.GradingScheme)
             .HasConversion<string>();
-    }
-
-    private void ConfigureDefaultValues(ModelBuilder builder)
-    {
-        // Configure SQL Server specific default values
-        builder.Entity<Test>()
-            .Property(t => t.CreatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<Test>()
-            .Property(t => t.UpdatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<Question>()
-            .Property(q => q.CreatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<Question>()
-            .Property(q => q.UpdatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<User>()
-            .Property(u => u.CreatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<User>()
-            .Property(u => u.UpdatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<Company>()
-            .Property(c => c.CreatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Entity<Company>()
-            .Property(c => c.UpdatedOn)
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        // Configure NEWID() for GUIDs that need it
-        builder.Entity<TestResult>()
-            .Property(tr => tr.Id)
-            .HasDefaultValueSql("NEWID()");
-
-        builder.Entity<QuestionResult>()
-            .Property(qr => qr.Id)
-            .HasDefaultValueSql("NEWID()");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

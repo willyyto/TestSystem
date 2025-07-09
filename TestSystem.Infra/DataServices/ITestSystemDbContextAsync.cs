@@ -16,5 +16,6 @@ public interface ITestSystemDbContextAsync
     DbSet<OrderingItem> OrderingItems { get; }
     DbSet<TestAttempt> TestAttempts { get; }
     DbSet<TestSchedule> TestSchedules { get; }
+    DbSet<Notification> Notifications { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

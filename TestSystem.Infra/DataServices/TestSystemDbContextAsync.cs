@@ -25,6 +25,7 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
     public DbSet<OrderingItem> OrderingItems => Set<OrderingItem>();
     public DbSet<TestAttempt> TestAttempts => Set<TestAttempt>();
     public DbSet<TestSchedule> TestSchedules => Set<TestSchedule>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -40,9 +41,14 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
         new OrderingItemConfig().Configure(builder.Entity<OrderingItem>());
         new TestAttemptConfig().Configure(builder.Entity<TestAttempt>());
         new TestScheduleConfig().Configure(builder.Entity<TestSchedule>());
+        new NotificationConfig().Configure(builder.Entity<Notification>());
 
+        
+        ConfigureEnumConversions(builder);
+        
         // Add performance indexes
         ConfigureIndexes(builder);
+        
         
         // Configure global query filters if needed
         ConfigureGlobalFilters(builder);
@@ -50,6 +56,34 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
         base.OnModelCreating(builder);
     }
 
+    
+    private void ConfigureEnumConversions(ModelBuilder builder)
+    {
+        // Configure enum to string conversions for better database readability
+        builder.Entity<Question>()
+            .Property(q => q.Type)
+            .HasConversion<string>();
+
+        builder.Entity<Test>()
+            .Property(t => t.Visibility)
+            .HasConversion<string>();
+
+        builder.Entity<Test>()
+            .Property(t => t.TestType)
+            .HasConversion<string>();
+
+        builder.Entity<Test>()
+            .Property(t => t.Feedback)
+            .HasConversion<string>();
+
+        builder.Entity<Test>()
+            .Property(t => t.TestAccessControl)
+            .HasConversion<string>();
+
+        builder.Entity<Test>()
+            .Property(t => t.GradingScheme)
+            .HasConversion<string>();
+    }
     private void ConfigureIndexes(ModelBuilder builder)
     {
         // Performance indexes for frequently queried combinations

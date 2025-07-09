@@ -7,6 +7,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TestSystem.Core.Dtos;
 using TestSystem.Core.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using TestSystem.Core.Dtos;
+using TestSystem.Core.Entities;
 using TestSystem.Infra.Interfaces;
 
 namespace TestSystem.Infra.Services;
@@ -35,13 +44,21 @@ public class UserService : IUserService
         {
             Id = Guid.NewGuid(),
             Username = request.Username,
-            Password = request.Password,
+            Password = string.Empty, // Will be set below
             Name = request.Name,
             Email = request.Email,
             Role = request.Role,
-            IsActive = true
+            IsActive = true,
+            CreatedOn = DateTime.UtcNow,
+            UpdatedOn = DateTime.UtcNow,
+            RefreshToken = string.Empty,
+            TokenCreated = DateTime.UtcNow,
+            TokenExpires = DateTime.UtcNow.AddDays(7)
         };
-        user.Password = _passwordHasher.HashPassword(user, user.Password);
+        
+        // Hash the password using Identity's password hasher
+        user.Password = _passwordHasher.HashPassword(user, request.Password);
+        
         var userId = await _userRepository.CreateUserAsync(ct, user);
         return userId;
     }
@@ -52,7 +69,7 @@ public class UserService : IUserService
         {
             Id = Guid.NewGuid(),
             Username = request.Username,
-            Password = request.Password,
+            Password = string.Empty, // Will be set below
             CompanyId = request.CompanyId,
             Name = request.Name,
             Email = request.Email,
@@ -60,11 +77,14 @@ public class UserService : IUserService
             IsActive = true,
             CreatedOn = DateTime.UtcNow,
             UpdatedOn = DateTime.UtcNow,
-            RefreshToken = "",
-            TokenExpires = DateTime.UtcNow,
+            RefreshToken = string.Empty,
+            TokenExpires = DateTime.UtcNow.AddDays(7),
             TokenCreated = DateTime.UtcNow
         };
-        user.Password = _passwordHasher.HashPassword(user, user.Password);
+        
+        // Hash the password using Identity's password hasher
+        user.Password = _passwordHasher.HashPassword(user, request.Password);
+        
         var userId = await _userRepository.CreateUserAsync(ct, user);
         return userId;
     }
@@ -72,15 +92,19 @@ public class UserService : IUserService
     public async Task<bool> ValidateUserAsync(CancellationToken ct, string username, string password)
     {
         var user = await _userRepository.GetByUsernameAsync(ct, username);
-        if (user == null) return false;
+        if (user == null || !user.IsActive || user.IsLocked) 
+            return false;
 
+        // Use Identity's password verification
         var result = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
-        return result == PasswordVerificationResult.Success;
+        return result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded;
     }
 
     public async Task<string> CreateToken(CancellationToken ct, LoginDto request)
     {
         var user = await _userRepository.GetByUsernameAsync(ct, request.Username);
+        if (user == null)
+            throw new UnauthorizedAccessException("Invalid credentials");
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Token"]);
@@ -90,7 +114,9 @@ public class UserService : IUserService
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("name", user.Name)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials =
@@ -114,7 +140,8 @@ public class UserService : IUserService
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.GivenName, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("companyId", user.CompanyId?.ToString() ?? string.Empty)
             }),
             Expires = DateTime.UtcNow.AddMinutes(30),
             SigningCredentials =
@@ -148,7 +175,8 @@ public class UserService : IUserService
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
         if (!(securityToken is JwtSecurityToken jwtSecurityToken) ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase)) throw new SecurityTokenException("Invalid token");
+                StringComparison.InvariantCultureIgnoreCase)) 
+            throw new SecurityTokenException("Invalid token");
 
         return principal;
     }

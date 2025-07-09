@@ -65,12 +65,8 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            // Hash password if not already hashed
-            if (!string.IsNullOrEmpty(user.Password) && !user.Password.StartsWith("$2"))
-            {
-                user.Password = _passwordHasher.HashPassword(user, user.Password);
-            }
-
+            // Don't hash password here if it's already hashed
+            // The UserService should handle password hashing
             user.CreatedOn = DateTime.UtcNow;
             user.UpdatedOn = DateTime.UtcNow;
 
@@ -136,10 +132,29 @@ public class UserRepository : IUserRepository
     public async Task<bool> ValidateUserCredentialsAsync(CancellationToken ct, string username, string password)
     {
         var user = await GetByUsernameAsync(ct, username);
-        if (user == null || !user.IsActive || user.IsLocked) return false;
+        if (user == null || !user.IsActive || user.IsLocked) 
+            return false;
 
-        var result = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
-        return result == PasswordVerificationResult.Success;
+        try
+        {
+            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            var isValid = result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded;
+            
+            // If SuccessRehashNeeded, update the password hash
+            if (result == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                user.Password = _passwordHasher.HashPassword(user, password);
+                await UpdateUserAsync(ct, user);
+                _logger.LogInformation("Rehashed password for user {Username}", username);
+            }
+            
+            return isValid;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating credentials for user {Username}", username);
+            return false;
+        }
     }
 
     public async Task UpdateLastLoginAsync(CancellationToken ct, Guid userId, string? ipAddress = null)
@@ -168,6 +183,47 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.PasswordResetToken == token && 
                                     u.PasswordResetExpires > DateTime.UtcNow &&
                                     !u.IsArchived, ct);
+    }
+
+    #endregion
+
+    #region Password Management
+
+    public async Task<bool> UpdatePasswordAsync(CancellationToken ct, Guid userId, string currentPassword, string newPassword)
+    {
+        var user = await GetByIdAsync(ct, userId);
+        if (user == null) return false;
+
+        // Verify current password
+        var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.Password, currentPassword);
+        if (verificationResult == PasswordVerificationResult.Failed)
+            return false;
+
+        // Hash and set new password
+        user.Password = _passwordHasher.HashPassword(user, newPassword);
+        user.UpdatedOn = DateTime.UtcNow;
+
+        await UpdateUserAsync(ct, user);
+        _logger.LogInformation("Password updated for user {UserId}", userId);
+        
+        return true;
+    }
+
+    public async Task<bool> ResetPasswordAsync(CancellationToken ct, string token, string newPassword)
+    {
+        var user = await GetByPasswordResetTokenAsync(ct, token);
+        if (user == null) return false;
+
+        // Hash and set new password
+        user.Password = _passwordHasher.HashPassword(user, newPassword);
+        user.PasswordResetToken = null;
+        user.PasswordResetExpires = null;
+        user.UpdatedOn = DateTime.UtcNow;
+
+        await UpdateUserAsync(ct, user);
+        _logger.LogInformation("Password reset for user {UserId}", user.Id);
+        
+        return true;
     }
 
     #endregion
@@ -282,7 +338,11 @@ public class UserRepository : IUserRepository
         {
             foreach (var user in userList)
             {
-                user.Password = _passwordHasher.HashPassword(user, user.Password);
+                // Ensure password is hashed
+                if (!string.IsNullOrEmpty(user.Password) && !user.Password.StartsWith("$2"))
+                {
+                    user.Password = _passwordHasher.HashPassword(user, user.Password);
+                }
                 user.CreatedOn = DateTime.UtcNow;
                 user.UpdatedOn = DateTime.UtcNow;
             }

@@ -94,7 +94,7 @@ public class Startup
             options.AddPolicy("AllowLocalhost",
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173")
+                    builder.WithOrigins("http://localhost:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
