@@ -26,7 +26,7 @@ public class CompanyService : ICompanyService
             Name = request.Name,
             IsActive = true
         };
-        var company = await _companyRepository.AddCompanyAsync(ct, newcompany);
+        var company = await _companyRepository.CreateCompanyAsync(ct, newcompany);
         return company;
     }
 }

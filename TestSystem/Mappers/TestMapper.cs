@@ -1,0 +1,116 @@
+﻿using TestSystem.Core.Dtos;
+using TestSystem.Core.Entities;
+
+namespace TestSystem.Mappers;
+
+public static class TestMapper
+{
+    public static TestDto MapToTestDto(this Test test)
+    {
+        return new TestDto(
+            test.Id,
+            test.Name,
+            test.Company?.Name ?? string.Empty,
+            test.Description,
+            test.Instructions,
+            test.StartDate,
+            test.EndDate,
+            test.Duration,
+            test.PassMark,
+            test.IsTimed,
+            test.ShuffleQuestions,
+            test.MaximumAttempts,
+            test.Visibility.ToString(),
+            test.TestType.ToString(),
+            test.Feedback.ToString(),
+            test.TestAccessControl.ToString(),
+            test.GradingScheme.ToString(),
+            test.RetakePolicy.MapToRetakePolicyDto(),
+            test.ShowProgressBar,
+            test.AllowBackNavigation,
+            test.ShowQuestionNumbers,
+            test.AutoSubmit,
+            test.RequirePassword,
+            test.ShowResultsImmediately,
+            test.ShowCorrectAnswers,
+            test.ShowScorePercentage,
+            test.EmailResults,
+            test.WelcomeMessage,
+            test.CompletionMessage,
+            test.FailureMessage,
+            test.IsPublic,
+            test.InviteCode,
+            test.AvailableFrom,
+            test.AvailableUntil,
+            test.RandomQuestionCount,
+            test.RandomizeFromPool,
+            test.DisableCopyPaste,
+            test.FullScreenMode,
+            test.DisableRightClick,
+            test.TrackTabSwitches,
+            test.MaxTabSwitches,
+            test.RequireWebcam,
+            test.RequireMicrophone,
+            test.EnableScreenRecording,
+            test.IsScheduled,
+            test.Schedules?.Select(s => s.MapToTestScheduleDto()).ToList() ?? new List<TestScheduleDto>(),
+            test.Questions?.OrderBy(q => q.DisplayOrder).Select(q => q.MapToQuestionDto()).ToList() ?? new List<QuestionDto>(),
+            test.IsArchived,
+            test.IsActive
+        );
+    }
+
+    public static Test MapToTest(this CreateTestDto dto)
+    {
+        return new Test
+        {
+            Id = Guid.NewGuid(),
+            Name = dto.Name,
+            Description = dto.Description,
+            Instructions = dto.Instructions,
+            CompanyId = dto.CompanyId,
+            StartDate = dto.StartDate,
+            EndDate = dto.EndDate,
+            Duration = dto.Duration,
+            PassMark = dto.PassMark,
+            IsTimed = dto.IsTimed,
+            ShuffleQuestions = dto.ShuffleQuestions,
+            MaximumAttempts = dto.MaximumAttempts,
+            Visibility = Enum.Parse<TestVisibility>(dto.Visibility),
+            TestType = Enum.Parse<TestType>(dto.TestType),
+            Feedback = Enum.Parse<FeedbackType>(dto.Feedback),
+            TestAccessControl = Enum.Parse<AccessControl>(dto.TestAccessControl),
+            GradingScheme = Enum.Parse<GradingScheme>(dto.GradingScheme),
+            RetakePolicy = dto.RetakePolicy.MapToRetakePolicy(),
+            ShowProgressBar = dto.ShowProgressBar,
+            AllowBackNavigation = dto.AllowBackNavigation,
+            ShowQuestionNumbers = dto.ShowQuestionNumbers,
+            AutoSubmit = dto.AutoSubmit,
+            RequirePassword = dto.RequirePassword,
+            Password = dto.Password,
+            ShowResultsImmediately = dto.ShowResultsImmediately,
+            ShowCorrectAnswers = dto.ShowCorrectAnswers,
+            ShowScorePercentage = dto.ShowScorePercentage,
+            EmailResults = dto.EmailResults,
+            WelcomeMessage = dto.WelcomeMessage,
+            CompletionMessage = dto.CompletionMessage,
+            FailureMessage = dto.FailureMessage,
+            IsPublic = dto.IsPublic,
+            AvailableFrom = dto.AvailableFrom,
+            AvailableUntil = dto.AvailableUntil,
+            RandomQuestionCount = dto.RandomQuestionCount,
+            RandomizeFromPool = dto.RandomizeFromPool,
+            DisableCopyPaste = dto.DisableCopyPaste,
+            FullScreenMode = dto.FullScreenMode,
+            DisableRightClick = dto.DisableRightClick,
+            TrackTabSwitches = dto.TrackTabSwitches,
+            MaxTabSwitches = dto.MaxTabSwitches,
+            RequireWebcam = dto.RequireWebcam,
+            RequireMicrophone = dto.RequireMicrophone,
+            EnableScreenRecording = dto.EnableScreenRecording,
+            IsActive = true,
+            CreatedOn = DateTime.UtcNow,
+            UpdatedOn = DateTime.UtcNow
+        };
+    }
+}

@@ -42,7 +42,7 @@ public class UserService : IUserService
             IsActive = true
         };
         user.Password = _passwordHasher.HashPassword(user, user.Password);
-        var userId = await _userRepository.AddUserAsync(ct, user);
+        var userId = await _userRepository.CreateUserAsync(ct, user);
         return userId;
     }
 
@@ -65,13 +65,13 @@ public class UserService : IUserService
             TokenCreated = DateTime.UtcNow
         };
         user.Password = _passwordHasher.HashPassword(user, user.Password);
-        var userId = await _userRepository.AddUserAsync(ct, user);
+        var userId = await _userRepository.CreateUserAsync(ct, user);
         return userId;
     }
 
     public async Task<bool> ValidateUserAsync(CancellationToken ct, string username, string password)
     {
-        var user = await _userRepository.GetByUsername(ct, username);
+        var user = await _userRepository.GetByUsernameAsync(ct, username);
         if (user == null) return false;
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
@@ -80,7 +80,7 @@ public class UserService : IUserService
 
     public async Task<string> CreateToken(CancellationToken ct, LoginDto request)
     {
-        var user = await _userRepository.GetByUsername(ct, request.Username);
+        var user = await _userRepository.GetByUsernameAsync(ct, request.Username);
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Token"]);

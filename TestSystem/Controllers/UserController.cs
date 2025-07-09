@@ -38,7 +38,7 @@ public class UserController : ControllerBase
     {
         var ct = _cancellationTokenAccessor.Token;
         var userId = User.FindFirstValue(ClaimTypes.Name);
-        var user = await _userRepository.GetById(ct, Guid.Parse(userId));
+        var user = await _userRepository.GetByIdAsync(ct, Guid.Parse(userId));
 
         if (user == null) return NotFound();
 

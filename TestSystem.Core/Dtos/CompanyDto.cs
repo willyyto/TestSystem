@@ -1,3 +1,31 @@
 ﻿namespace TestSystem.Core.Dtos;
 
-public record CompanyDto(Guid Id, string Name, bool isActive, bool isArchived);
+public record CompanyDto(
+    Guid Id,
+    string Name,
+    string? Description,
+    string? Website,
+    string? LogoUrl,
+    string? Address,
+    string? City,
+    string? State,
+    string? Country,
+    string? PostalCode,
+    string? Phone,
+    string? Email,
+    string? ContactPerson,
+    string SubscriptionTier,
+    DateTime? SubscriptionStart,
+    DateTime? SubscriptionEnd,
+    int MaxUsers,
+    int MaxTests,
+    int MaxQuestionsPerTest,
+    bool CustomBrandingEnabled,
+    bool AdvancedReportsEnabled,
+    bool ApiAccessEnabled,
+    long StorageLimitMB,
+    long StorageUsedMB,
+    string? CustomDomain,
+    bool IsActive,
+    bool IsArchived
+);

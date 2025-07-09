@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
         var ct = _cancellationTokenAccessor.Token;
         if (!await _userService.ValidateUserAsync(ct, request.Username, request.Password)) return Unauthorized();
 
-        var user = await _userRepository.GetByUsername(ct, request.Username);
+        var user = await _userRepository.GetByUsernameAsync(ct, request.Username);
 
         var token = _userService.GenerateJwtToken(user);
         var refreshToken = _userService.GenerateRefreshToken();
@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
         var username = principal.Identity.Name;
 
         var ct = _cancellationTokenAccessor.Token;
-        var user = await _userRepository.GetByUsername(ct, username);
+        var user = await _userRepository.GetByUsernameAsync(ct, username);
         if (user == null || user.RefreshToken != request.RefreshToken || user.TokenExpires <= DateTime.UtcNow)
             return Unauthorized();
 

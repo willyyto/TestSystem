@@ -1,0 +1,31 @@
+﻿namespace TestSystem.Core.Dtos;
+
+public record CreateQuestionDto(
+    Guid TestId,
+    string Text,
+    string Type,
+    double Weight,
+    int TimeLimit,
+    bool IsRequired,
+    string? ImageUrl,
+    string? VideoUrl,
+    string? AudioUrl,
+    string? Explanation,
+    string? Hint,
+    int DisplayOrder,
+    bool AllowMultipleAnswers,
+    bool ShuffleAnswers,
+    double? CorrectNumericalAnswer,
+    double? NumericalTolerance,
+    string? NumericalUnit,
+    int? ScaleMin,
+    int? ScaleMax,
+    string? ScaleMinLabel,
+    string? ScaleMaxLabel,
+    string? AllowedFileTypes,
+    int? MaxFileSizeKB,
+    string? OrderingInstructions,
+    List<CreateAnswerDto> Answers,
+    List<CreateMatchPairDto> MatchPairs,
+    List<CreateOrderingItemDto> OrderingItems
+);

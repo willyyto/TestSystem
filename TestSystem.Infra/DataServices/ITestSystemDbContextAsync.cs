@@ -12,7 +12,9 @@ public interface ITestSystemDbContextAsync
     DbSet<Answer> Answers { get; }
     DbSet<TestResult> TestResults { get; }
     DbSet<QuestionResult> QuestionResults { get; }
-
-
+    DbSet<MatchPair> MatchPairs { get; }
+    DbSet<OrderingItem> OrderingItems { get; }
+    DbSet<TestAttempt> TestAttempts { get; }
+    DbSet<TestSchedule> TestSchedules { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }
