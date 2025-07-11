@@ -385,9 +385,6 @@ const AdminDashboard = () => {
         queryFn: () => apiQuery<UpcomingTest[]>('/user/tests/upcoming'),
     })
 
-    const isAdmin = user?.role === 'Administrator'
-    const isManager = user?.role === 'Manager'
-
     return (
         <>
             <Helmet>
@@ -406,8 +403,6 @@ const AdminDashboard = () => {
                             {formatDateD(new Date())}
                         </p>
                     </div>
-
-                    {(isAdmin || isManager) && (
                         <Button
                             color="primary"
                             startContent={<Plus className="h-4 w-4" />}
@@ -415,7 +410,6 @@ const AdminDashboard = () => {
                         >
                             Create Test
                         </Button>
-                    )}
                 </div>
 
                 {/* Stats Overview */}
@@ -454,7 +448,7 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Quick Actions */}
-                {(isAdmin || isManager) && <QuickActions />}
+                <QuickActions />
 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
