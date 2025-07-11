@@ -1,25 +1,27 @@
 import type {RouteObject} from 'react-router';
 import {DefaultLayout, Layout} from 'layouts';
 import AppRoutes from 'navigation/AppRoutes';
+import { lazy } from 'react'
+
 import Home from 'pages/CommonPages/Home';
 import BlogPage from 'pages/CommonPages/Blog';
 import DocsPage from 'pages/CommonPages/Docs';
 import PricingPage from 'pages/CommonPages/Pricing';
 import AboutPage from 'pages/CommonPages/About';
 import Login from "pages/CommonPages/Login";
-import Dashboard from "pages/UserPages/Dashboard";
-import TestBox from "pages/UserPages/TestBox";
-import Result from "pages/UserPages/Result";
-import CreateTest from "pages/AdminPages/AdminTest/CreateTest";
 import ProtectedRoute from "./ProtectedRoute.tsx";
-import Logout from "pages/CommonPages/Logout";
-import Page401 from "pages/CommonPages/AppStatus/Page401";
-/*import Page404 from "pages/AppStatus/Page404";*/
-import AdminDashboard from "pages/AdminPages/AdminDashboard";
-import {SideLayout} from "layouts/SideLayout.tsx";
-import AdminTest from "pages/AdminPages/AdminTest";
-import AdminCompany from "pages/AdminPages/AdminCompany";
-import AdminUser from "../pages/AdminPages/AdminUserTable";
+import {SideLayout} from "layouts/SideLayout";
+
+const Dashboard = lazy(() => import('pages/UserPages/Dashboard'))
+const TestBox = lazy(() => import('pages/UserPages/TestBox'))
+const Result = lazy(() => import('pages/UserPages/Result'))
+const CreateTest = lazy(() => import('pages/AdminPages/AdminTest/CreateTest'))
+const Logout = lazy(() => import('pages/CommonPages/Logout'))
+const Page401 = lazy(() => import('pages/CommonPages/AppStatus/Page401'))
+const AdminDashboard = lazy(() => import('pages/AdminPages/AdminDashboard'))
+const AdminTest = lazy(() => import('pages/AdminPages/AdminTest'))
+const AdminCompany = lazy(() => import('pages/AdminPages/AdminCompany'))
+const AdminUser = lazy(() => import('pages/AdminPages/AdminUserTable'))
 
 const routes: RouteObject[] = [
     {
@@ -87,7 +89,7 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.docs,
         element: (
-            <Layout> 
+            <Layout>
                 <DocsPage/>
             </Layout>
         ),
@@ -95,7 +97,7 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.pricing,
         element: (
-            <Layout> 
+            <Layout>
                 <PricingPage/>
             </Layout>
         ),
@@ -111,7 +113,7 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.login,
         element: (
-            <DefaultLayout> 
+            <DefaultLayout>
                 <Login/>
             </DefaultLayout>
         ),
@@ -135,7 +137,7 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.quiz,
         element: (
-            <Layout> 
+            <Layout>
                 <ProtectedRoute><TestBox/></ProtectedRoute>
             </Layout>
         ),
@@ -143,7 +145,7 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.result,
         element: (
-            <Layout> 
+            <Layout>
                 <ProtectedRoute><Result/></ProtectedRoute>
             </Layout>
         ),
@@ -151,7 +153,7 @@ const routes: RouteObject[] = [
     {
         path: AppRoutes.admintestcreate,
         element: (
-            <Layout> 
+            <Layout>
                 <ProtectedRoute><CreateTest/></ProtectedRoute>
             </Layout>
         ),

@@ -1,40 +1,61 @@
-﻿import React from 'react';
-import {Navigate} from 'react-router-dom';
-import {useAuth} from 'contexts/AuthContext';
-import {Progress} from "@heroui/react";
+﻿import React from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from 'auth/AuthContext'
+import { LoadingSpinner } from "../components/common/LoadingSpinner"
+import AppRoutes from '../navigation/AppRoutes'
 
 interface ProtectedRouteProps {
-    children: React.ReactNode;
-    roles?: string[];
+    children: React.ReactNode
+    roles?: string[]
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, roles }) => {
-    const { isAuthenticated, hasRole, userRole } = useAuth();
+    const location = useLocation()
+    const {
+        isAuthenticated,
+        isLoading,
+        hasRole,
+        userRole,
+        isTokenExpired,
+        refreshAccessToken
+    } = useAuth()
 
-    if (userRole === null) {
-        // Render a loading state or spinner until userRole is set
-        return <div className="flex items-center justify-center py-40">
-            <div className="text-center">
-                <Progress
-                    size="lg"
-                    isIndeterminate
-                    aria-label="Loading..."
-                    className="max-w-sm mx-auto"
-                />
-                <p className="mt-4 text-md">Loading...</p>
-            </div>
-        </div>;
+    // Show loading while userRole is being determined
+    if (userRole === null && isAuthenticated) {
+        return <LoadingSpinner text="Loading user data..." />
     }
 
+    // Show loading while checking authentication
+    if (isLoading) {
+        return <LoadingSpinner text="Authenticating..." />
+    }
+
+    // Check if token is expired and try to refresh
+    if (isAuthenticated && isTokenExpired()) {
+        console.log('Token expired in ProtectedRoute, attempting refresh...')
+
+        // Attempt to refresh token
+        refreshAccessToken().catch(() => {
+            console.log('Token refresh failed, user will be logged out')
+        })
+
+        // Show loading while refreshing
+        return <LoadingSpinner text="Refrehsing Session..." />
+    }
+
+    // Redirect to login if not authenticated
     if (!isAuthenticated) {
-        return <Navigate to="/login"/>;
+        return <Navigate to={AppRoutes.login} state={{ from: location }} replace />
     }
 
+    // Check role requirements (keeping your existing logic)
     if (roles && !roles.some(role => hasRole(role))) {
-        return <Navigate to="/unauthorised"/>;
+        console.log(`Access denied. User role: ${userRole}, Required roles: ${roles.join(', ')}`)
+        return <Navigate to={AppRoutes.unauthorised} replace />
     }
 
-    return <>{children}</>;
-};
+    // All checks passed, render the protected content
+    return <>{children}</>
+}
 
-export default ProtectedRoute;
+export default ProtectedRoute

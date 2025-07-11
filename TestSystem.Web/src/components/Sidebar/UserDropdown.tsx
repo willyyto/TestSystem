@@ -10,7 +10,7 @@ import {
     Skeleton,
 } from "@heroui/react";
 import {Icon} from "@iconify/react";
-import {useAuth} from "contexts/AuthContext";
+import {useAuth} from "../../auth/AuthContext.tsx";
 import {capitalize} from "utils/utils.tsx"; // Adjust the import path as needed
 
 interface User {
@@ -20,7 +20,7 @@ interface User {
 }
 
 export const UsersDropdown = () => {
-    const {userRole, userGivenName, userEmail} = useAuth();
+    const {userRole, userGivenName} = useAuth();
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 

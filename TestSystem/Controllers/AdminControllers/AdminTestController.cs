@@ -7,7 +7,7 @@ using TestSystem.Infra.Interfaces;
 using TestSystem.Mappers;
 
 namespace TestSystem.Controllers;
-[Authorize(Roles = "Administrator,Manager")]
+[Authorize(Roles = "Admin,Manager")]
 [ApiController]
 [Route("api/admin/[controller]")]
 public class AdminTestController : ControllerBase

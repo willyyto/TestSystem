@@ -9,7 +9,7 @@ using TestSystem.Mappers;
 
 namespace TestSystem.Controllers;
 
-[Authorize(Roles = "Administrator")]
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/admin/[controller]")]
 public class AdminCompanyController : ControllerBase

@@ -1,5 +1,5 @@
 ﻿import React, {useEffect} from 'react';
-import {useAuth} from 'contexts/AuthContext.tsx';
+import {useAuth} from '../../../auth/AuthContext.tsx';
 import {useNavigate} from 'react-router-dom';
 import {Spinner} from '@heroui/react'; // Assuming you are using Next UI
 

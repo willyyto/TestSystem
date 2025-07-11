@@ -1,4 +1,4 @@
-﻿import Provider from "../Provider.tsx";
+﻿import Provider from "../providers/Provider.tsx";
 
 export default function DefaultLayout({children}: { children: React.ReactNode; }) {
     return (
