@@ -1,7 +1,7 @@
 import api, { ApiResponse } from 'libs/api'
 
 // Types
-export interface Test {
+interface Test {
     id: string
     name: string
     company: string

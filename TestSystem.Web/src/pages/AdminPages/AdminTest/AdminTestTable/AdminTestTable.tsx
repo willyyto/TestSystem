@@ -1,4 +1,11 @@
-﻿import React, {useCallback, useEffect, useMemo, useState} from 'react';
+﻿import React, { useCallback, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+    PagedResult,
+    Test,
+    TestSearchParams
+} from 'services/TestsService'
+import { useQuery } from '@tanstack/react-query';
 import {
     Button,
     Chip,
@@ -14,28 +21,299 @@ import {
     TableColumn,
     TableHeader,
     TableRow,
+    Spinner,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
 } from '@heroui/react';
-import {AdminTestTableColumns} from './AdminTestTableColumns';
-import {formatDate, formatDuration} from 'utils/utils';
-import apiService from 'contexts/AdminApiService';
-import ViewTestModal from './ViewTestModal.tsx';
-import ConfirmationModal from 'components/common/ConfirmationModal';
-import {Test} from 'types/Interfaces.ts';
-import {useNavigate} from 'react-router-dom';
-import {Icon} from '@iconify/react';
-import RowsPerPageDropdown from "components/common/RowsPerPageDropdown.tsx";
-import RetakePolicyModal from 'components/Test/RetakePolicyModal'; // Import the new component
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'company', 'testType', 'duration', 'passMark', 'isTimed', 'shuffleQuestions', 'maximumAttempts', 'feedback', 'testAccessControl', 'gradingScheme', 'visibility', 'questions', 'retakePolicy', 'startDate', 'endDate', 'isActive', 'actions'];
+// Import the actual testsService
+import api, {ApiResponse} from 'libs/api';
+
+// Updated testsService that matches your actual API
+const testsService = {
+    // Get all tests (admin/manager)
+    getTests: async (params?: TestSearchParams): Promise<PagedResult<Test>> => {
+        const searchParams = new URLSearchParams()
+        if (params) {
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    if (Array.isArray(value)) {
+                        value.forEach(v => searchParams.append(key, v))
+                    } else {
+                        searchParams.append(key, String(value))
+                    }
+                }
+            })
+        }
+
+        const response = await api.get<ApiResponse<PagedResult<Test>>>(`/admin/admintest?${searchParams.toString()}`)
+        return response.data.data
+    },
+
+    // Get available tests for user
+    getAvailableTests: async (): Promise<Test[]> => {
+        const response = await api.get<ApiResponse<Test[]>>('/user/usertest/available')
+        return response.data.data
+    },
+
+    // Delete test
+    deleteTest: async (id: string): Promise<void> => {
+        await api.delete(`/admin/admintest/${id}`)
+    },
+
+    // Get test for admin/manager
+    getTestAdmin: async (id: string): Promise<Test> => {
+        const response = await api.get<ApiResponse<Test>>(`/admin/admintest/${id}`)
+        return response.data.data
+    },
+
+    // Bulk operations
+    bulkUpdateTestStatus: async (testIds: string[], isActive: boolean): Promise<void> => {
+        await api.put('/admin/admintest/bulk-status', { testIds, isActive })
+    },
+};
+
+// Utility functions
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+};
+
+const formatDuration = (duration) => {
+    if (!duration) return 'N/A';
+
+    // Handle TimeSpan format from C# (e.g., "01:30:00" or "1.02:30:00")
+    const parts = duration.split(':');
+    if (parts.length >= 2) {
+        const hours = parseInt(parts[0]);
+        const minutes = parseInt(parts[1]);
+
+        if (hours === 0) return `${minutes}m`;
+        if (minutes === 0) return `${hours}h`;
+        return `${hours}h ${minutes}m`;
+    }
+
+    return duration;
+};
+
+// Helper function to get display name for sort fields
+const getSortDisplayName = (column) => {
+    const sortDisplayNames = {
+        'name': 'Name',
+        'company': 'Company',
+        'testType': 'Test Type',
+        'passMark': 'Pass Mark',
+        'maximumAttempts': 'Max Attempts',
+        'startDate': 'Start Date',
+        'endDate': 'End Date',
+        'createdOn': 'Created',
+        'updatedOn': 'Updated',
+        'duration': 'Duration'
+    };
+    return sortDisplayNames[column] || column;
+};
+
+// Table columns definition that matches your backend
+const AdminTestTableColumns = [
+    { name: "Name", uid: "name", sortable: true },
+    { name: "Company", uid: "company", sortable: true },
+    { name: "Type", uid: "testType", sortable: true },
+    { name: "Duration", uid: "duration", sortable: true },
+    { name: "Pass Mark", uid: "passMark", sortable: true },
+    { name: "Timed", uid: "isTimed", sortable: true },
+    { name: "Shuffle", uid: "shuffleQuestions", sortable: true },
+    { name: "Max Attempts", uid: "maximumAttempts", sortable: true },
+    { name: "Questions", uid: "questions", sortable: true },
+    { name: "Feedback", uid: "feedback", sortable: true },
+    { name: "Access", uid: "testAccessControl", sortable: true },
+    { name: "Grading", uid: "gradingScheme", sortable: true },
+    { name: "Retake Policy", uid: "retakePolicy", sortable: false },
+    { name: "Visibility", uid: "visibility", sortable: true },
+    { name: "Start Date", uid: "startDate", sortable: true },
+    { name: "End Date", uid: "endDate", sortable: true },
+    { name: "Status", uid: "isActive", sortable: true },
+    { name: "Actions", uid: "actions", sortable: false },
+];
+
+// HeroUI Modal Components
+const ViewTestModal = ({ isOpen, onClose, test }) => {
+    return (
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            size="2xl"
+            scrollBehavior="inside"
+        >
+            <ModalContent>
+                <ModalHeader className="flex flex-col gap-1">
+                    Test Details
+                </ModalHeader>
+                <ModalBody>
+                    {test && (
+                        <div className="space-y-4">
+                            <div>
+                                <p className="font-semibold">Name:</p>
+                                <p >{test.name}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Company:</p>
+                                <p >{test.company}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Description:</p>
+                                <p >{test.description || 'No description available'}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Test Type:</p>
+                                <p >{test.testType}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Duration:</p>
+                                <p >{formatDuration(test.duration)}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Pass Mark:</p>
+                                <p >{test.passMark}%</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Questions:</p>
+                                <p >{test.questions?.length || 0}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Status:</p>
+                                <Chip
+                                    color={test.isActive ? 'success' : 'danger'}
+                                    size="sm"
+                                    variant="flat"
+                                >
+                                    {test.isActive ? 'Active' : 'Inactive'}
+                                </Chip>
+                            </div>
+                        </div>
+                    )}
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onPress={onClose}>
+                        Close
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    );
+};
+
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+    return (
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            size="md"
+        >
+            <ModalContent>
+                <ModalHeader className="flex flex-col gap-1">
+                    {title}
+                </ModalHeader>
+                <ModalBody>
+                    <p>{message}</p>
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant="light" onPress={onClose}>
+                        Cancel
+                    </Button>
+                    <Button color="danger" onPress={onConfirm}>
+                        Confirm
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    );
+};
+
+const RetakePolicyModal = ({ isOpen, onClose, retakePolicy }) => {
+    return (
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            size="md"
+        >
+            <ModalContent>
+                <ModalHeader className="flex flex-col gap-1">
+                    Retake Policy
+                </ModalHeader>
+                <ModalBody>
+                    {retakePolicy ? (
+                        <div className="space-y-3">
+                            <div>
+                                <p className="font-semibold">Allow Retakes:</p>
+                                <Chip
+                                    color={retakePolicy.allowRetakes ? 'success' : 'danger'}
+                                    size="sm"
+                                    variant="flat"
+                                >
+                                    {retakePolicy.allowRetakes ? 'Yes' : 'No'}
+                                </Chip>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Max Retakes:</p>
+                                <p >{retakePolicy.maxRetakes || 'Unlimited'}</p>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Retake Interval:</p>
+                                <p >{retakePolicy.retakeInterval || 'No restriction'}</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">No retake policy configured</p>
+                    )}
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onPress={onClose}>
+                        Close
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    );
+};
+
+const RowsPerPageDropdown = ({ rowsPerPage, onRowsPerPageChange }) => {
+    return (
+        <select
+            value={rowsPerPage}
+            onChange={(e) => onRowsPerPageChange(parseInt(e.target.value))}
+            className="border rounded px-2 py-1 text-sm"
+        >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+        </select>
+    );
+};
+
+const INITIAL_VISIBLE_COLUMNS = [
+    'name', 'company', 'testType', 'duration', 'passMark', 'isTimed',
+    'shuffleQuestions', 'maximumAttempts', 'feedback', 'testAccessControl',
+    'gradingScheme', 'visibility', 'questions', 'retakePolicy', 'startDate',
+    'endDate', 'isActive', 'actions'
+];
 
 const statusColorMap = {
     true: 'success',
     false: 'danger',
 };
 
-const AdminTestTable: React.FC = () => {
+const AdminTestTable = () => {
     const [filterValue, setFilterValue] = useState('');
-    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
     const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -44,156 +322,187 @@ const AdminTestTable: React.FC = () => {
         direction: 'ascending',
     });
     const [page, setPage] = useState(1);
-    const [testData, setTestData] = useState<Test[]>([]);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirm modal
-    const [isRetakePolicyModalOpen, setIsRetakePolicyModalOpen] = useState(false); // State for retake policy modal
-    const [selectedTest, setSelectedTest] = useState<Test | null>(null);
-    const [testToDelete, setTestToDelete] = useState<Test | null>(null); // State for the test to delete
-    const navigate = useNavigate();
+    const [selectedTest, setSelectedTest] = useState(null);
+    const [testToDelete, setTestToDelete] = useState(null);
 
-    useEffect(() => {
-        const fetchAdminTests = async () => {
-            try {
-                const data = await apiService.fetchAdminTests();
-                setTestData(data);
-            } catch (error) {
-                console.error('Error fetching tests:', error);
-            }
+    // HeroUI useDisclosure hooks for modals
+    const {
+        isOpen: isViewModalOpen,
+        onOpen: onViewModalOpen,
+        onClose: onViewModalClose
+    } = useDisclosure();
+
+    const {
+        isOpen: isConfirmModalOpen,
+        onOpen: onConfirmModalOpen,
+        onClose: onConfirmModalClose
+    } = useDisclosure();
+
+    const {
+        isOpen: isRetakePolicyModalOpen,
+        onOpen: onRetakePolicyModalOpen,
+        onClose: onRetakePolicyModalClose
+    } = useDisclosure();
+
+    // Build filters for the API query to match your backend expectations
+    const filters = useMemo(() => {
+        const params: TestSearchParams = {
+            page: page,
+            pageSize: rowsPerPage,
+            sortBy: sortDescriptor.column,
+            sortDirection: sortDescriptor.direction === 'ascending' ? 'asc' : 'desc'
         };
 
-        fetchAdminTests();
-    }, []);
-
-    const handleViewTest = (test: Test) => {
-        setSelectedTest(test);
-        setIsViewModalOpen(true);
-    };
-
-    const handleDeleteTest = async () => {
-        if (testToDelete) {
-            try {
-                await apiService.deleteAdminTestById(testToDelete.id);
-                setTestData(testData.filter(test => test.id !== testToDelete.id));
-                setIsConfirmModalOpen(false);
-                setTestToDelete(null);
-                alert('Test deleted successfully.');
-            } catch (error) {
-                setIsConfirmModalOpen(false);
-                setTestToDelete(null);
-                console.error('Failed to delete test', error);
-                alert('Failed to delete test.');
-            }
-        }
-    };
-
-    const handleViewRetakePolicy = (test: Test) => {
-        setSelectedTest(test);
-        setIsRetakePolicyModalOpen(true);
-    };
-
-    const hasSearchFilter = Boolean(filterValue);
-
-    const headerColumns = useMemo(() => {
-        if (visibleColumns === 'all') return AdminTestTableColumns;
-
-        return AdminTestTableColumns.filter((column) => Array.from(visibleColumns).includes(column.uid));
-    }, [visibleColumns]);
-
-    const filteredItems = useMemo(() => {
-        let filteredTests = [...testData];
-
-        if (hasSearchFilter) {
-            filteredTests = filteredTests.filter((test) =>
-                test.name.toLowerCase().includes(filterValue.toLowerCase()),
-            );
+        if (filterValue?.trim()) {
+            params.searchTerm = filterValue.trim();
         }
 
         if (statusFilter !== 'all') {
-            filteredTests = filteredTests.filter((test) =>
-                statusFilter === 'active' ? test.isActive : !test.isActive,
-            );
+            // Map status filter to what backend expects
+            params.statuses = [statusFilter === 'active' ? 'active' : 'inactive'];
         }
 
-        return filteredTests;
-    }, [testData, filterValue, statusFilter]);
+        return params;
+    }, [filterValue, statusFilter, sortDescriptor, page, rowsPerPage]);
 
-    const pages = Math.ceil(filteredItems.length / rowsPerPage);
+    // Fetch tests data using TanStack Query with proper error handling
+    const { data: testsResponse, isLoading, error, refetch } = useQuery({
+        queryKey: ['admin-tests', filters],
+        queryFn: async () => {
+            try {
+                return await testsService.getTests(filters);
+            } catch (error) {
+                console.error('Error fetching tests:', error);
+                throw error;
+            }
+        },
+        keepPreviousData: true,
+        retry: 2,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        cacheTime: 10 * 60 * 1000, // 10 minutes
+    });
 
-    const items = useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+    // Extract data from the API response structure
+    const testData = testsResponse?.items || [];
+    const totalCount = testsResponse?.totalCount || 0;
+    const totalPages = testsResponse?.totalPages || 1;
 
-        return filteredItems.slice(start, end);
-    }, [page, filteredItems, rowsPerPage]);
+    const handleViewTest = useCallback((test) => {
+        setSelectedTest(test);
+        onViewModalOpen();
+    }, [onViewModalOpen]);
 
-    const sortedItems = useMemo(() => {
-        return [...items].sort((a, b) => {
-            const first = a[sortDescriptor.column];
-            const second = b[sortDescriptor.column];
-            const cmp = first < second ? -1 : first > second ? 1 : 0;
+    const handleDeleteTest = useCallback(async () => {
+        if (!testToDelete) return;
 
-            return sortDescriptor.direction === 'descending' ? -cmp : cmp;
-        });
-    }, [sortDescriptor, items]);
+        try {
+            await testsService.deleteTest(testToDelete.id);
+            onConfirmModalClose();
+            setTestToDelete(null);
+            refetch(); // Refresh the data after deletion
+            // You might want to show a success toast here
+        } catch (error) {
+            console.error('Failed to delete test', error);
+            onConfirmModalClose();
+            setTestToDelete(null);
+            // You might want to show an error toast here
+        }
+    }, [testToDelete, refetch, onConfirmModalClose]);
+
+    const handleViewRetakePolicy = useCallback((test) => {
+        setSelectedTest(test);
+        onRetakePolicyModalOpen();
+    }, [onRetakePolicyModalOpen]);
+
+    const headerColumns = useMemo(() => {
+        if (visibleColumns === 'all') return AdminTestTableColumns;
+        return AdminTestTableColumns.filter((column) =>
+            Array.from(visibleColumns).includes(column.uid)
+        );
+    }, [visibleColumns]);
 
     const renderCell = useCallback((test, columnKey) => {
         const cellValue = test[columnKey];
+
         switch (columnKey) {
             case 'name':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-sm capitalize">{cellValue}</p>
+                        <p className="text-sm font-semibold">{cellValue}</p>
+                        {test.description && (
+                            <p className="text-xs text-gray-500 truncate max-w-[200px]">
+                                {test.description}
+                            </p>
+                        )}
+                    </div>
+                );
+            case 'company':
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-sm">{cellValue}</p>
                     </div>
                 );
             case 'isActive':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
+                    <Chip
+                        className="capitalize"
+                        color={statusColorMap[test.isActive]}
+                        size="sm"
+                        variant="flat"
+                    >
                         {test.isActive ? 'Active' : 'Inactive'}
                     </Chip>
                 );
             case 'isTimed':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
-                        {test.isTimed ? 'Active' : 'Inactive'}
+                    <Chip
+                        className="capitalize"
+                        color={test.isTimed ? 'success' : 'default'}
+                        size="sm"
+                        variant="flat"
+                    >
+                        {test.isTimed ? 'Yes' : 'No'}
                     </Chip>
                 );
             case 'shuffleQuestions':
                 return (
-                    <Chip className="capitalize" color={statusColorMap[test.isActive]} size="sm" variant="flat">
-                        {test.shuffleQuestions ? 'Active' : 'Inactive'}
+                    <Chip
+                        className="capitalize"
+                        color={test.shuffleQuestions ? 'success' : 'default'}
+                        size="sm"
+                        variant="flat"
+                    >
+                        {test.shuffleQuestions ? 'Yes' : 'No'}
                     </Chip>
                 );
             case 'duration':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDuration(cellValue)}</p>
+                        <p className="text-sm">{formatDuration(cellValue)}</p>
                     </div>
                 );
             case 'startDate':
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
-                    </div>
-                );
             case 'endDate':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-sm capitalize">{formatDate(cellValue)}</p>
+                        <p className="text-sm">{formatDate(cellValue)}</p>
                     </div>
                 );
             case 'questions':
                 return (
                     <div className="flex flex-col">
-                        <p className="text-sm">{test.questions.length}</p>
+                        <p className="text-sm">{test.questions?.length || 0}</p>
                     </div>
                 );
             case 'retakePolicy':
                 return (
                     <div className="flex flex-col">
-                        <Button size="sm" variant="ghost"
-                                endContent={<Icon icon="solar:arrow-right-up-outline" className="h-3 w-3"/>}
-                                onClick={() => handleViewRetakePolicy(test)}>
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            endContent={<span className="text-xs">→</span>}
+                            onClick={() => handleViewRetakePolicy(test)}
+                        >
                             View
                         </Button>
                     </div>
@@ -204,30 +513,39 @@ const AdminTestTable: React.FC = () => {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
-                                    <Icon icon="solar:menu-dots-bold" className="text-default-300 h-6 w-6 rotate-90"/>
+                                    <span className="text-default-300 rotate-90">⋯</span>
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onPress={() => handleViewTest(test)}>View</DropdownItem>
-                                <DropdownItem>Edit</DropdownItem>
-                                <DropdownItem color="danger" onPress={() => {
-                                    setIsConfirmModalOpen(true);
-                                    setTestToDelete(test);
-                                }}>Delete</DropdownItem>
+                                <DropdownItem onPress={() => handleViewTest(test)}>
+                                    View
+                                </DropdownItem>
+                                <DropdownItem onPress={() => console.log('Edit test:', test.id)}>
+                                    Edit
+                                </DropdownItem>
+                                <DropdownItem
+                                    color="danger"
+                                    onPress={() => {
+                                        setTestToDelete(test);
+                                        onConfirmModalOpen();
+                                    }}
+                                >
+                                    Delete
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
                 );
             default:
-                return cellValue;
+                return cellValue?.toString() || '';
         }
-    }, []);
+    }, [handleViewTest, handleViewRetakePolicy, onConfirmModalOpen]);
 
     const onNextPage = useCallback(() => {
-        if (page < pages) {
+        if (page < totalPages) {
             setPage(page + 1);
         }
-    }, [page, pages]);
+    }, [page, totalPages]);
 
     const onPreviousPage = useCallback(() => {
         if (page > 1) {
@@ -235,18 +553,14 @@ const AdminTestTable: React.FC = () => {
         }
     }, [page]);
 
-    const onRowsPerPageChange = useCallback((e: number) => {
-        setRowsPerPage(e);
+    const onRowsPerPageChange = useCallback((newRowsPerPage) => {
+        setRowsPerPage(newRowsPerPage);
         setPage(1);
     }, []);
 
     const onSearchChange = useCallback((value) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue('');
-        }
+        setFilterValue(value || '');
+        setPage(1);
     }, []);
 
     const onClear = useCallback(() => {
@@ -261,18 +575,19 @@ const AdminTestTable: React.FC = () => {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search"
-                        startContent={<Icon icon="solar:minimalistic-magnifer-outline"
-                                            className="h-4 w-4 text-gray-500"/>}
+                        placeholder="Search tests..."
+                        startContent={<span>🔍</span>}
                         value={filterValue}
-                        onClear={() => onClear()}
+                        onClear={onClear}
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<Icon icon="solar:alt-arrow-down-outline" className="h-3 w-3"/>}
-                                        variant="flat">
+                                <Button
+                                    endContent={<span>▼</span>}
+                                    variant="flat"
+                                >
                                     Status
                                 </Button>
                             </DropdownTrigger>
@@ -282,17 +597,73 @@ const AdminTestTable: React.FC = () => {
                                 closeOnSelect={false}
                                 selectionMode="single"
                                 selectedKeys={new Set([statusFilter])}
-                                onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string)}
+                                onSelectionChange={(keys) => {
+                                    const newFilter = Array.from(keys)[0];
+                                    setStatusFilter(newFilter);
+                                    setPage(1);
+                                }}
                             >
                                 <DropdownItem key="all">All</DropdownItem>
                                 <DropdownItem key="active">Active</DropdownItem>
                                 <DropdownItem key="inactive">Inactive</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
+
+                        {/* New Sort Dropdown */}
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<Icon icon="solar:alt-arrow-down-outline" className="h-3 w-3"/>}
-                                        variant="flat">
+                                <Button
+                                    endContent={<span>▼</span>}
+                                    variant="flat"
+                                >
+                                    Sort: {getSortDisplayName(sortDescriptor.column)}
+                                    {sortDescriptor.direction === 'ascending' ? ' 🡅 ' : ' 🡇 '}
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Sort Options"
+                                closeOnSelect={true}
+                                selectionMode="single"
+                                selectedKeys={new Set([`${sortDescriptor.column}-${sortDescriptor.direction}`])}
+                                onSelectionChange={(keys) => {
+                                    const selectedKey = Array.from(keys)[0] as string;
+                                    const [column, direction] = selectedKey.split('-');
+                                    setSortDescriptor({
+                                        column,
+                                        direction: direction as 'ascending' | 'descending'
+                                    });
+                                    setPage(1);
+                                }}
+                            >
+                                <DropdownItem key="name-ascending">Name (A-Z)</DropdownItem>
+                                <DropdownItem key="name-descending">Name (Z-A)</DropdownItem>
+                                <DropdownItem key="company-ascending">Company (A-Z)</DropdownItem>
+                                <DropdownItem key="company-descending">Company (Z-A)</DropdownItem>
+                                <DropdownItem key="testType-ascending">Test Type (A-Z)</DropdownItem>
+                                <DropdownItem key="testType-descending">Test Type (Z-A)</DropdownItem>
+                                <DropdownItem key="passMark-ascending">Pass Mark (Low-High)</DropdownItem>
+                                <DropdownItem key="passMark-descending">Pass Mark (High-Low)</DropdownItem>
+                                <DropdownItem key="maximumAttempts-ascending">Max Attempts (Low-High)</DropdownItem>
+                                <DropdownItem key="maximumAttempts-descending">Max Attempts (High-Low)</DropdownItem>
+                                <DropdownItem key="startDate-ascending">Start Date (Oldest)</DropdownItem>
+                                <DropdownItem key="startDate-descending">Start Date (Newest)</DropdownItem>
+                                <DropdownItem key="endDate-ascending">End Date (Oldest)</DropdownItem>
+                                <DropdownItem key="endDate-descending">End Date (Newest)</DropdownItem>
+                                <DropdownItem key="createdOn-ascending">Created (Oldest)</DropdownItem>
+                                <DropdownItem key="createdOn-descending">Created (Newest)</DropdownItem>
+                                <DropdownItem key="updatedOn-ascending">Updated (Oldest)</DropdownItem>
+                                <DropdownItem key="updatedOn-descending">Updated (Newest)</DropdownItem>
+                                <DropdownItem key="duration-ascending">Duration (Shortest)</DropdownItem>
+                                <DropdownItem key="duration-descending">Duration (Longest)</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+
+                        <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
+                                <Button
+                                    endContent={<span>▼</span>}
+                                    variant="flat"
+                                >
                                     Columns
                                 </Button>
                             </DropdownTrigger>
@@ -311,64 +682,106 @@ const AdminTestTable: React.FC = () => {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<Icon icon="heroicons-solid:plus"
-                                                                  className="h-5 w-5 text-white"/>}
-                                onClick={() => navigate('/admin/test/create')}>
+                        <Button
+                            color="primary"
+                            endContent={<span>+</span>}
+                            onClick={() => console.log('Navigate to create test')}
+                        >
                             Add New
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-sm">Total {testData.length} Tests</span>
+                    <span className="text-default-400 text-sm">
+                        Total {totalCount} Tests
+                        {isLoading && <Spinner size="sm" className="ml-2" />}
+                    </span>
                     <label className="flex items-center text-default-400 text-sm gap-2">
-                        Rows per page:  <RowsPerPageDropdown rowsPerPage={rowsPerPage} onRowsPerPageChange={onRowsPerPageChange} />
+                        Rows per page:
+                        <RowsPerPageDropdown
+                            rowsPerPage={rowsPerPage}
+                            onRowsPerPageChange={onRowsPerPageChange}
+                        />
                     </label>
                 </div>
+                {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                        <p className="text-red-800 text-sm">
+                            Error loading tests: {error.message}
+                        </p>
+                        <Button size="sm" variant="flat" onClick={() => refetch()} className="mt-2">
+                            Retry
+                        </Button>
+                    </div>
+                )}
             </div>
         );
     }, [
         filterValue,
+        statusFilter,
         visibleColumns,
-        onRowsPerPageChange,
-        testData.length,
+        totalCount,
+        isLoading,
+        error,
+        rowsPerPage,
+        sortDescriptor,
         onSearchChange,
         onClear,
-        statusFilter,
+        onRowsPerPageChange,
+        refetch
     ]);
 
     const bottomContent = useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-sm text-default-400">
-          {selectedKeys === 'all'
-              ? 'All items selected'
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
+                <span className="w-[30%] text-sm text-default-400">
+                    {selectedKeys === 'all'
+                        ? 'All items selected'
+                        : `${selectedKeys.size} of ${testData.length} selected`}
+                </span>
                 <Pagination
                     isCompact
                     showControls
                     showShadow
                     color="primary"
                     page={page}
-                    total={pages}
+                    total={totalPages}
                     onChange={setPage}
                 />
                 <div className="hidden sm:flex w-[30%] justify-end gap-2">
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+                    <Button
+                        isDisabled={page <= 1}
+                        size="sm"
+                        variant="flat"
+                        onPress={onPreviousPage}
+                    >
                         Previous
                     </Button>
-                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+                    <Button
+                        isDisabled={page >= totalPages}
+                        size="sm"
+                        variant="flat"
+                        onPress={onNextPage}
+                    >
                         Next
                     </Button>
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, testData.length, page, totalPages, onPreviousPage, onNextPage]);
+
+    if (isLoading && !testData.length) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
 
     return (
         <>
             <Table
-                aria-label="Example table with custom cells, pagination and sorting"
+                aria-label="Tests table with pagination and sorting"
                 color="primary"
                 isHeaderSticky
                 bottomContent={bottomContent}
@@ -395,10 +808,21 @@ const AdminTestTable: React.FC = () => {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody emptyContent={'No tests found'} items={sortedItems}>
+                <TableBody
+                    emptyContent={
+                        error ? 'Error loading tests' : 'No tests found'
+                    }
+                    items={testData}
+                    isLoading={isLoading}
+                    loadingContent={<Spinner label="Loading..." />}
+                >
                     {(item) => (
                         <TableRow key={item.id}>
-                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                            {(columnKey) => (
+                                <TableCell>
+                                    {renderCell(item, columnKey)}
+                                </TableCell>
+                            )}
                         </TableRow>
                     )}
                 </TableBody>
@@ -406,23 +830,23 @@ const AdminTestTable: React.FC = () => {
 
             <ViewTestModal
                 isOpen={isViewModalOpen}
-                onClose={() => setIsViewModalOpen(false)}
+                onClose={onViewModalClose}
                 test={selectedTest}
             />
 
             <ConfirmationModal
                 isOpen={isConfirmModalOpen}
-                onClose={() => setIsConfirmModalOpen(false)}
+                onClose={onConfirmModalClose}
                 onConfirm={handleDeleteTest}
+                title="Delete Test"
+                message={`Are you sure you want to delete "${testToDelete?.name}"? This action cannot be undone.`}
             />
 
-            {selectedTest && (
-                <RetakePolicyModal
-                    isOpen={isRetakePolicyModalOpen}
-                    onClose={() => setIsRetakePolicyModalOpen(false)}
-                    retakePolicy={selectedTest.retakePolicy}
-                />
-            )}
+            <RetakePolicyModal
+                isOpen={isRetakePolicyModalOpen}
+                onClose={onRetakePolicyModalClose}
+                retakePolicy={selectedTest?.retakePolicy}
+            />
         </>
     );
 };

@@ -31,7 +31,7 @@ const ViewTestModal: React.FC<ViewTestModalProps> = ({ isOpen, onClose, test }) 
     const renderQuestion = (question: Question, index: number) => {
         return (
             <div className="py-4">
-                <Card key={question.id} radius="sm" shadow="none" isBlurred fullWidth className="p-2 bg-gray-200">
+                <Card key={question.id} radius="sm" shadow="none" isBlurred fullWidth className="p-2 ">
                     <CardHeader>
                         <p>
                             Question <b>{index + 1}</b> of {test?.questions.length}

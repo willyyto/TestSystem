@@ -1,6 +1,16 @@
 ﻿export const AdminCompanyTableColumns = [
-    { name: "Id", uid: "id", sortable: true },
     { name: "Name", uid: "name", sortable: true },
+    { name: "Description", uid: "description", sortable: false },
+    { name: "Website", uid: "website", sortable: false },
+    { name: "Contact Person", uid: "contactPerson", sortable: true },
+    { name: "Email", uid: "email", sortable: true },
+    { name: "Phone", uid: "phone", sortable: false },
+    { name: "Subscription", uid: "subscriptionTier", sortable: true },
+    { name: "Max Users", uid: "maxUsers", sortable: true },
+    { name: "Max Tests", uid: "maxTests", sortable: true },
+    { name: "Storage", uid: "storage", sortable: false },
+    { name: "Created", uid: "createdOn", sortable: true },
+    { name: "Updated", uid: "updatedOn", sortable: true },
     { name: "Status", uid: "isActive", sortable: true },
-    { name: "Actions", uid: "actions" },
+    { name: "Actions", uid: "actions", sortable: false },
 ];

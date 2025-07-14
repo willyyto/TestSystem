@@ -163,12 +163,33 @@ public class TestRepository : ITestRepository
             "name" => searchDto.SortDirection?.ToLower() == "desc" 
                 ? query.OrderByDescending(t => t.Name)
                 : query.OrderBy(t => t.Name),
-            "createdon" => searchDto.SortDirection?.ToLower() == "desc"
-                ? query.OrderByDescending(t => t.CreatedOn)
-                : query.OrderBy(t => t.CreatedOn),
+            "company" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.Company.Name)
+                : query.OrderBy(t => t.Company.Name),
+            "testtype" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.TestType)
+                : query.OrderBy(t => t.TestType),
+            "passmark" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.PassMark)
+                : query.OrderBy(t => t.PassMark),
+            "maximumattempts" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.MaximumAttempts)
+                : query.OrderBy(t => t.MaximumAttempts),
             "startdate" => searchDto.SortDirection?.ToLower() == "desc"
                 ? query.OrderByDescending(t => t.StartDate)
                 : query.OrderBy(t => t.StartDate),
+            "enddate" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.EndDate)
+                : query.OrderBy(t => t.EndDate),
+            "createdon" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.CreatedOn)
+                : query.OrderBy(t => t.CreatedOn),
+            "updatedon" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.UpdatedOn)
+                : query.OrderBy(t => t.UpdatedOn),
+            "duration" => searchDto.SortDirection?.ToLower() == "desc"
+                ? query.OrderByDescending(t => t.Duration)
+                : query.OrderBy(t => t.Duration),
             _ => query.OrderByDescending(t => t.CreatedOn)
         };
 
