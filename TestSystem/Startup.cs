@@ -140,28 +140,3 @@ public class Startup
         app.MapControllers();
     }
 }
-// Extension for Swagger configuration
-public static class SwaggerExtensions
-{
-    public static void ConfigureForApiResponseDto(this SwaggerGenOptions options)
-    {
-        // Add custom schema for ApiResponseDto
-        options.MapType<ApiResponseDto<object>>(() => new OpenApiSchema
-        {
-            Type = "object",
-            Properties = new Dictionary<string, OpenApiSchema>
-            {
-                ["success"] = new OpenApiSchema { Type = "boolean" },
-                ["data"] = new OpenApiSchema { Type = "object" },
-                ["message"] = new OpenApiSchema { Type = "string", Nullable = true },
-                ["errors"] = new OpenApiSchema 
-                { 
-                    Type = "array", 
-                    Items = new OpenApiSchema { Type = "string" },
-                    Nullable = true 
-                },
-                ["statusCode"] = new OpenApiSchema { Type = "integer", Nullable = true }
-            }
-        });
-    }
-}

@@ -42,13 +42,8 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
         new TestAttemptConfig().Configure(builder.Entity<TestAttempt>());
         new TestScheduleConfig().Configure(builder.Entity<TestSchedule>());
         new NotificationConfig().Configure(builder.Entity<Notification>());
-
         
         ConfigureEnumConversions(builder);
-        
-        // Add performance indexes
-        ConfigureIndexes(builder);
-        
         
         // Configure global query filters if needed
         ConfigureGlobalFilters(builder);
@@ -83,74 +78,6 @@ public class TestSystemDbContextAsync : AsyncDbContext, ITestSystemDbContextAsyn
         builder.Entity<Test>()
             .Property(t => t.GradingScheme)
             .HasConversion<string>();
-    }
-    private void ConfigureIndexes(ModelBuilder builder)
-    {
-        // Performance indexes for frequently queried combinations
-        builder.Entity<TestResult>()
-            .HasIndex(tr => new { tr.TestId, tr.UserId, tr.CompletedDate })
-            .HasDatabaseName("IX_TestResult_Performance");
-
-        builder.Entity<QuestionResult>()
-            .HasIndex(qr => new { qr.TestResultId, qr.QuestionId })
-            .HasDatabaseName("IX_QuestionResult_Performance");
-
-        builder.Entity<TestAttempt>()
-            .HasIndex(ta => new { ta.TestId, ta.UserId, ta.StartedAt })
-            .HasDatabaseName("IX_TestAttempt_Performance");
-
-        builder.Entity<TestAttempt>()
-            .HasIndex(ta => new { ta.TestId, ta.UserId, ta.AttemptNumber })
-            .HasDatabaseName("IX_TestAttempt_Unique")
-            .IsUnique();
-
-        // Search indexes
-        builder.Entity<Test>()
-            .HasIndex(t => new { t.CompanyId, t.IsActive, t.IsArchived })
-            .HasDatabaseName("IX_Test_Search");
-
-        builder.Entity<User>()
-            .HasIndex(u => new { u.CompanyId, u.IsActive, u.IsArchived })
-            .HasDatabaseName("IX_User_Search");
-
-        builder.Entity<Question>()
-            .HasIndex(q => new { q.TestId, q.DisplayOrder })
-            .HasDatabaseName("IX_Question_Order");
-
-        // Unique constraints
-        builder.Entity<User>()
-            .HasIndex(u => u.Username)
-            .HasDatabaseName("IX_User_Username")
-            .IsUnique();
-
-        builder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .HasDatabaseName("IX_User_Email")
-            .IsUnique();
-
-        builder.Entity<Company>()
-            .HasIndex(c => c.CustomDomain)
-            .HasDatabaseName("IX_Company_CustomDomain")
-            .IsUnique()
-            .HasFilter("[CustomDomain] IS NOT NULL");
-
-        // Frequently filtered columns
-        builder.Entity<Test>()
-            .HasIndex(t => t.IsPublic)
-            .HasDatabaseName("IX_Test_IsPublic");
-
-        builder.Entity<Test>()
-            .HasIndex(t => t.InviteCode)
-            .HasDatabaseName("IX_Test_InviteCode")
-            .HasFilter("[InviteCode] IS NOT NULL");
-
-        builder.Entity<TestResult>()
-            .HasIndex(tr => tr.Passed)
-            .HasDatabaseName("IX_TestResult_Passed");
-
-        builder.Entity<QuestionResult>()
-            .HasIndex(qr => qr.RequiresManualGrading)
-            .HasDatabaseName("IX_QuestionResult_ManualGrading");
     }
 
     private void ConfigureGlobalFilters(ModelBuilder builder)
